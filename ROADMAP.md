@@ -56,42 +56,42 @@ Il cuore dell'app. Nient'altro.
 
 ---
 
-## Fase 2 — Weekly Planner `[~10-14h]`
+## Fase 2 — Weekly Planner `[~10-14h]` ✅ COMPLETATA
 
 Il time-blocking che risolve il problema originale: "non so cosa fare".
 
 ### 2.1 — Modello dati planner
-- [ ] Definire `Block` (attività, categoria, durata stimata, colore)
-- [ ] Definire `WeeklySlot` (giorno, fascia oraria, blocco assegnato)
-- [ ] Collegamento opzionale blocco → vetta (le ore di studio contano come progresso)
+- [x] Definire `Block` (attività, categoria, durata stimata, colore)
+- [x] Definire `WeeklySlot` (giorno, fascia oraria esatta)
+- [x] Collegamento blocchi → gamification (ore completate = altitudine vetta)
 
 ### 2.2 — UI planner
-- [ ] Vista settimanale a griglia (lun-dom, fasce orarie)
-- [ ] Drag & drop dei blocchi negli slot (o tap per assegnare)
-- [ ] Monte ore settimanale per categoria (barra di progresso)
-- [ ] Vista giornaliera: "cosa devo fare oggi" — la schermata che apri la mattina
+- [x] Vista settimanale con timeline esatta
+- [x] Funzione di "Copia Settimana" per routine predefinite
+- [x] Monte ore settimanale per categoria (barra di progresso modificabile)
+- [x] Vista giornaliera: "cosa devo fare oggi" — la schermata che apri la mattina
 
-### 2.3 — Tracking e review
-- [ ] Spunta blocchi completati durante la giornata
-- [ ] Riepilogo settimanale: ore pianificate vs ore fatte
-- [ ] Prompt domenicale di review ("com'è andata questa settimana?")
+### 2.3 — Sincronizzazione Esterna
+- [x] Esportazione nativa verso Google Calendar
+- [x] Architettura multi-calendario per la gestione dei colori di Google Calendar
 
-**Deliverable**: puoi pianificare la settimana la domenica sera, e ogni mattina sai cosa fare senza pensarci.
+**Deliverable**: puoi pianificare la settimana la domenica sera, e ogni mattina sai cosa fare senza pensarci. E ti arrivano le notifiche da Google!
 
 ---
 
-## Fase 3 — Automazione e CI/CD `[~4-6h]`
+## Fase 3 — Automazione e CI/CD `[IN CORSO 🏗️]`
 
 ### 3.1 — Build automatizzata
 - [ ] Configurazione EAS Build (account Expo gratuito)
+- [ ] Creazione primo pacchetto APK (o AAB) di test per l'installazione
+- [ ] Push della repository aggiornata sul remote di GitHub
 - [ ] GitHub Action: su tag/release → build APK → allegato alla release
-- [ ] Documentare il processo di installazione APK nel README
 
 ### 3.2 — Quality
-- [ ] Test unitari sullo store/logica (Jest)
-- [ ] Test di base sui componenti principali
+- [ ] Pulizia deprecation warnings rimasti
+- [ ] Risoluzione di eventuali conflitti di TS
 
-**Deliverable**: pushare un tag su GitHub genera automaticamente un APK scaricabile dalla pagina Releases.
+**Deliverable**: pushare un tag su GitHub genera automaticamente un APK scaricabile.
 
 ---
 
@@ -99,13 +99,11 @@ Il time-blocking che risolve il problema originale: "non so cosa fare".
 
 > Queste feature esistono solo qui. Non vanno toccate finché la Fase 2 non è stabile e usata quotidianamente da almeno 2 settimane.
 
-- [ ] Notifiche/reminder per i blocchi pianificati
+- [ ] **Achievements/Badge**: Trofei sbloccabili ogni tot metri scalati (es. "Campo Base dell'Everest - 5364m", "Monte Bianco - 4809m")
+- [ ] Notifiche/reminder nativi interni per i blocchi pianificati (se Google Calendar non basta)
 - [ ] Widget Android per la vista giornaliera
 - [ ] Grafici storici (progresso nel tempo, ore per settimana)
 - [ ] Export dati (JSON/CSV)
-- [ ] Sincronizzazione tra dispositivi (solo se davvero necessario)
-- [ ] Integrazione con Google Calendar (import blocchi)
-- [ ] Achievements/badge per milestone particolari
 
 ---
 
