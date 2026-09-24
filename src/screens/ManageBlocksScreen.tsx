@@ -28,6 +28,10 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const [catModalVisible, setCatModalVisible] = useState(false);
   const [editCatId, setEditCatId] = useState<string | null>(null);
   const [catTargetHours, setCatTargetHours] = useState('');
+  const [catName, setCatName] = useState('');
+  const [catEmoji, setCatEmoji] = useState('⭐');
+  const [catColor, setCatColor] = useState('#EF4444');
+  const CATEGORY_COLORS = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280'];
 
   const resetModal = () => {
     setBlockName('');
@@ -50,6 +54,15 @@ export default function ManageBlocksScreen({ navigation }: any) {
     ]);
   };
 
+  const openNewCategory = () => {
+    setEditCatId(null);
+    setCatName('');
+    setCatEmoji('⭐');
+    setCatColor('#EF4444');
+    setCatTargetHours('10');
+    setCatModalVisible(true);
+  };
+
   const openEditCategory = (cat: any) => {
     setEditCatId(cat.id);
     setCatTargetHours(String(cat.targetHoursPerWeek));
@@ -58,8 +71,12 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
   const saveCategory = () => {
     const hours = parseInt(catTargetHours, 10);
-    if (!isNaN(hours) && editCatId) {
-      editCategory(editCatId, hours);
+    if (!isNaN(hours)) {
+      if (editCatId) {
+        editCategory(editCatId, hours);
+      } else if (catName.trim()) {
+        addCategory(catName.trim(), catEmoji, catColor, hours);
+      }
     }
     setCatModalVisible(false);
   };
@@ -74,11 +91,14 @@ export default function ManageBlocksScreen({ navigation }: any) {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         
-        {{/* Categories Section */}}
+        {/* Categories Section */}
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm}}>
-          <Text style={[styles.sectionTitle, { color: colors.text }]}>Categorie</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('manage.title')}</Text>
+          <Pressable onPress={openNewCategory} style={{padding: Spacing.xs, paddingHorizontal: Spacing.sm, backgroundColor: colors.surfaceAlt, borderRadius: BorderRadius.sm}}>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>+ New</Text>
+          </Pressable>
         </View>
-        <Text style={{color: colors.textSecondary, fontSize: 12, marginBottom: Spacing.sm}}>Tocca una categoria per modificarne le ore target.</Text>
+        <Text style={{color: colors.textSecondary, fontSize: 12, marginBottom: Spacing.sm}}>{t('manage.categoriesInfo')}</Text>
         
         {categories.map((c) => (
           <Pressable key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]} onPress={() => openEditCategory(c)}>
@@ -125,7 +145,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
         })}
       </ScrollView>
 
-      {{/* FAB - New Block */}}
+      {/* FAB - New Block */}
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primary }]}
         onPress={() => setModalVisible(true)}
@@ -133,12 +153,43 @@ export default function ManageBlocksScreen({ navigation }: any) {
         <Text style={styles.fabText}>+</Text>
       </Pressable>
 
-      {{/* Category Modal */}}
+      {/* Category Modal */}
       <Modal visible={catModalVisible} transparent animationType="fade" onRequestClose={() => setCatModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Modifica Categoria</Text>
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Target ore settimanali (es. 20)</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{editCatId ? t('manage.editCategory') : 'New Category'}</Text>
+            
+            {!editCatId && (
+              <>
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Name</Text>
+                <TextInput
+                  style={[styles.input, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
+                  value={catName}
+                  onChangeText={setCatName}
+                />
+                
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Emoji</Text>
+                <TextInput
+                  style={[styles.input, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
+                  value={catEmoji}
+                  onChangeText={setCatEmoji}
+                  maxLength={2}
+                />
+
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Color</Text>
+                <View style={[styles.chipsRow, {marginBottom: Spacing.md}]}>
+                  {CATEGORY_COLORS.map(c => (
+                    <Pressable 
+                      key={c} 
+                      onPress={() => setCatColor(c)}
+                      style={{width: 32, height: 32, borderRadius: 16, backgroundColor: c, borderWidth: 2, borderColor: catColor === c ? colors.text : 'transparent', marginRight: 8, marginBottom: 8}}
+                    />
+                  ))}
+                </View>
+              </>
+            )}
+
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.targetHoursInput')}</Text>
             <TextInput
               style={[
                 styles.input,
@@ -151,17 +202,17 @@ export default function ManageBlocksScreen({ navigation }: any) {
             />
             <View style={styles.modalButtons}>
               <Pressable style={[styles.modalButton, { backgroundColor: colors.background }]} onPress={() => setCatModalVisible(false)}>
-                <Text style={[styles.modalButtonText, { color: colors.textSecondary }]}>Annulla</Text>
+                <Text style={[styles.modalButtonText, { color: colors.textSecondary }]}>{t('common.cancel')}</Text>
               </Pressable>
               <Pressable style={[styles.modalButton, { backgroundColor: colors.primary }]} onPress={saveCategory}>
-                <Text style={[styles.modalButtonText, { color: '#fff' }]}>Salva</Text>
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('common.save')}</Text>
               </Pressable>
             </View>
           </View>
         </View>
       </Modal>
 
-      {{/* New Block Modal */}}
+      {/* New Block Modal */}
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={resetModal}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
