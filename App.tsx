@@ -1,51 +1,58 @@
+import React from 'react';
+import { useColorScheme } from 'react-native';
+import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, useColorScheme } from 'react-native';
+import { PeaksProvider } from './src/store/PeaksContext';
+import HomeScreen from './src/screens/HomeScreen';
+import PeakDetailScreen from './src/screens/PeakDetailScreen';
+import { Colors } from './src/utils/theme';
+import type { RootStackParamList } from './src/types/navigation';
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const LightNavTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: Colors.light.background,
+    card: Colors.light.surface,
+    text: Colors.light.text,
+    border: Colors.light.border,
+    primary: Colors.light.primary,
+  },
+};
+
+const DarkNavTheme = {
+  ...DarkTheme,
+  colors: {
+    ...DarkTheme.colors,
+    background: Colors.dark.background,
+    card: Colors.dark.surface,
+    text: Colors.dark.text,
+    border: Colors.dark.border,
+    primary: Colors.dark.primary,
+  },
+};
 
 export default function App() {
-  const colorScheme = useColorScheme();
-  const isDark = colorScheme === 'dark';
+  const scheme = useColorScheme();
+  const isDark = scheme === 'dark';
 
   return (
-    <View style={[styles.container, isDark && styles.containerDark]}>
-      <Text style={[styles.emoji]}>🏔️</Text>
-      <Text style={[styles.title, isDark && styles.textDark]}>LevelUp</Text>
-      <Text style={[styles.subtitle, isDark && styles.subtitleDark]}>
-        Conquista le tue vette.
-      </Text>
+    <PeaksProvider>
+      <NavigationContainer theme={isDark ? DarkNavTheme : LightNavTheme}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShadowVisible: false,
+            headerTitleStyle: { fontWeight: '700' },
+          }}
+        >
+          <Stack.Screen name="Home" component={HomeScreen} />
+          <Stack.Screen name="PeakDetail" component={PeakDetailScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
       <StatusBar style="auto" />
-    </View>
+    </PeaksProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F8FAFC',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  containerDark: {
-    backgroundColor: '#0F172A',
-  },
-  emoji: {
-    fontSize: 64,
-    marginBottom: 16,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    color: '#1E293B',
-    letterSpacing: 1,
-  },
-  textDark: {
-    color: '#F1F5F9',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#64748B',
-    marginTop: 8,
-  },
-  subtitleDark: {
-    color: '#94A3B8',
-  },
-});
