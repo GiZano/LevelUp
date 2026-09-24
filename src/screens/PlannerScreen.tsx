@@ -1,397 +1,255 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useLayoutEffect, useMemo, useState } from 'react';
-import {
-  Alert,
-  FlatList,
-  Modal,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useLayoutEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePlanner } from '../store/PlannerContext';
-import {
-  DAYS_OF_WEEK,
-  TIME_SLOTS,
-  TIME_SLOT_LABELS,
-  type DayOfWeek,
-  type TimeSlot,
-} from '../types';
-import { getTodayDayOfWeek } from '../types/weekUtils';
+import { usePeaks } from '../store/PeaksContext';
+import CategoryProgress from '../components/CategoryProgress';
+import BlockChip from '../components/BlockChip';
+import { DAYS_OF_WEEK, DAY_LABELS, DayOfWeek } from '../types';
 
-const DAY_SHORT: Record<DayOfWeek, string> = {
-  lun: 'L',
-  mar: 'M',
-  mer: 'M',
-  gio: 'G',
-  ven: 'V',
-  sab: 'S',
-  dom: 'D',
-};
-
-const COL_WIDTH = 110;
-
-export default function PlannerScreen({ navigation }: { navigation: any }) {
+export default function PlannerScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const {
-    categories,
-    templates,
-    currentPlan,
-    currentWeekId,
-    scheduleBlock,
-    unscheduleBlock,
-    toggleBlockDone,
-    getTemplateById,
-    getCategoryById,
-    getCategoryHours,
-  } = usePlanner();
+  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours } = usePlanner();
+  const { addCompletedHours } = usePeaks();
 
-  const [pickSlot, setPickSlot] = useState<{ day: DayOfWeek; timeSlot: TimeSlot } | null>(null);
-
-  const today = useMemo(() => getTodayDayOfWeek(), []);
-  const weekNum = currentWeekId.split('-W')[1] ?? '';
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedDay, setSelectedDay] = useState<DayOfWeek | null>(null);
+  const [startTime, setStartTime] = useState(new Date(new Date().setHours(9, 0, 0, 0)));
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: `Settimana ${weekNum}`,
+      title: 'Planner',
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
       headerRight: () => (
-        <Pressable onPress={() => navigation.navigate('ManageBlocks')} style={{ marginRight: Spacing.md }}>
-          <Text style={{ color: colors.primary, fontSize: FontSize.md, fontWeight: '600' }}>Blocchi</Text>
+        <Pressable onPress={() => navigation.navigate('ManageBlocks')} hitSlop={8} style={{marginRight: 8}}>
+          <Text style={{ fontSize: FontSize.lg }}>⚙️</Text>
         </Pressable>
       ),
     });
-  }, [navigation, colors, weekNum]);
+  }, [navigation, colors]);
 
-  // ── Category progress ──
+  const handleBlockPress = (block: any) => {
+    let name = '';
+    let duration = 0;
+    if (block.isOneOff) {
+      name = block.oneOffName;
+      duration = block.oneOffDuration;
+    } else {
+      const template = getTemplateById(block.templateId);
+      name = template?.name || 'Sconosciuto';
+      duration = template?.durationHours || 0;
+    }
 
-  const categoryProgress = useMemo(
-    () => categories.filter((c) => c.targetHoursPerWeek > 0).map((c) => ({ ...c, ...getCategoryHours(c.id) })),
-    [categories, getCategoryHours],
-  );
-
-  // ── Helpers ──
-
-  const blocksForSlot = (day: DayOfWeek, slot: TimeSlot) =>
-    currentPlan.blocks.filter((b) => b.day === day && b.timeSlot === slot);
-
-  const handleBlockPress = (blockId: string, isDone: boolean) => {
     Alert.alert(
-      'Azione',
-      undefined,
+      name,
+      `Vuoi modificare lo stato o rimuoverlo?`,
       [
-        { text: isDone ? 'Riapri' : 'Completa', onPress: () => toggleBlockDone(blockId) },
-        { text: 'Rimuovi', style: 'destructive', onPress: () => unscheduleBlock(blockId) },
         { text: 'Annulla', style: 'cancel' },
-      ],
+        {
+          text: block.done ? 'Segna da fare' : 'Completato',
+          onPress: () => {
+            toggleBlockDone(block.id);
+            if (!block.done) addCompletedHours(duration);
+            else addCompletedHours(-duration);
+          }
+        },
+        { text: 'Rimuovi', style: 'destructive', onPress: () => unscheduleBlock(block.id) }
+      ]
     );
   };
 
-  const handlePickTemplate = (templateId: string) => {
-    if (!pickSlot) return;
-    scheduleBlock(templateId, pickSlot.day, pickSlot.timeSlot);
-    setPickSlot(null);
+  const handleAddPress = (day: DayOfWeek) => {
+    setSelectedDay(day);
+    setStartTime(new Date(new Date().setHours(9, 0, 0, 0)));
+    setModalVisible(true);
   };
 
-  // ── Render ──
+  const formatTime = (d: Date) => {
+    const hh = d.getHours().toString().padStart(2, '0');
+    const mm = d.getMinutes().toString().padStart(2, '0');
+    return `${hh}:${mm}`;
+  };
+
+  const handlePickTemplate = (templateId: string) => {
+    if (selectedDay) {
+      scheduleBlock(templateId, selectedDay, formatTime(startTime));
+    }
+    setModalVisible(false);
+    setSelectedDay(null);
+  };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      {/* Category hours summary */}
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.catRow}
-        style={styles.catScroll}
-      >
-        {categoryProgress.map((c) => {
-          const pct = c.target > 0 ? Math.min(c.completed / c.target, 1) : 0;
-          const isMet = c.completed >= c.target && c.target > 0;
-          return (
-            <View key={c.id} style={[styles.catCard, { backgroundColor: colors.surface }]}>
-              <Text style={[styles.catLabel, { color: colors.text }]} numberOfLines={1}>
-                {c.emoji} {c.name}
-              </Text>
-              <View style={[styles.barBg, { backgroundColor: colors.surfaceAlt }]}>
-                <View
-                  style={[
-                    styles.barFill,
-                    {
-                      width: `${pct * 100}%`,
-                      backgroundColor: isMet ? colors.success : colors.accent,
-                    },
-                  ]}
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Categorie summary */}
+      <View style={[styles.summaryContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
+        <Text style={[styles.weekText, { color: colors.textSecondary }]}>Settimana {currentWeekId}</Text>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.summaryList}>
+          {categories.map((cat) => {
+            const hours = getCategoryHours(cat.id);
+            if (hours.scheduled === 0 && cat.targetHoursPerWeek === 0) return null;
+            return (
+              <View key={cat.id} style={{ marginRight: Spacing.sm }}>
+                <CategoryProgress
+                  emoji={cat.emoji}
+                  name={cat.name}
+                  scheduled={hours.scheduled}
+                  completed={hours.completed}
+                  target={cat.targetHoursPerWeek}
+                  color={cat.color}
                 />
               </View>
-              <Text style={[styles.catHours, { color: colors.textSecondary }]}>
-                {c.scheduled}/{c.target}h
-              </Text>
-            </View>
-          );
-        })}
-      </ScrollView>
+            );
+          })}
+        </ScrollView>
+      </View>
 
-      {/* Weekly grid */}
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.gridScroll}>
-        <View style={styles.gridContainer}>
-          {/* Day headers */}
-          <View style={styles.dayHeaders}>
-            {DAYS_OF_WEEK.map((d) => (
-              <View
-                key={d}
-                style={[
-                  styles.dayHeader,
-                  d === today && { backgroundColor: colors.primary },
-                ]}
-              >
-                <Text
-                  style={[
-                    styles.dayHeaderText,
-                    { color: d === today ? '#fff' : colors.text },
-                  ]}
-                >
-                  {DAY_SHORT[d]}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          {/* Slot rows */}
-          {TIME_SLOTS.map((slot) => (
-            <View key={slot} style={styles.slotRow}>
-              <Text style={[styles.slotLabel, { color: colors.textTertiary }]}>
-                {TIME_SLOT_LABELS[slot]}
-              </Text>
-              <View style={styles.slotCells}>
-                {DAYS_OF_WEEK.map((day) => {
-                  const blocks = blocksForSlot(day, slot);
-                  return (
-                    <View
-                      key={day}
-                      style={[styles.cell, { borderColor: colors.border }]}
-                    >
-                      {blocks.map((b) => {
-                        const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
+      {/* Grid */}
+      <ScrollView style={styles.gridScroll}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <View style={styles.grid}>
+            {DAYS_OF_WEEK.map((day) => {
+              const blocks = currentPlan.blocks.filter(b => b.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime));
+              return (
+                <View key={day} style={[styles.dayCol, { borderRightColor: colors.border }]}>
+                  <Text style={[styles.dayHeader, { color: colors.text }]}>{DAY_LABELS[day]}</Text>
+                  
+                  <View style={styles.slotContainer}>
+                    {blocks.map(block => {
+                      let name, catColor, catEmoji, duration;
+                      if (block.isOneOff) {
+                        name = block.oneOffName!;
+                        duration = block.oneOffDuration!;
+                        const cat = getCategoryById(block.oneOffCategoryId!);
+                        catColor = cat?.color || colors.primary;
+                        catEmoji = cat?.emoji || '🏷️';
+                      } else {
+                        const tmpl = block.templateId ? getTemplateById(block.templateId) : undefined;
                         const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
-                        return (
-                          <Pressable
-                            key={b.id}
-                            style={[
-                              styles.chip,
-                              {
-                                backgroundColor: cat?.color ?? colors.surfaceAlt,
-                                opacity: b.done ? 0.5 : 1,
-                              },
-                            ]}
-                            onPress={() => handleBlockPress(b.id, b.done)}
-                          >
-                            <Text style={styles.chipText} numberOfLines={2}>
-                              {b.done ? '✓ ' : ''}
-                              {tmpl?.name ?? '?'}
-                            </Text>
-                            <Text style={styles.chipDur}>{tmpl?.durationHours}h</Text>
-                          </Pressable>
-                        );
-                      })}
-                      {blocks.length === 0 && (
-                        <Pressable
-                          style={[styles.addBtn, { borderColor: colors.border }]}
-                          onPress={() => setPickSlot({ day, timeSlot: slot })}
-                        >
-                          <Text style={[styles.addBtnText, { color: colors.textTertiary }]}>+</Text>
-                        </Pressable>
-                      )}
-                    </View>
-                  );
-                })}
-              </View>
-            </View>
-          ))}
-        </View>
+                        name = tmpl?.name || 'Sconosciuto';
+                        duration = tmpl?.durationHours || 0;
+                        catColor = cat?.color || colors.primary;
+                        catEmoji = cat?.emoji || '🏷️';
+                      }
+                      
+                      return (
+                        <View key={block.id} style={{marginBottom: Spacing.sm}}>
+                          <Text style={{fontSize: 10, color: colors.textTertiary, marginBottom: 2}}>{block.startTime}</Text>
+                          <BlockChip
+                            name={name}
+                            categoryColor={catColor}
+                            categoryEmoji={catEmoji}
+                            durationHours={duration}
+                            done={block.done}
+                            onPress={() => handleBlockPress(block)}
+                          />
+                        </View>
+                      );
+                    })}
+                    <Pressable 
+                      style={[styles.addSlotBtn, { backgroundColor: colors.surfaceAlt }]} 
+                      onPress={() => handleAddPress(day)}
+                    >
+                      <Text style={{color: colors.textSecondary}}>+</Text>
+                    </Pressable>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </ScrollView>
       </ScrollView>
 
-      {/* FAB → ManageBlocks */}
-      <Pressable
-        style={[styles.fab, { backgroundColor: colors.primary }]}
-        onPress={() => navigation.navigate('ManageBlocks')}
-      >
-        <Text style={styles.fabText}>⚙️</Text>
-      </Pressable>
-
-      {/* Template picker modal */}
-      <Modal visible={!!pickSlot} transparent animationType="fade" onRequestClose={() => setPickSlot(null)}>
+      {/* Template Picker Modal */}
+      <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Scegli blocco</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Programma Blocco</Text>
+            
+            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md}}>
+              <Text style={{color: colors.text, fontSize: FontSize.md, marginRight: Spacing.sm}}>Ora di inizio:</Text>
+              {Platform.OS === 'ios' ? (
+                <DateTimePicker
+                  value={startTime}
+                  mode="time"
+                  display="default"
+                  onChange={(_, date) => { if (date) setStartTime(date); }}
+                />
+              ) : (
+                <>
+                  <Pressable 
+                    onPress={() => setShowTimePicker(true)}
+                    style={{padding: Spacing.sm, backgroundColor: colors.background, borderRadius: BorderRadius.sm}}
+                  >
+                    <Text style={{color: colors.text, fontSize: FontSize.md}}>{formatTime(startTime)}</Text>
+                  </Pressable>
+                  {showTimePicker && (
+                    <DateTimePicker
+                      value={startTime}
+                      mode="time"
+                      is24Hour={true}
+                      display="default"
+                      onChange={(_, date) => {
+                        setShowTimePicker(false);
+                        if (date) setStartTime(date);
+                      }}
+                    />
+                  )}
+                </>
+              )}
+            </View>
 
             {templates.length === 0 ? (
-              <View style={styles.emptyPicker}>
-                <Text style={[styles.emptyPickerText, { color: colors.textSecondary }]}>
-                  Crea prima un blocco attività!
-                </Text>
-                <Pressable
-                  style={[styles.emptyPickerBtn, { backgroundColor: colors.primary }]}
-                  onPress={() => {
-                    setPickSlot(null);
-                    navigation.navigate('ManageBlocks');
-                  }}
-                >
-                  <Text style={styles.emptyPickerBtnText}>Vai a Blocchi</Text>
+              <View style={{padding: Spacing.lg, alignItems: 'center'}}>
+                <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>Crea prima un blocco attività!</Text>
+                <Pressable onPress={() => { setModalVisible(false); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
+                  <Text style={{color: '#fff'}}>Vai a Gestisci Blocchi</Text>
                 </Pressable>
               </View>
             ) : (
-              <FlatList
-                data={templates}
-                keyExtractor={(t) => t.id}
-                style={{ maxHeight: 320 }}
-                renderItem={({ item }) => {
-                  const cat = getCategoryById(item.categoryId);
+              <ScrollView style={{maxHeight: 300}}>
+                {templates.map(t => {
+                  const cat = getCategoryById(t.categoryId);
                   return (
-                    <Pressable
-                      style={[styles.templateRow, { backgroundColor: colors.surfaceAlt }]}
-                      onPress={() => handlePickTemplate(item.id)}
-                    >
-                      <Text style={[styles.templateLabel, { color: colors.text }]}>
-                        {cat?.emoji ?? '📦'} {item.name}
-                      </Text>
-                      <Text style={[styles.templateDur, { color: colors.textSecondary }]}>
-                        {item.durationHours}h
-                      </Text>
+                    <Pressable key={t.id} style={[styles.templateItem, {borderBottomColor: colors.border}]} onPress={() => handlePickTemplate(t.id)}>
+                      <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{cat?.emoji}</Text>
+                      <View style={{flex: 1}}>
+                        <Text style={{color: colors.text, fontWeight: '600'}}>{t.name}</Text>
+                      </View>
+                      <Text style={{color: colors.textSecondary}}>{t.durationHours}h</Text>
                     </Pressable>
                   );
-                }}
-              />
+                })}
+              </ScrollView>
             )}
-
-            <Pressable style={styles.cancelBtn} onPress={() => setPickSlot(null)}>
-              <Text style={[styles.cancelText, { color: colors.textSecondary }]}>Annulla</Text>
+            <Pressable onPress={() => setModalVisible(false)} style={{padding: Spacing.md, alignItems: 'center'}}>
+              <Text style={{color: colors.textSecondary}}>Annulla</Text>
             </Pressable>
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-
-  /* Category summary */
-  catScroll: { flexGrow: 0 },
-  catRow: { paddingHorizontal: Spacing.sm, paddingVertical: Spacing.sm, gap: Spacing.sm },
-  catCard: {
-    width: 140,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.sm,
-  },
-  catLabel: { fontSize: FontSize.xs, fontWeight: '600', marginBottom: 4 },
-  barBg: { height: 6, borderRadius: 3, overflow: 'hidden', marginBottom: 2 },
-  barFill: { height: 6, borderRadius: 3 },
-  catHours: { fontSize: FontSize.xs, textAlign: 'right' },
-
-  /* Grid */
+  summaryContainer: { padding: Spacing.md, borderBottomWidth: 1 },
+  weekText: { fontSize: FontSize.sm, marginBottom: Spacing.xs },
+  summaryList: { paddingBottom: Spacing.xs },
   gridScroll: { flex: 1 },
-  gridContainer: { paddingHorizontal: Spacing.sm, paddingBottom: 100 },
-  dayHeaders: { flexDirection: 'row', marginBottom: Spacing.xs },
-  dayHeader: {
-    width: COL_WIDTH,
-    alignItems: 'center',
-    paddingVertical: Spacing.xs,
-    borderRadius: BorderRadius.sm,
-    marginRight: 4,
-  },
-  dayHeaderText: { fontSize: FontSize.sm, fontWeight: '700' },
-
-  slotRow: { marginBottom: Spacing.sm },
-  slotLabel: { fontSize: FontSize.xs, marginBottom: 2, paddingLeft: 2 },
-  slotCells: { flexDirection: 'row' },
-  cell: {
-    width: COL_WIDTH,
-    minHeight: 64,
-    borderWidth: 1,
-    borderRadius: BorderRadius.sm,
-    marginRight: 4,
-    padding: 4,
-    justifyContent: 'center',
-  },
-
-  /* Chips */
-  chip: {
-    borderRadius: BorderRadius.sm,
-    paddingHorizontal: 6,
-    paddingVertical: 4,
-    marginBottom: 2,
-  },
-  chipText: { color: '#fff', fontSize: 11, fontWeight: '600' },
-  chipDur: { color: 'rgba(255,255,255,0.8)', fontSize: 10 },
-
-  addBtn: {
-    alignSelf: 'center',
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderRadius: BorderRadius.sm,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  addBtnText: { fontSize: 20, lineHeight: 22 },
-
-  /* FAB */
-  fab: {
-    position: 'absolute',
-    bottom: Spacing.xl,
-    right: Spacing.lg,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: 'center',
-    alignItems: 'center',
-    elevation: 6,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.27,
-    shadowRadius: 4.65,
-  },
-  fabText: { fontSize: 24 },
-
-  /* Modal */
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    padding: Spacing.lg,
-  },
-  modalContent: {
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-  },
-  modalTitle: { fontSize: FontSize.lg, fontWeight: '700', marginBottom: Spacing.md },
-
-  templateRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: Spacing.sm,
-    borderRadius: BorderRadius.sm,
-    marginBottom: Spacing.xs,
-  },
-  templateLabel: { fontSize: FontSize.md, flex: 1 },
-  templateDur: { fontSize: FontSize.sm, marginLeft: Spacing.sm },
-
-  emptyPicker: { alignItems: 'center', paddingVertical: Spacing.lg },
-  emptyPickerText: { fontSize: FontSize.md, marginBottom: Spacing.md, textAlign: 'center' },
-  emptyPickerBtn: {
-    paddingVertical: Spacing.sm,
-    paddingHorizontal: Spacing.md,
-    borderRadius: BorderRadius.md,
-  },
-  emptyPickerBtnText: { color: '#fff', fontWeight: '600', fontSize: FontSize.md },
-
-  cancelBtn: { alignItems: 'center', marginTop: Spacing.md },
-  cancelText: { fontSize: FontSize.md, fontWeight: '600' },
+  grid: { flexDirection: 'row', paddingVertical: Spacing.md },
+  dayCol: { width: 140, borderRightWidth: 1, paddingHorizontal: Spacing.xs },
+  dayHeader: { textAlign: 'center', fontWeight: 'bold', marginBottom: Spacing.sm },
+  slotContainer: { minHeight: 120 },
+  addSlotBtn: { alignItems: 'center', justifyContent: 'center', padding: Spacing.sm, borderRadius: BorderRadius.md, marginTop: Spacing.xs },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalContent: { borderTopLeftRadius: BorderRadius.lg, borderTopRightRadius: BorderRadius.lg, padding: Spacing.lg, paddingBottom: 40 },
+  modalTitle: { fontSize: FontSize.xl, fontWeight: 'bold', marginBottom: Spacing.md },
+  templateItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.md, borderBottomWidth: 1 },
+  btn: { padding: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center' }
 });

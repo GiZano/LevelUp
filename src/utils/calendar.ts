@@ -1,13 +1,13 @@
 import * as Calendar from 'expo-calendar/legacy';
 import { Platform } from 'react-native';
-import { DayOfWeek, TimeSlot } from '../types';
+import { DayOfWeek } from '../types';
 
 async function getDefaultCalendarSource() {
   const defaultCalendar = await Calendar.getDefaultCalendarAsync();
   return defaultCalendar.source;
 }
 
-export async function createCalendarEvent(title: string, day: DayOfWeek, timeSlot: TimeSlot, durationHours: number, offsetHours: number = 0) {
+export async function createCalendarEvent(title: string, day: DayOfWeek, startTime: string, durationHours: number) {
   try {
     const { status } = await Calendar.requestCalendarPermissionsAsync();
     if (status !== 'granted') {
@@ -44,20 +44,12 @@ export async function createCalendarEvent(title: string, day: DayOfWeek, timeSlo
     const targetDate = new Date();
     targetDate.setDate(targetDate.getDate() + diff);
 
-    let baseHour = 9; // mattina
-    if (timeSlot === 'pomeriggio') baseHour = 14;
-    else if (timeSlot === 'sera') baseHour = 20;
-
-    // Aggiungi l'offset dei blocchi precedenti nello stesso slot
-    const finalStartHour = baseHour + offsetHours;
-    const finalStartMinutes = (finalStartHour % 1) * 60; // Supporta mezz'ore (es. 1.5h)
-    
-    targetDate.setHours(Math.floor(finalStartHour), finalStartMinutes, 0, 0);
+    const [hh, mm] = startTime.split(':').map(Number);
+    targetDate.setHours(hh, mm, 0, 0);
 
     const endDate = new Date(targetDate);
-    const finalEndHour = finalStartHour + durationHours;
-    const finalEndMinutes = (finalEndHour % 1) * 60;
-    endDate.setHours(Math.floor(finalEndHour), finalEndMinutes, 0, 0);
+    const durationMs = durationHours * 60 * 60 * 1000;
+    endDate.setTime(targetDate.getTime() + durationMs);
 
     await Calendar.createEventAsync(calendarId, {
       title,

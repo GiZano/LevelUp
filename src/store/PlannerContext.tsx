@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
-import type { Category, BlockTemplate, ScheduledBlock, WeeklyPlan, DayOfWeek, TimeSlot } from '../types';
+import type { Category, BlockTemplate, ScheduledBlock, WeeklyPlan, DayOfWeek } from '../types';
 import { generateId } from '../utils/id';
 import {
   saveCategories,
@@ -37,8 +37,8 @@ interface PlannerActions {
   deleteCategory: (id: string) => void;
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
   deleteTemplate: (id: string) => void;
-  scheduleBlock: (templateId: string, day: DayOfWeek, timeSlot: TimeSlot) => void;
-  scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, timeSlot: TimeSlot) => void;
+  scheduleBlock: (templateId: string, day: DayOfWeek, startTime: string) => void;
+  scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
   unscheduleBlock: (blockId: string) => void;
   toggleBlockDone: (blockId: string) => void;
   getTemplateById: (id: string) => BlockTemplate | undefined;
@@ -131,32 +131,20 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, timeSlot: TimeSlot) => {
+  const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, startTime: string) => {
     setCurrentPlan((prev) => {
-      // Calcola l'offset ore per posizionare il blocco dopo quelli già presenti nello stesso slot
-      const slotBlocks = prev.blocks.filter(b => b.day === day && b.timeSlot === timeSlot);
-      let offsetHours = 0;
-      for (const b of slotBlocks) {
-        if (b.isOneOff) {
-          offsetHours += b.oneOffDuration || 0;
-        } else if (b.templateId) {
-          const t = templates.find(temp => temp.id === b.templateId);
-          if (t) offsetHours += t.durationHours;
-        }
-      }
-
       const newBlock: ScheduledBlock = {
         id: generateId(),
         templateId,
         day,
-        timeSlot,
+        startTime,
         done: false,
       };
 
-      // Sincronizza con Google Calendar in background usando il prev state aggiornato con offset
+      // Sincronizza con Google Calendar in background
       const template = templates.find(t => t.id === templateId);
       if (template) {
-        createCalendarEvent(template.name, day, timeSlot, template.durationHours, offsetHours).catch(console.error);
+        createCalendarEvent(template.name, day, startTime, template.durationHours).catch(console.error);
       }
 
       return {
@@ -166,24 +154,12 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     });
   }, [templates]);
 
-  const scheduleOneOffBlock = useCallback((name: string, categoryId: string, durationHours: number, day: DayOfWeek, timeSlot: TimeSlot) => {
+  const scheduleOneOffBlock = useCallback((name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => {
     setCurrentPlan((prev) => {
-      // Calcola l'offset ore per posizionare il blocco dopo quelli già presenti nello stesso slot
-      const slotBlocks = prev.blocks.filter(b => b.day === day && b.timeSlot === timeSlot);
-      let offsetHours = 0;
-      for (const b of slotBlocks) {
-        if (b.isOneOff) {
-          offsetHours += b.oneOffDuration || 0;
-        } else if (b.templateId) {
-          const t = templates.find(temp => temp.id === b.templateId);
-          if (t) offsetHours += t.durationHours;
-        }
-      }
-
       const newBlock: ScheduledBlock = {
         id: generateId(),
         day,
-        timeSlot,
+        startTime,
         done: false,
         isOneOff: true,
         oneOffName: name,
@@ -192,7 +168,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       };
 
       // Sincronizza con Google Calendar in background
-      createCalendarEvent(name, day, timeSlot, durationHours, offsetHours).catch(console.error);
+      createCalendarEvent(name, day, startTime, durationHours).catch(console.error);
 
       return {
         ...prev,

@@ -56,16 +56,6 @@ export const DAY_LABELS: Record<DayOfWeek, string> = {
   dom: 'Domenica',
 };
 
-export type TimeSlot = 'mattina' | 'pomeriggio' | 'sera';
-
-export const TIME_SLOTS: TimeSlot[] = ['mattina', 'pomeriggio', 'sera'];
-
-export const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
-  mattina: '🌅 Mattina',
-  pomeriggio: '☀️ Pomeriggio',
-  sera: '🌙 Sera',
-};
-
 export interface Category {
   id: string;
   name: string;
@@ -86,7 +76,7 @@ export interface ScheduledBlock {
   id: string;
   templateId?: string; // opzionale se è one-off
   day: DayOfWeek;
-  timeSlot: TimeSlot;
+  startTime: string; // formato "HH:mm", es. "09:30" o "22:00"
   done: boolean;
   // Campi per blocchi one-off temporanei
   isOneOff?: boolean;

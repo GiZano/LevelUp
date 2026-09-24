@@ -1,217 +1,139 @@
-import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useLayoutEffect, useMemo } from 'react';
-import {
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import React, { useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePlanner } from '../store/PlannerContext';
-import { DAY_LABELS, TIME_SLOTS, TIME_SLOT_LABELS, type TimeSlot } from '../types';
+import { usePeaks } from '../store/PeaksContext';
 import { getTodayDayOfWeek } from '../types/weekUtils';
+import { DAY_LABELS } from '../types';
 
-export default function TodayScreen({ navigation }: { navigation: any }) {
+export default function TodayScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const {
-    currentPlan,
-    toggleBlockDone,
-    getTemplateById,
-    getCategoryById,
-  } = usePlanner();
-
-  const today = useMemo(() => getTodayDayOfWeek(), []);
-  const dayLabel = DAY_LABELS[today];
-  const dateStr = new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long' });
+  const { currentPlan, templates, getCategoryById, getTemplateById, toggleBlockDone } = usePlanner();
+  const { addCompletedHours } = usePeaks();
+  const today = getTodayDayOfWeek();
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Oggi',
+      title: `Oggi: ${DAY_LABELS[today]}`,
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });
-  }, [navigation, colors]);
+  }, [navigation, colors, today]);
 
-  const todayBlocks = useMemo(
-    () => currentPlan.blocks.filter((b) => b.day === today),
-    [currentPlan.blocks, today],
-  );
+  const todayBlocks = currentPlan.blocks
+    .filter(b => b.day === today)
+    .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-  const blocksBySlot = useMemo(() => {
-    const map: Record<TimeSlot, typeof todayBlocks> = {
-      mattina: [],
-      pomeriggio: [],
-      sera: [],
-    };
-    for (const b of todayBlocks) {
-      map[b.timeSlot].push(b);
+  const handleToggle = (block: any) => {
+    const template = templates.find(t => t.id === block.templateId);
+    let duration = 0;
+    if (block.isOneOff) {
+      duration = block.oneOffDuration || 0;
+    } else {
+      duration = template?.durationHours || 0;
     }
-    return map;
-  }, [todayBlocks]);
+    
+    toggleBlockDone(block.id);
+    if (!block.done) addCompletedHours(duration);
+    else addCompletedHours(-duration);
+  };
 
-  // Summary
-  const { totalHours, completedHours } = useMemo(() => {
-    let total = 0;
-    let completed = 0;
-    for (const b of todayBlocks) {
-      const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
-      if (tmpl) {
-        total += tmpl.durationHours;
-        if (b.done) completed += tmpl.durationHours;
-      }
-    }
-    return { totalHours: total, completedHours: completed };
-  }, [todayBlocks, getTemplateById]);
+  let totalScheduled = 0;
+  let totalCompleted = 0;
 
-  const pct = totalHours > 0 ? Math.min(completedHours / totalHours, 1) : 0;
+  todayBlocks.forEach(b => {
+    const template = templates.find(t => t.id === b.templateId);
+    const duration = b.isOneOff ? (b.oneOffDuration || 0) : (template?.durationHours || 0);
+    totalScheduled += duration;
+    if (b.done) totalCompleted += duration;
+  });
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        {/* Header */}
-        <View style={styles.header}>
-          <Text style={[styles.dayName, { color: colors.text }]}>{dayLabel}</Text>
-          <Text style={[styles.date, { color: colors.textSecondary }]}>{dateStr}</Text>
+        <View style={styles.slotSection}>
+          <Text style={[styles.slotTitle, { color: colors.textSecondary }]}>La tua giornata</Text>
+          
+          {todayBlocks.length === 0 ? (
+            <Text style={{color: colors.textTertiary, fontStyle: 'italic', marginLeft: Spacing.md, marginTop: Spacing.sm}}>
+              Nessun blocco per oggi. Vai nel Planner!
+            </Text>
+          ) : (
+            todayBlocks.map(b => {
+              let name, catColor, catEmoji, duration;
+              if (b.isOneOff) {
+                name = b.oneOffName;
+                duration = b.oneOffDuration;
+                const cat = getCategoryById(b.oneOffCategoryId!);
+                catColor = cat?.color || colors.border;
+                catEmoji = cat?.emoji || '';
+              } else {
+                const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
+                const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
+                name = tmpl?.name || 'Sconosciuto';
+                duration = tmpl?.durationHours || 0;
+                catColor = cat?.color || colors.border;
+                catEmoji = cat?.emoji || '';
+              }
+
+              return (
+                <View key={b.id} style={{marginBottom: Spacing.md}}>
+                  <Text style={{fontSize: 12, color: colors.textSecondary, marginBottom: 4, marginLeft: 4, fontWeight: '600'}}>
+                    {b.startTime}
+                  </Text>
+                  <Pressable 
+                    onPress={() => handleToggle(b)}
+                    style={[
+                      styles.blockItem, 
+                      { backgroundColor: colors.surface, borderLeftColor: catColor },
+                      b.done && { opacity: 0.5 }
+                    ]}
+                  >
+                    <View style={[styles.checkbox, { borderColor: b.done ? colors.success : colors.textTertiary, backgroundColor: b.done ? colors.success : 'transparent' }]}>
+                      {b.done && <Text style={{color: '#fff', fontSize: 12}}>✓</Text>}
+                    </View>
+                    
+                    <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{catEmoji}</Text>
+                    
+                    <View style={{flex: 1}}>
+                      <Text style={[styles.blockName, { color: colors.text }, b.done && {textDecorationLine: 'line-through'}]}>{name}</Text>
+                    </View>
+                    
+                    <Text style={{color: colors.textSecondary}}>{duration}h</Text>
+                  </Pressable>
+                </View>
+              );
+            })
+          )}
         </View>
-
-        {/* Time slot sections */}
-        {TIME_SLOTS.map((slot) => {
-          const blocks = blocksBySlot[slot];
-          return (
-            <View key={slot} style={styles.section}>
-              <Text style={[styles.slotHeader, { color: colors.text }]}>
-                {TIME_SLOT_LABELS[slot]}
-              </Text>
-
-              {blocks.length === 0 ? (
-                <Text style={[styles.emptySlot, { color: colors.textTertiary }]}>
-                  Nessun blocco
-                </Text>
-              ) : (
-                blocks.map((b) => {
-                  const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
-                  const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
-                  return (
-                    <Pressable
-                      key={b.id}
-                      style={[
-                        styles.blockCard,
-                        {
-                          backgroundColor: colors.surface,
-                          borderLeftColor: cat?.color ?? colors.primary,
-                          opacity: b.done ? 0.55 : 1,
-                        },
-                      ]}
-                      onPress={() => toggleBlockDone(b.id)}
-                    >
-                      {/* Checkbox */}
-                      <View
-                        style={[
-                          styles.checkbox,
-                          {
-                            borderColor: b.done ? colors.success : colors.border,
-                            backgroundColor: b.done ? colors.success : 'transparent',
-                          },
-                        ]}
-                      >
-                        {b.done && <Text style={styles.checkmark}>✓</Text>}
-                      </View>
-
-                      <View style={styles.blockInfo}>
-                        <Text
-                          style={[
-                            styles.blockName,
-                            { color: colors.text },
-                            b.done && styles.strikethrough,
-                          ]}
-                          numberOfLines={1}
-                        >
-                          {tmpl?.name ?? '?'}
-                        </Text>
-                        <Text style={[styles.blockMeta, { color: colors.textSecondary }]}>
-                          {cat?.emoji} {cat?.name} · {tmpl?.durationHours}h
-                        </Text>
-                      </View>
-                    </Pressable>
-                  );
-                })
-              )}
-            </View>
-          );
-        })}
       </ScrollView>
 
-      {/* Summary bar */}
-      <View style={[styles.summaryBar, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
-        <Text style={[styles.summaryText, { color: colors.text }]}>
-          {completedHours}/{totalHours} ore completate oggi
-        </Text>
-        <View style={[styles.progressBg, { backgroundColor: colors.surfaceAlt }]}>
-          <View
-            style={[
-              styles.progressFill,
-              {
-                width: `${pct * 100}%`,
-                backgroundColor: pct >= 1 ? colors.success : colors.accent,
-              },
-            ]}
-          />
+      {/* Footer summary */}
+      <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
+        <View style={styles.footerHeader}>
+          <Text style={{color: colors.text, fontWeight: 'bold'}}>Progresso odierno</Text>
+          <Text style={{color: colors.textSecondary}}>{totalCompleted} / {totalScheduled}h</Text>
+        </View>
+        <View style={[styles.progressBar, { backgroundColor: colors.background }]}>
+          <View style={[styles.progressFill, { backgroundColor: colors.primary, width: totalScheduled > 0 ? `${(totalCompleted / totalScheduled) * 100}%` : '0%' }]} />
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  scroll: { padding: Spacing.md, paddingBottom: 120 },
-
-  /* Header */
-  header: { marginBottom: Spacing.lg },
-  dayName: { fontSize: FontSize.xxl, fontWeight: '700' },
-  date: { fontSize: FontSize.md, marginTop: 2 },
-
-  /* Slot sections */
-  section: { marginBottom: Spacing.lg },
-  slotHeader: { fontSize: FontSize.lg, fontWeight: '600', marginBottom: Spacing.sm },
-  emptySlot: { fontSize: FontSize.sm, paddingVertical: Spacing.sm },
-
-  /* Block card */
-  blockCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    borderLeftWidth: 4,
-    marginBottom: Spacing.xs,
-  },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.sm,
-  },
-  checkmark: { color: '#fff', fontSize: 14, fontWeight: '700', lineHeight: 16 },
-  blockInfo: { flex: 1 },
-  blockName: { fontSize: FontSize.md, fontWeight: '500' },
-  blockMeta: { fontSize: FontSize.sm, marginTop: 2 },
-  strikethrough: { textDecorationLine: 'line-through' },
-
-  /* Summary bar */
-  summaryBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    padding: Spacing.md,
-    borderTopWidth: 1,
-  },
-  summaryText: { fontSize: FontSize.sm, fontWeight: '600', marginBottom: Spacing.xs },
-  progressBg: { height: 8, borderRadius: 4, overflow: 'hidden' },
-  progressFill: { height: 8, borderRadius: 4 },
+  scroll: { padding: Spacing.md, paddingBottom: Spacing.xxl },
+  slotSection: { marginBottom: Spacing.lg },
+  slotTitle: { fontSize: FontSize.xl, fontWeight: 'bold', marginBottom: Spacing.md },
+  blockItem: { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, borderRadius: BorderRadius.md, borderLeftWidth: 4 },
+  checkbox: { width: 20, height: 20, borderRadius: BorderRadius.full, borderWidth: 2, marginRight: Spacing.md, alignItems: 'center', justifyContent: 'center' },
+  blockName: { fontSize: FontSize.md, fontWeight: '600' },
+  footer: { padding: Spacing.md, borderTopWidth: 1 },
+  footerHeader: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: Spacing.sm },
+  progressBar: { height: 8, borderRadius: BorderRadius.full, overflow: 'hidden' },
+  progressFill: { height: '100%', borderRadius: BorderRadius.full }
 });
