@@ -26,11 +26,6 @@ export default function PlannerScreen({ navigation }: any) {
       title: 'Planner',
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
-      headerRight: () => (
-        <Pressable onPress={() => navigation.navigate('ManageBlocks')} hitSlop={8} style={{marginRight: 8}}>
-          <Text style={{ fontSize: FontSize.lg }}>⚙️</Text>
-        </Pressable>
-      ),
     });
   }, [navigation, colors]);
 

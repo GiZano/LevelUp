@@ -27,7 +27,7 @@ export default function ManageBlocksScreen({ navigation }: { navigation: any }) 
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Gestisci Blocchi',
+      title: 'Blocchi & Categorie',
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });

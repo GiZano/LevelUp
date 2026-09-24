@@ -18,6 +18,7 @@ import TodayScreen from './src/screens/TodayScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const PlannerStack = createNativeStackNavigator<PlannerStackParamList>();
+const BlocchiStackNav = createNativeStackNavigator<any>();
 const Tab = createBottomTabNavigator<TabParamList>();
 
 function VetteStack() {
@@ -43,8 +44,20 @@ function PlannerStackNavigator() {
       }}
     >
       <PlannerStack.Screen name="PlannerHome" component={PlannerScreen} />
-      <PlannerStack.Screen name="ManageBlocks" component={ManageBlocksScreen} />
     </PlannerStack.Navigator>
+  );
+}
+
+function BlocchiStack() {
+  return (
+    <BlocchiStackNav.Navigator
+      screenOptions={{
+        headerShadowVisible: false,
+        headerTitleStyle: { fontWeight: '700' },
+      }}
+    >
+      <BlocchiStackNav.Screen name="GestisciBlocchi" component={ManageBlocksScreen} />
+    </BlocchiStackNav.Navigator>
   );
 }
 
@@ -87,6 +100,14 @@ function TabNavigator() {
         options={{ 
           title: 'Planner',
           tabBarIcon: ({ color }) => <Text style={{color}}>📅</Text> 
+        }} 
+      />
+      <Tab.Screen 
+        name="BlocchiTab" 
+        component={BlocchiStack} 
+        options={{ 
+          title: 'Blocchi',
+          tabBarIcon: ({ color }) => <Text style={{color}}>🧩</Text> 
         }} 
       />
     </Tab.Navigator>

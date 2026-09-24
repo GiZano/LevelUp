@@ -5,11 +5,15 @@ export type RootStackParamList = {
 
 export type PlannerStackParamList = {
   PlannerHome: undefined;
-  ManageBlocks: undefined;
+};
+
+export type BlocchiStackParamList = {
+  GestisciBlocchi: undefined;
 };
 
 export type TabParamList = {
+  OggiTab: undefined;
   VetteTab: undefined;
   PlannerTab: undefined;
-  OggiTab: undefined;
+  BlocchiTab: undefined;
 };

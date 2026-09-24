@@ -16,6 +16,7 @@ import { createCalendarEvent } from '../utils/calendar';
 
 const DEFAULT_CATEGORIES: Category[] = [
   { id: 'sonno', name: 'Sonno', color: '#6366F1', emoji: '😴', targetHoursPerWeek: 56 },
+  { id: 'uni', name: 'Lezione Uni', color: '#0EA5E9', emoji: '🎓', targetHoursPerWeek: 20 },
   { id: 'studio', name: 'Studio', color: '#3B82F6', emoji: '📚', targetHoursPerWeek: 20 },
   { id: 'cp', name: 'Competitive Programming', color: '#8B5CF6', emoji: '💻', targetHoursPerWeek: 4 },
   { id: 'hobby', name: 'Hobby', color: '#10B981', emoji: '♟️', targetHoursPerWeek: 3 },
