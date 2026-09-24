@@ -9,10 +9,10 @@ import { usePeaks } from '../store/PeaksContext';
 import CategoryProgress from '../components/CategoryProgress';
 import BlockChip from '../components/BlockChip';
 import { DAYS_OF_WEEK, DAY_LABELS, DayOfWeek } from '../types';
-import { getDatesOfWeek, getNextWeekId, getPrevWeekId } from '../types/weekUtils';
+import { getDatesOfWeek, getNextWeekId, getPrevWeekId, getCurrentWeekId, getTodayDayOfWeek } from '../types/weekUtils';
 
 export default function PlannerScreen({ navigation }: any) {
-  const { colors } = useThemeColors();
+  const { colors, isDark } = useThemeColors();
   const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours, changeWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
@@ -80,6 +80,8 @@ export default function PlannerScreen({ navigation }: any) {
   };
 
   const datesOfWeek = getDatesOfWeek(currentWeekId);
+  const realCurrentWeekId = getCurrentWeekId();
+  const todayDay = getTodayDayOfWeek();
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
@@ -89,7 +91,9 @@ export default function PlannerScreen({ navigation }: any) {
           <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>← Precedente</Text>
           </Pressable>
-          <Text style={[styles.weekText, { color: colors.textSecondary, marginBottom: 0 }]}>Settimana {currentWeekId}</Text>
+          <Text style={[styles.weekText, { color: colors.textSecondary, marginBottom: 0 }]}>
+            Settimana {currentWeekId} {currentWeekId === realCurrentWeekId ? '(Corrente)' : ''}
+          </Text>
           <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>Prossima →</Text>
           </Pressable>
@@ -122,9 +126,21 @@ export default function PlannerScreen({ navigation }: any) {
               const blocks = currentPlan.blocks.filter(b => b.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime));
               const dateObj = datesOfWeek[idx];
               const dateStr = `${dateObj.getDate()}/${dateObj.getMonth() + 1}`;
+              const isToday = currentWeekId === realCurrentWeekId && day === todayDay;
+              
               return (
-                <View key={day} style={[styles.dayCol, { borderRightColor: colors.border }]}>
-                  <Text style={[styles.dayHeader, { color: colors.text }]}>{DAY_LABELS[day]} {dateStr}</Text>
+                <View key={day} style={[
+                  styles.dayCol, 
+                  { borderRightColor: colors.border },
+                  isToday && { backgroundColor: isDark ? '#1F2937' : '#F3F4F6' }
+                ]}>
+                  <Text style={[
+                    styles.dayHeader, 
+                    { color: isToday ? colors.primary : colors.text },
+                    isToday && { fontWeight: '900' }
+                  ]}>
+                    {DAY_LABELS[day]} {dateStr}
+                  </Text>
                   
                   <View style={styles.slotContainer}>
                     {blocks.map(block => {
