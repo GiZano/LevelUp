@@ -91,9 +91,18 @@ export default function PlannerScreen({ navigation }: any) {
           <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>← Precedente</Text>
           </Pressable>
-          <Text style={[styles.weekText, { color: colors.textSecondary, marginBottom: 0 }]}>
-            Settimana {currentWeekId} {currentWeekId === realCurrentWeekId ? '(Corrente)' : ''}
-          </Text>
+          
+          <View style={{ alignItems: 'center' }}>
+            {currentWeekId === realCurrentWeekId && (
+              <Text style={{ color: colors.primary, fontSize: 10, fontWeight: 'bold', marginBottom: 2 }}>
+                (Corrente)
+              </Text>
+            )}
+            <Text style={[styles.weekText, { color: colors.textSecondary, marginBottom: 0 }]}>
+              Settimana {currentWeekId}
+            </Text>
+          </View>
+
           <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>Prossima →</Text>
           </Pressable>
