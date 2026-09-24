@@ -100,8 +100,13 @@ export default function TodayScreen({ navigation }: any) {
                     
                     <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{catEmoji}</Text>
                     
-                    <View style={{flex: 1}}>
+                    <View style={{flex: 1, flexDirection: 'column'}}>
                       <Text style={[styles.blockName, { color: colors.text }, b.done && {textDecorationLine: 'line-through'}]}>{name}</Text>
+                      {!!b.description && (
+                        <Text style={{fontSize: 13, color: colors.textSecondary, fontStyle: 'italic', marginTop: 2}}>
+                          {b.description}
+                        </Text>
+                      )}
                     </View>
                     
                     <Text style={{color: colors.textSecondary}}>{duration}h</Text>

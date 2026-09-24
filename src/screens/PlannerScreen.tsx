@@ -1,6 +1,6 @@
 import { t } from "../utils/i18n";
 import React, { useLayoutEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -14,13 +14,16 @@ import { getDatesOfWeek, getNextWeekId, getPrevWeekId, getCurrentWeekId, getToda
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors, isDark } = useThemeColors();
-  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
+  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedDay, setSelectedDay] = useState<DayOfWeek | null>(null);
   const [startTime, setStartTime] = useState(new Date(new Date().setHours(9, 0, 0, 0)));
   const [showTimePicker, setShowTimePicker] = useState(false);
+
+  const [editBlockId, setEditBlockId] = useState<string | null>(null);
+  const [editBlockDesc, setEditBlockDesc] = useState('');
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -31,33 +34,40 @@ export default function PlannerScreen({ navigation }: any) {
   }, [navigation, colors]);
 
   const handleBlockPress = (block: any) => {
-    let name = '';
-    let duration = 0;
-    if (block.isOneOff) {
-      name = block.oneOffName;
-      duration = block.oneOffDuration;
-    } else {
-      const template = getTemplateById(block.templateId);
-      name = template?.name || 'Sconosciuto';
-      duration = template?.durationHours || 0;
-    }
+    setEditBlockId(block.id);
+    setEditBlockDesc(block.description || '');
+  };
 
-    Alert.alert(
-      name,
-      `Vuoi modificare lo stato o rimuoverlo?`,
-      [
-        { text: t('common.cancel'), style: 'cancel' },
-        {
-          text: block.done ? t('planner.markTodo') : t('planner.markDone'),
-          onPress: () => {
-            toggleBlockDone(block.id);
-            if (!block.done) addCompletedHours(duration);
-            else addCompletedHours(-duration);
-          }
-        },
-        { text: t('common.remove'), style: 'destructive', onPress: () => unscheduleBlock(block.id) }
-      ]
-    );
+  const saveBlockDesc = () => {
+    if (editBlockId) {
+      updateBlockDescription(editBlockId, editBlockDesc.trim());
+      setEditBlockId(null);
+    }
+  };
+
+  const handleDeleteBlock = () => {
+    if (editBlockId) {
+      unscheduleBlock(editBlockId);
+      setEditBlockId(null);
+    }
+  };
+
+  const handleToggleBlock = () => {
+    if (editBlockId) {
+      const block = currentPlan.blocks.find(b => b.id === editBlockId);
+      if (block) {
+        let duration = 0;
+        if (block.isOneOff) duration = block.oneOffDuration || 0;
+        else {
+          const template = getTemplateById(block.templateId!);
+          duration = template?.durationHours || 0;
+        }
+        toggleBlockDone(block.id);
+        if (!block.done) addCompletedHours(duration);
+        else addCompletedHours(-duration);
+      }
+      setEditBlockId(null);
+    }
   };
 
   const handleAddPress = (day: DayOfWeek) => {
@@ -229,6 +239,46 @@ export default function PlannerScreen({ navigation }: any) {
           </View>
         </ScrollView>
       </ScrollView>
+
+      {/* Edit Block Modal */}
+      <Modal visible={!!editBlockId} transparent animationType="fade" onRequestClose={() => setEditBlockId(null)}>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Block Details</Text>
+            
+            <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 4, color: colors.textSecondary }}>Specific Task / Description</Text>
+            <TextInput
+              style={[
+                { borderWidth: 1, borderRadius: 12, padding: 8, fontSize: 16, marginBottom: 16 },
+                { backgroundColor: colors.background, color: colors.text, borderColor: colors.border },
+              ]}
+              placeholder="e.g. Chapter 4 exercises"
+              placeholderTextColor={colors.textSecondary}
+              value={editBlockDesc}
+              onChangeText={setEditBlockDesc}
+            />
+            
+            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
+              <View style={{flexDirection: 'row', gap: 8}}>
+                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.danger }} onPress={handleDeleteBlock}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>Delete</Text>
+                </Pressable>
+                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.success }} onPress={handleToggleBlock}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>✓ Toggle</Text>
+                </Pressable>
+              </View>
+              <View style={{flexDirection: 'row', gap: 8}}>
+                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.background }} onPress={() => setEditBlockId(null)}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>{t('common.cancel')}</Text>
+                </Pressable>
+                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.primary }} onPress={saveBlockDesc}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.save')}</Text>
+                </Pressable>
+              </View>
+            </View>
+          </View>
+        </View>
+      </Modal>
 
       {/* Template Picker Modal */}
       <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>

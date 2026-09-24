@@ -45,6 +45,7 @@ interface PlannerActions {
   scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
   unscheduleBlock: (blockId: string) => void;
   toggleBlockDone: (blockId: string) => void;
+  updateBlockDescription: (blockId: string, desc: string) => void;
   copyPreviousWeek: () => void;
   getTemplateById: (id: string) => BlockTemplate | undefined;
   getCategoryById: (id: string) => Category | undefined;
@@ -281,6 +282,13 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentWeekId, templates, categories]);
 
+  const updateBlockDescription = useCallback((blockId: string, desc: string) => {
+    setCurrentPlan((prev) => ({
+      ...prev,
+      blocks: prev.blocks.map(b => b.id === blockId ? { ...b, description: desc } : b)
+    }));
+  }, []);
+
   const toggleBlockDone = useCallback((blockId: string) => {
     setCurrentPlan((prev) => {
       let duration = 0;
@@ -349,6 +357,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         scheduleOneOffBlock,
         unscheduleBlock,
         toggleBlockDone,
+        updateBlockDescription,
         copyPreviousWeek,
         getTemplateById,
         getCategoryById,

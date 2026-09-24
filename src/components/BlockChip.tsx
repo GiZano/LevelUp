@@ -9,6 +9,7 @@ interface BlockChipProps {
   categoryEmoji: string;
   durationHours: number;
   done: boolean;
+  description?: string;
   onPress: () => void;
 }
 
@@ -18,6 +19,7 @@ export default function BlockChip({
   categoryEmoji,
   durationHours,
   done,
+  description,
   onPress,
 }: BlockChipProps) {
   const { colors } = useThemeColors();
@@ -38,17 +40,24 @@ export default function BlockChip({
       <Text style={styles.emoji}>{categoryEmoji}</Text>
 
       <View style={styles.nameContainer}>
-        {done && <Text style={[styles.checkmark, { color: colors.success }]}>✓ </Text>}
-        <Text
-          style={[
-            styles.name,
-            { color: colors.text },
-            done && styles.nameDone,
-          ]}
-          numberOfLines={1}
-        >
-          {name}
-        </Text>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          {done && <Text style={[styles.checkmark, { color: colors.success }]}>✓ </Text>}
+          <Text
+            style={[
+              styles.name,
+              { color: colors.text },
+              done && styles.nameDone,
+            ]}
+            numberOfLines={1}
+          >
+            {name}
+          </Text>
+        </View>
+        {!!description && (
+          <Text style={[styles.description, { color: colors.textSecondary }]} numberOfLines={1}>
+            {description}
+          </Text>
+        )}
       </View>
 
       <Text style={[styles.duration, { color: colors.textSecondary }]}>
@@ -74,8 +83,8 @@ const styles = StyleSheet.create({
   },
   nameContainer: {
     flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
+    justifyContent: 'center',
     marginRight: Spacing.xs,
   },
   checkmark: {
@@ -89,6 +98,11 @@ const styles = StyleSheet.create({
   },
   nameDone: {
     textDecorationLine: 'line-through',
+  },
+  description: {
+    fontSize: FontSize.xs,
+    fontStyle: 'italic',
+    marginTop: 2,
   },
   duration: {
     fontSize: FontSize.xs,

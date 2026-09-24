@@ -79,6 +79,7 @@ export interface ScheduledBlock {
   day: DayOfWeek;
   startTime: string; // format "HH:mm", e.g. "09:30" or "22:00"
   done: boolean;
+  description?: string; // Optional instance-specific description
   calendarEventId?: string; // Google Calendar event ID to allow deletion
   // Fields for temporary one-off blocks
   isOneOff?: boolean;
