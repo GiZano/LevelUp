@@ -11,7 +11,7 @@ import {
   loadWeeklyPlan,
 } from './plannerStorage';
 import { getCurrentWeekId, getPrevWeekId } from '../types/weekUtils';
-import { createCalendarEvent, deleteCalendarEvent } from '../utils/calendar';
+import { createCalendarEvent, deleteCalendarEvent, updateCalendarEventDescription } from '../utils/calendar';
 
 // ── Default Categories ──
 
@@ -283,10 +283,16 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, [currentWeekId, templates, categories]);
 
   const updateBlockDescription = useCallback((blockId: string, desc: string) => {
-    setCurrentPlan((prev) => ({
-      ...prev,
-      blocks: prev.blocks.map(b => b.id === blockId ? { ...b, description: desc } : b)
-    }));
+    setCurrentPlan((prev) => {
+      const block = prev.blocks.find(b => b.id === blockId);
+      if (block?.calendarEventId) {
+        updateCalendarEventDescription(block.calendarEventId, desc);
+      }
+      return {
+        ...prev,
+        blocks: prev.blocks.map(b => b.id === blockId ? { ...b, description: desc } : b)
+      };
+    });
   }, []);
 
   const toggleBlockDone = useCallback((blockId: string) => {

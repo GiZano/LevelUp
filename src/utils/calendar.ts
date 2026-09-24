@@ -91,3 +91,15 @@ export async function deleteCalendarEvent(eventId: string) {
     console.error('Errore cancellazione calendario:', e);
   }
 }
+
+export async function updateCalendarEventDescription(eventId: string, description: string) {
+  try {
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status !== 'granted') return;
+    await Calendar.updateEventAsync(eventId, {
+      notes: description
+    });
+  } catch (e) {
+    console.error('Failed to update calendar event description', e);
+  }
+}
