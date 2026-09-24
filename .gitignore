@@ -1,0 +1,54 @@
+# Brainstorming logs
+log.txt
+
+# Dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Native builds
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Android
+android/app/build/
+android/.gradle/
+*.apk
+*.aab
+
+# iOS
+ios/Pods/
+*.ipa
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# EAS
+.easignore
+
+# Debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
