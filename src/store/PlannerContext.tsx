@@ -36,6 +36,7 @@ interface PlannerState {
 interface PlannerActions {
   changeWeek: (weekId: string) => void;
   addCategory: (name: string, emoji: string, color: string, targetHours: number) => void;
+  editCategory: (id: string, targetHours: number) => void;
   deleteCategory: (id: string) => void;
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
   deleteTemplate: (id: string) => void;
@@ -69,7 +70,15 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
           loadTemplates(),
           loadWeeklyPlan(currentWeekId),
         ]);
-        if (cats.length > 0) setCategories(cats);
+        if (cats.length > 0) {
+          const merged = [...cats];
+          for (const def of DEFAULT_CATEGORIES) {
+            if (!merged.find(c => c.id === def.id)) {
+              merged.push(def);
+            }
+          }
+          setCategories(merged);
+        }
         setTemplates(tmpl);
         if (plan) setCurrentPlan(plan);
       } catch (e) {
@@ -126,6 +135,10 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const deleteCategory = useCallback((id: string) => {
     setCategories((prev) => prev.filter((c) => c.id !== id));
+  }, []);
+
+  const editCategory = useCallback((id: string, targetHours: number) => {
+    setCategories((prev) => prev.map((c) => c.id === id ? { ...c, targetHoursPerWeek: targetHours } : c));
   }, []);
 
   const addTemplate = useCallback((name: string, categoryId: string, durationHours: number, peakId?: string) => {
@@ -322,6 +335,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         changeWeek,
         addCategory,
+        editCategory,
         deleteCategory,
         addTemplate,
         deleteTemplate,
