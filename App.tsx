@@ -61,6 +61,8 @@ function BlocchiStack() {
   );
 }
 
+import { t } from './src/utils/i18n';
+
 function TabNavigator() {
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
@@ -82,7 +84,7 @@ function TabNavigator() {
         name="OggiTab" 
         component={TodayScreen} 
         options={{ 
-          title: 'Oggi',
+          title: t('tabs.today'),
           tabBarIcon: ({ color }) => <Text style={{color}}>🌅</Text> 
         }} 
       />
@@ -90,7 +92,7 @@ function TabNavigator() {
         name="VetteTab" 
         component={VetteStack} 
         options={{ 
-          title: 'Vette',
+          title: t('tabs.peaks'),
           tabBarIcon: ({ color }) => <Text style={{color}}>🏔️</Text> 
         }} 
       />
@@ -98,7 +100,7 @@ function TabNavigator() {
         name="PlannerTab" 
         component={PlannerStackNavigator} 
         options={{ 
-          title: 'Planner',
+          title: t('tabs.planner'),
           tabBarIcon: ({ color }) => <Text style={{color}}>📅</Text> 
         }} 
       />
@@ -106,7 +108,7 @@ function TabNavigator() {
         name="BlocchiTab" 
         component={BlocchiStack} 
         options={{ 
-          title: 'Blocchi',
+          title: t('tabs.blocks'),
           tabBarIcon: ({ color }) => <Text style={{color}}>🧩</Text> 
         }} 
       />

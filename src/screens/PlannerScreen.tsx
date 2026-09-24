@@ -1,3 +1,4 @@
+import { t } from "../utils/i18n";
 import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -23,7 +24,7 @@ export default function PlannerScreen({ navigation }: any) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Planner',
+      title: t('tabs.planner'),
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });
@@ -45,16 +46,16 @@ export default function PlannerScreen({ navigation }: any) {
       name,
       `Vuoi modificare lo stato o rimuoverlo?`,
       [
-        { text: 'Annulla', style: 'cancel' },
+        { text: t('common.cancel'), style: 'cancel' },
         {
-          text: block.done ? 'Segna da fare' : 'Completato',
+          text: block.done ? t('planner.markTodo') : t('planner.markDone'),
           onPress: () => {
             toggleBlockDone(block.id);
             if (!block.done) addCompletedHours(duration);
             else addCompletedHours(-duration);
           }
         },
-        { text: 'Rimuovi', style: 'destructive', onPress: () => unscheduleBlock(block.id) }
+        { text: t('common.remove'), style: 'destructive', onPress: () => unscheduleBlock(block.id) }
       ]
     );
   };
@@ -148,9 +149,9 @@ export default function PlannerScreen({ navigation }: any) {
           <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>Questa settimana è vuota.</Text>
           <Pressable 
             onPress={() => {
-              Alert.alert('Copia', 'Vuoi copiare i blocchi ricorrenti dalla settimana precedente?', [
-                { text: 'Annulla', style: 'cancel' },
-                { text: 'Copia', onPress: copyPreviousWeek }
+              Alert.alert(t('planner.copyWeekTitle'), t('planner.copyWeekMsg'), [
+                { text: t('common.cancel'), style: 'cancel' },
+                { text: t('planner.copyWeekTitle'), onPress: copyPreviousWeek }
               ])
             }}
             style={[styles.btn, {backgroundColor: colors.primary}]}

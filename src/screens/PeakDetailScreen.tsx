@@ -1,3 +1,4 @@
+import { t } from "../utils/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useLayoutEffect, useState } from 'react';
 import {
@@ -62,9 +63,9 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
 
   const handleDeletePeak = () => {
     Alert.alert('Elimina vetta', `Vuoi eliminare "${peak.name}"?`, [
-      { text: 'Annulla', style: 'cancel' },
+      { text: t('common.cancel'), style: 'cancel' },
       {
-        text: 'Elimina',
+        text: t('common.delete'),
         style: 'destructive',
         onPress: () => {
           deletePeak(peakId);

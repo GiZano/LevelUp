@@ -1,3 +1,4 @@
+import { t } from "../utils/i18n";
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';

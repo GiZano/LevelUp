@@ -1,3 +1,4 @@
+import { t } from "../utils/i18n";
 /**
  * LevelUp — Core type definitions
  *
@@ -47,13 +48,13 @@ export type DayOfWeek = 'lun' | 'mar' | 'mer' | 'gio' | 'ven' | 'sab' | 'dom';
 export const DAYS_OF_WEEK: DayOfWeek[] = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
 
 export const DAY_LABELS: Record<DayOfWeek, string> = {
-  lun: 'Lunedì',
-  mar: 'Martedì',
-  mer: 'Mercoledì',
-  gio: 'Giovedì',
-  ven: 'Venerdì',
-  sab: 'Sabato',
-  dom: 'Domenica',
+  lun: t('days.mon'),
+  mar: t('days.tue'),
+  mer: t('days.wed'),
+  gio: t('days.thu'),
+  ven: t('days.fri'),
+  sab: t('days.sat'),
+  dom: t('days.sun'),
 };
 
 export interface Category {

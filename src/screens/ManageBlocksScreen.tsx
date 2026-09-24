@@ -1,3 +1,4 @@
+import { t } from "../utils/i18n";
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -13,7 +14,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: 'Blocchi & Categorie',
+      title: t('manage.title'),
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });
@@ -43,9 +44,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
   };
 
   const handleDeleteBlock = (id: string, name: string) => {
-    Alert.alert('Elimina Blocco', `Sei sicuro di voler eliminare "${name}"?`, [
-      { text: 'Annulla', style: 'cancel' },
-      { text: 'Elimina', style: 'destructive', onPress: () => deleteTemplate(id) },
+    Alert.alert(t('manage.deleteBlockTitle'), `Sei sicuro di voler eliminare "${name}"?`, [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.delete'), style: 'destructive', onPress: () => deleteTemplate(id) },
     ]);
   };
 
