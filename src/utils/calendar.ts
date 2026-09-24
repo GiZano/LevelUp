@@ -15,7 +15,7 @@ async function getOrCreateCategoryCalendar(catName: string, catColor: string): P
   const calName = `LevelUp - ${catName}`;
   const existing = calendars.find(c => c.title === calName);
   if (existing) {
-    // Se il colore è cambiato, potremmo aggiornarlo, ma per ora teniamo semplice
+    // If the color changed, we could update it, but keep it simple for now
     return existing.id;
   }
 
@@ -43,7 +43,7 @@ async function getOrCreateCategoryCalendar(catName: string, catColor: string): P
     return newCalId;
   } catch (e) {
     console.error('Errore creazione calendario:', e);
-    return calendars.find(c => c.isPrimary)?.id || null; // Fallback al primario
+    return calendars.find(c => c.isPrimary)?.id || null; // Fallback to primary
   }
 }
 
@@ -53,7 +53,7 @@ export async function createCalendarEvent(title: string, day: DayOfWeek, startTi
     if (!calendarId) return null;
 
     const now = new Date();
-    const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1; // 0=Lun, 6=Dom
+    const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1; // 0=Mon, 6=Sun
     const targetDays = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
     const targetDayIdx = targetDays.indexOf(day);
     
@@ -73,7 +73,7 @@ export async function createCalendarEvent(title: string, day: DayOfWeek, startTi
       startDate: targetDate,
       endDate,
       timeZone: 'Europe/Rome',
-      alarms: [{ relativeOffset: -10 }] // Notifica 10 min prima
+      alarms: [{ relativeOffset: -10 }] // Notify 10 mins before
     });
     return eventId;
   } catch (e) {

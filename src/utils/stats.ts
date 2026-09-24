@@ -15,7 +15,7 @@ export function computeStats(peaks: Peak[], currentStreak: number, lastActiveDat
   }
 
   return {
-    totalAltitude: (totalCampsCompleted * 100) + totalCompletedHours, // 100m per campo + 1m per ora
+    totalAltitude: (totalCampsCompleted * 100) + totalCompletedHours, // 100m per camp + 1m per hour
     peaksReached,
     currentStreak,
     lastActiveDate,
@@ -47,7 +47,7 @@ export function updateStreak(
   }
 
   if (lastActiveDate === today) {
-    // Già attivo oggi, non cambia
+    // Already active today, no change
     return { streak: currentStreak, lastActiveDate: today };
   }
 
@@ -56,10 +56,10 @@ export function updateStreak(
   const yesterdayStr = yesterday.toISOString().split('T')[0];
 
   if (lastActiveDate === yesterdayStr) {
-    // Giorno consecutivo
+    // Consecutive day
     return { streak: currentStreak + 1, lastActiveDate: today };
   }
 
-  // Streak interrotto
+  // Streak broken
   return { streak: 1, lastActiveDate: today };
 }

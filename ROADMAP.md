@@ -1,122 +1,121 @@
 # 🏔️ LevelUp — Roadmap
 
-> Side project personale. Timeboxed, AI-assisted, scope controllato.
-> L'obiettivo è avere un'app funzionante sul telefono, non vincere un premio di design.
+> Personal side project. Timeboxed, AI-assisted, controlled scope.
+> The goal is to have a working app on the phone, not to win a design award.
 
 ---
 
-## Filosofia di sviluppo
+## Development Philosophy
 
-- **Product Owner + Solutions Architect**: tu definisci architettura e specifiche, l'AI genera il codice UI
-- **Timebox per fase**: ogni fase ha un budget di ore. Se sfora, si taglia scope, non si aggiunge tempo
-- **Ship early, iterate later**: meglio un'app brutta che usi davvero che una bella che non finisci mai
-
----
-
-## Fase 0 — Setup progetto `[~4h]`
-
-- [x] Brainstorming e definizione del concept
-- [x] Creazione repo GitHub
-- [x] README e ROADMAP
-- [ ] Inizializzazione progetto Expo (React Native)
-- [ ] Struttura cartelle (`/src`, `/components`, `/store`, `/assets`, ecc.)
-- [ ] Configurazione linter + formatter (ESLint + Prettier)
-- [ ] Primo commit con scheletro vuoto funzionante
-
-**Deliverable**: `npx expo start` funziona, app mostra una schermata vuota con il nome "LevelUp"
+- **Product Owner + Solutions Architect**: you define architecture and specs, AI generates UI code
+- **Timebox per phase**: each phase has a budget of hours. If it overflows, cut scope, don't add time
+- **Ship early, iterate later**: better an ugly app you actually use than a beautiful one you never finish
 
 ---
 
-## Fase 1 — MVP: Vette e Campi `[~12-16h]`
+## Phase 0 — Project Setup `[~4h]`
 
-Il cuore dell'app. Nient'altro.
+- [x] Brainstorming and concept definition
+- [x] Create GitHub repo
+- [x] README and ROADMAP
+- [x] Expo (React Native) project initialization
+- [x] Folder structure (`/src`, `/components`, `/store`, `/assets`, etc.)
+- [x] Linter + formatter setup (ESLint + Prettier)
+- [x] First commit with working empty skeleton
 
-### 1.1 — Modello dati e persistenza
-- [ ] Definire lo schema dati (`Peak`, `Camp`, metadati)
-- [ ] Setup storage locale (`expo-sqlite` o `AsyncStorage` + JSON)
-- [ ] CRUD completo: creare/modificare/eliminare vette e campi
-
-### 1.2 — UI principale
-- [ ] Schermata Home: lista delle vette con progresso (barra o %)
-- [ ] Schermata dettaglio vetta: lista campi con checkbox
-- [ ] Visualizzazione SVG montagna con tracciato che si riempie (`react-native-svg`)
-- [ ] Statistiche aggregate: altitudine totale, vette raggiunte
-
-### 1.3 — Gamification base
-- [ ] Contatore streak (giorni consecutivi di attività)
-- [ ] Feedback visivo al completamento di un campo (animazione semplice)
-- [ ] Feedback visivo al completamento di una vetta (bandierina + celebrazione)
-
-### 1.4 — Polish minimo
-- [ ] Tema chiaro/scuro (segue il sistema)
-- [ ] Navigazione fluida tra schermate (Expo Router o React Navigation)
-- [ ] Icona app e splash screen
-
-**Deliverable**: APK installabile sul telefono. Puoi creare vette, spuntare campi, vedere il progresso. Fine.
+**Deliverable**: `npx expo start` works, app shows an empty screen with "LevelUp" name
 
 ---
 
-## Fase 2 — Weekly Planner `[~10-14h]` ✅ COMPLETATA
+## Phase 1 — MVP: Peaks and Camps `[~12-16h]`
 
-Il time-blocking che risolve il problema originale: "non so cosa fare".
+The core of the app. Nothing else.
 
-### 2.1 — Modello dati planner
-- [x] Definire `Block` (attività, categoria, durata stimata, colore)
-- [x] Definire `WeeklySlot` (giorno, fascia oraria esatta)
-- [x] Collegamento blocchi → gamification (ore completate = altitudine vetta)
+### 1.1 — Data model and persistence
+- [x] Define data schema (`Peak`, `Camp`, metadata)
+- [x] Local storage setup (`expo-sqlite` or `AsyncStorage` + JSON)
+- [x] Full CRUD: create/edit/delete peaks and camps
 
-### 2.2 — UI planner
-- [x] Vista settimanale con timeline esatta
-- [x] Funzione di "Copia Settimana" per routine predefinite
-- [x] Monte ore settimanale per categoria (barra di progresso modificabile)
-- [x] Vista giornaliera: "cosa devo fare oggi" — la schermata che apri la mattina
+### 1.2 — Main UI
+- [x] Home screen: list of peaks with progress (bar or %)
+- [x] Peak detail screen: list of camps with checkboxes
+- [x] SVG mountain visualization with filling path (`react-native-svg`)
+- [x] Aggregate stats: total altitude, peaks reached
 
-### 2.3 — Sincronizzazione Esterna
-- [x] Esportazione nativa verso Google Calendar
-- [x] Architettura multi-calendario per la gestione dei colori di Google Calendar
+### 1.3 — Basic Gamification
+- [x] Streak counter (consecutive days of activity)
+- [x] Visual feedback on camp completion (simple animation)
+- [x] Visual feedback on peak completion (flag + celebration)
 
-**Deliverable**: puoi pianificare la settimana la domenica sera, e ogni mattina sai cosa fare senza pensarci. E ti arrivano le notifiche da Google!
+### 1.4 — Minimum Polish
+- [x] Light/dark theme (follows system)
+- [x] Smooth navigation between screens (Expo Router or React Navigation)
+- [x] App icon and splash screen
+
+**Deliverable**: Installable APK on phone. You can create peaks, check camps, see progress. Done.
 
 ---
 
-## Fase 3 — Automazione e CI/CD `[IN CORSO 🏗️]`
+## Phase 2 — Weekly Planner `[~10-14h]` ✅ COMPLETED
 
-### 3.1 — Build automatizzata
-- [ ] Configurazione EAS Build (account Expo gratuito)
-- [ ] Creazione primo pacchetto APK (o AAB) di test per l'installazione
-- [ ] Push della repository aggiornata sul remote di GitHub
-- [ ] GitHub Action: su tag/release → build APK → allegato alla release
+The time-blocking that solves the original problem: "I don't know what to do".
+
+### 2.1 — Planner data model
+- [x] Define `Block` (activity, category, estimated duration, color)
+- [x] Define `WeeklySlot` (day, exact time slot)
+- [x] Link blocks → gamification (completed hours = peak altitude)
+
+### 2.2 — Planner UI
+- [x] Weekly grid view with exact timeline
+- [x] "Copy Week" function for predefined routines
+- [x] Weekly target hours per category (editable progress bar)
+- [x] Daily view: "what should I do today" — the screen you open in the morning
+
+### 2.3 — External Synchronization
+- [x] Native export to Google Calendar
+- [x] Multi-calendar architecture for Google Calendar colors
+
+**Deliverable**: you can plan the week on Sunday evening, and every morning you know what to do without thinking. Plus, you get Google notifications!
+
+---
+
+## Phase 3 — Automation and CI/CD `[IN PROGRESS 🏗️]`
+
+### 3.1 — Automated Build
+- [x] EAS Build config (free Expo account)
+- [x] Push updated repository to GitHub remote
+- [x] GitHub Action: on tag/release → build APK → attached to release
 
 ### 3.2 — Quality
-- [ ] Pulizia deprecation warnings rimasti
-- [ ] Risoluzione di eventuali conflitti di TS
+- [x] Cleanup remaining deprecation warnings
+- [x] Resolve any TS conflicts
 
-**Deliverable**: pushare un tag su GitHub genera automaticamente un APK scaricabile.
-
----
-
-## Backlog — Idee future (non pianificate, non promesse)
-
-> Queste feature esistono solo qui. Non vanno toccate finché la Fase 2 non è stabile e usata quotidianamente da almeno 2 settimane.
-
-- [ ] **Achievements/Badge**: Trofei sbloccabili ogni tot metri scalati (es. "Campo Base dell'Everest - 5364m", "Monte Bianco - 4809m")
-- [ ] Notifiche/reminder nativi interni per i blocchi pianificati (se Google Calendar non basta)
-- [ ] Widget Android per la vista giornaliera
-- [ ] Grafici storici (progresso nel tempo, ore per settimana)
-- [ ] Export dati (JSON/CSV)
+**Deliverable**: pushing a tag on GitHub automatically generates a downloadable APK.
 
 ---
 
-## Anti-pattern da evitare
+## Backlog — Future ideas (not planned, not promised)
 
-| ❌ Non fare | ✅ Fai invece |
+> These features only exist here. Do not touch until Phase 2 is stable and used daily for at least 2 weeks.
+
+- [ ] **Achievements/Badges**: Unlockable trophies every X meters climbed (e.g. "Everest Base Camp - 5364m", "Mont Blanc - 4809m")
+- [ ] Native internal notifications/reminders for scheduled blocks (if Google Calendar isn't enough)
+- [ ] Android widget for daily view
+- [ ] Historical charts (progress over time, hours per week)
+- [ ] Data export (JSON/CSV)
+
+---
+
+## Anti-patterns to avoid
+
+| ❌ Don't | ✅ Do instead |
 |---|---|
-| Aggiungere feature al backlog durante una fase attiva | Scrivile su un post-it e ignorale fino a fine fase |
-| Perfezionare la UI prima che la logica funzioni | Ship ugly, polish later |
-| Passare più di 30 min su un bug CSS | Chiedi all'AI, accetta il risultato, vai avanti |
-| Confrontare l'app con Todoist/Notion/TickTick | Questa app risolve **il tuo** problema, non quello di tutti |
-| Lavorarci quando dovresti studiare | Mai durante i blocchi di Deep Work |
+| Add features to backlog during active phase | Write them on a post-it and ignore until phase ends |
+| Perfect UI before logic works | Ship ugly, polish later |
+| Spend more than 30 mins on a CSS bug | Ask AI, accept result, move on |
+| Compare app to Todoist/Notion/TickTick | This app solves **your** problem, not everyone's |
+| Work on it when you should study | Never during Deep Work blocks |
 
 ---
 
-*Ultimo aggiornamento: settembre 2026*
+*Last update: September 2026*

@@ -64,7 +64,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
     setCatModalVisible(false);
   };
 
-  // Raggruppa template per categoria
+  // Group templates by category
   const templatesByCategory = categories.map((c) => ({
     categoryId: c.id,
     items: templates.filter((t) => t.categoryId === c.id),
@@ -74,7 +74,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         
-        {/* Sezione Categorie */}
+        {{/* Categories Section */}}
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm}}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>Categorie</Text>
         </View>
@@ -125,7 +125,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
         })}
       </ScrollView>
 
-      {/* FAB – Nuovo Blocco */}
+      {{/* FAB - New Block */}}
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primary }]}
         onPress={() => setModalVisible(true)}
@@ -133,7 +133,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
         <Text style={styles.fabText}>+</Text>
       </Pressable>
 
-      {/* Modal Categoria */}
+      {{/* Category Modal */}}
       <Modal visible={catModalVisible} transparent animationType="fade" onRequestClose={() => setCatModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
@@ -161,7 +161,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
         </View>
       </Modal>
 
-      {/* Modal Nuovo Blocco */}
+      {{/* New Block Modal */}}
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={resetModal}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>

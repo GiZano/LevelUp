@@ -33,7 +33,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
   const [totalCompletedHours, setTotalCompletedHours] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Carica dati all'avvio
+  // Load data on startup
   useEffect(() => {
     (async () => {
       try {
@@ -50,14 +50,14 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
     })();
   }, []);
 
-  // Salva peaks ogni volta che cambiano
+  // Save peaks whenever they change
   useEffect(() => {
     if (!isLoading) {
       savePeaks(peaks).catch((e) => console.error('Errore salvataggio peaks:', e));
     }
   }, [peaks, isLoading]);
 
-  // Salva streak e ore ogni volta che cambiano
+  // Save streak and hours whenever they change
   useEffect(() => {
     if (!isLoading && lastActiveDate) {
       saveStreak(streak, lastActiveDate, totalCompletedHours).catch((e) =>
@@ -132,7 +132,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
 
           const updatedPeak = { ...peak, camps: updatedCamps };
 
-          // Controlla se la vetta è stata completata
+          // Check if peak was completed
           if (isPeakComplete(updatedPeak) && !peak.completedAt) {
             updatedPeak.completedAt = new Date().toISOString();
           } else if (!isPeakComplete(updatedPeak) && peak.completedAt) {
@@ -155,7 +155,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         const reordered = filtered.map((c, i) => ({ ...c, order: i }));
 
         const updatedPeak = { ...peak, camps: reordered };
-        // Ricalcola completamento vetta
+        // Recalculate peak completion
         if (isPeakComplete(updatedPeak) && !peak.completedAt) {
           updatedPeak.completedAt = new Date().toISOString();
         } else if (!isPeakComplete(updatedPeak)) {

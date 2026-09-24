@@ -30,15 +30,15 @@ export interface WeeklyBlock {
   category: string;
   color: string;
   estimatedHours: number;
-  peakId?: string; // collegamento opzionale a una vetta
+  peakId?: string; // optional link to a peak
 }
 
 export interface UserStats {
-  totalAltitude: number; // 100m per campo completato + 1m per ora completata
+  totalAltitude: number; // 100m per completed camp + 1m per completed hour
   peaksReached: number;
   currentStreak: number;
   lastActiveDate?: string; // ISO 8601 (solo data, YYYY-MM-DD)
-  totalCompletedHours: number; // Incrementato quando un blocco viene completato
+  totalCompletedHours: number; // Incremented when a block is completed
 }
 
 // ── Weekly Planner types ──
@@ -70,17 +70,17 @@ export interface BlockTemplate {
   name: string;
   categoryId: string;
   durationHours: number;
-  peakId?: string; // collegamento opzionale a una vetta
+  peakId?: string; // optional link to a peak
 }
 
 export interface ScheduledBlock {
   id: string;
-  templateId?: string; // opzionale se è one-off
+  templateId?: string; // optional if it's one-off
   day: DayOfWeek;
-  startTime: string; // formato "HH:mm", es. "09:30" o "22:00"
+  startTime: string; // format "HH:mm", e.g. "09:30" or "22:00"
   done: boolean;
-  calendarEventId?: string; // ID dell'evento su Google Calendar per poterlo cancellare
-  // Campi per blocchi one-off temporanei
+  calendarEventId?: string; // Google Calendar event ID to allow deletion
+  // Fields for temporary one-off blocks
   isOneOff?: boolean;
   oneOffName?: string;
   oneOffCategoryId?: string;

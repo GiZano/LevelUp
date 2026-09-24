@@ -13,7 +13,7 @@ import {
 import { getCurrentWeekId, getPrevWeekId } from '../types/weekUtils';
 import { createCalendarEvent, deleteCalendarEvent } from '../utils/calendar';
 
-// ── Categorie predefinite ──
+// ── Default Categories ──
 
 const DEFAULT_CATEGORIES: Category[] = [
   { id: 'sonno', name: t('categories.sleep'), color: '#6366F1', emoji: '😴', targetHoursPerWeek: 56 },
@@ -62,7 +62,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [currentPlan, setCurrentPlan] = useState<WeeklyPlan>({ weekId: currentWeekId, blocks: [] });
   const [isLoading, setIsLoading] = useState(true);
 
-  // Carica dati all'avvio
+  // Load data on startup
   useEffect(() => {
     (async () => {
       try {
@@ -154,7 +154,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const deleteTemplate = useCallback((id: string) => {
     setTemplates((prev) => prev.filter((t) => t.id !== id));
-    // Rimuovi anche i blocchi schedulati con questo template
+    // Also remove scheduled blocks with this template
     setCurrentPlan((prev) => ({
       ...prev,
       blocks: prev.blocks.filter((b) => b.templateId !== id),
@@ -177,7 +177,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       };
     });
 
-    // Sincronizza con Google Calendar in background e salva l'ID
+    // Sync with Google Calendar in background and save ID
     const template = templates.find(t => t.id === templateId);
     const cat = categories.find(c => c.id === template?.categoryId);
     if (template && cat) {
@@ -211,7 +211,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       };
     });
 
-    // Sincronizza con Google Calendar in background
+    // Sync with Google Calendar in background
     const cat = categories.find(c => c.id === categoryId);
     if (cat) {
       createCalendarEvent(name, day, startTime, durationHours, cat.name, cat.color).then(eventId => {
@@ -246,7 +246,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
       const newBlocks: ScheduledBlock[] = [];
       for (const b of prevPlan.blocks) {
-        if (b.isOneOff) continue; // Non copiamo eventi una tantum
+        if (b.isOneOff) continue; // Do not copy one-off events
         const template = templates.find(t => t.id === b.templateId);
         const cat = categories.find(c => c.id === template?.categoryId);
         if (!template || !cat) continue;
@@ -261,7 +261,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         };
         newBlocks.push(newBlock);
 
-        // Crea eventi sul nuovo calendario in background
+        // Create events on the new calendar in background
         createCalendarEvent(template.name, b.day, b.startTime, template.durationHours, cat.name, cat.color).then(eventId => {
           if (eventId) {
             setCurrentPlan(prev => ({
