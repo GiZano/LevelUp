@@ -293,7 +293,7 @@ export default function PlannerScreen({ navigation }: any) {
                   value={startTime}
                   mode="time"
                   display="default"
-                  onChange={(_, date) => { if (date) setStartTime(date); }}
+                  onValueChange={(_, date) => { if (date) setStartTime(date); }}
                 />
               ) : (
                 <>
@@ -309,10 +309,11 @@ export default function PlannerScreen({ navigation }: any) {
                       mode="time"
                       is24Hour={true}
                       display="default"
-                      onChange={(_, date) => {
+                      onValueChange={(_, date) => {
                         setShowTimePicker(false);
                         if (date) setStartTime(date);
                       }}
+                      onDismiss={() => setShowTimePicker(false)}
                     />
                   )}
                 </>
