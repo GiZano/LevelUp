@@ -15,8 +15,10 @@ export default function TodayScreen({ navigation }: any) {
   const today = getTodayDayOfWeek();
 
   useLayoutEffect(() => {
+    const d = new Date();
+    const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
     navigation.setOptions({
-      title: `Oggi: ${DAY_LABELS[today]}`,
+      title: `Oggi: ${DAY_LABELS[today]} ${dateStr}`,
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });

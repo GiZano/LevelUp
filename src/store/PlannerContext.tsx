@@ -33,6 +33,7 @@ interface PlannerState {
 }
 
 interface PlannerActions {
+  changeWeek: (weekId: string) => void;
   addCategory: (name: string, emoji: string, color: string, targetHours: number) => void;
   deleteCategory: (id: string) => void;
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
@@ -53,7 +54,7 @@ const PlannerContext = createContext<PlannerContextType | null>(null);
 export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [categories, setCategories] = useState<Category[]>(DEFAULT_CATEGORIES);
   const [templates, setTemplates] = useState<BlockTemplate[]>([]);
-  const [currentWeekId] = useState(getCurrentWeekId);
+  const [currentWeekId, setCurrentWeekId] = useState(getCurrentWeekId());
   const [currentPlan, setCurrentPlan] = useState<WeeklyPlan>({ weekId: currentWeekId, blocks: [] });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -75,7 +76,20 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         setIsLoading(false);
       }
     })();
-  }, [currentWeekId]);
+  }, []);
+
+  const changeWeek = useCallback(async (newWeekId: string) => {
+    setIsLoading(true);
+    try {
+      const plan = await loadWeeklyPlan(newWeekId);
+      setCurrentWeekId(newWeekId);
+      setCurrentPlan(plan || { weekId: newWeekId, blocks: [] });
+    } catch (e) {
+      console.error('Errore cambio settimana:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
 
   // Auto-save
   useEffect(() => {
@@ -242,6 +256,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         currentPlan,
         currentWeekId,
         isLoading,
+        changeWeek,
         addCategory,
         deleteCategory,
         addTemplate,

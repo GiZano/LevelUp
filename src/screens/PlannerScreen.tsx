@@ -9,10 +9,11 @@ import { usePeaks } from '../store/PeaksContext';
 import CategoryProgress from '../components/CategoryProgress';
 import BlockChip from '../components/BlockChip';
 import { DAYS_OF_WEEK, DAY_LABELS, DayOfWeek } from '../types';
+import { getDatesOfWeek, getNextWeekId, getPrevWeekId } from '../types/weekUtils';
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours } = usePlanner();
+  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours, changeWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -83,11 +84,21 @@ export default function PlannerScreen({ navigation }: any) {
     setSelectedDay(null);
   };
 
+  const datesOfWeek = getDatesOfWeek(currentWeekId);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Categorie summary */}
       <View style={[styles.summaryContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
-        <Text style={[styles.weekText, { color: colors.textSecondary }]}>Settimana {currentWeekId}</Text>
+        <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: Spacing.xs}}>
+          <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>← Precedente</Text>
+          </Pressable>
+          <Text style={[styles.weekText, { color: colors.textSecondary, marginBottom: 0 }]}>Settimana {currentWeekId}</Text>
+          <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>Prossima →</Text>
+          </Pressable>
+        </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.summaryList}>
           {categories.map((cat) => {
             const hours = getCategoryHours(cat.id);
@@ -112,11 +123,13 @@ export default function PlannerScreen({ navigation }: any) {
       <ScrollView style={styles.gridScroll}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.grid}>
-            {DAYS_OF_WEEK.map((day) => {
+            {DAYS_OF_WEEK.map((day, idx) => {
               const blocks = currentPlan.blocks.filter(b => b.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime));
+              const dateObj = datesOfWeek[idx];
+              const dateStr = `${dateObj.getDate()}/${dateObj.getMonth() + 1}`;
               return (
                 <View key={day} style={[styles.dayCol, { borderRightColor: colors.border }]}>
-                  <Text style={[styles.dayHeader, { color: colors.text }]}>{DAY_LABELS[day]}</Text>
+                  <Text style={[styles.dayHeader, { color: colors.text }]}>{DAY_LABELS[day]} {dateStr}</Text>
                   
                   <View style={styles.slotContainer}>
                     {blocks.map(block => {

@@ -1,21 +1,50 @@
 import type { DayOfWeek } from './index';
 
-/**
- * Ritorna l'ID della settimana ISO corrente, es. "2026-W39"
- */
-export function getCurrentWeekId(): string {
-  const now = new Date();
-  const yearStart = new Date(now.getFullYear(), 0, 1);
-  const dayOfYear = Math.floor((now.getTime() - yearStart.getTime()) / 86400000) + 1;
-  // Calcolo settimana ISO semplificato
-  const weekNum = Math.ceil((dayOfYear + yearStart.getDay()) / 7);
-  return `${now.getFullYear()}-W${String(weekNum).padStart(2, '0')}`;
+export function getMonday(d: Date): Date {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1); 
+  date.setDate(diff);
+  date.setHours(0,0,0,0);
+  return date;
 }
 
-/**
- * Ritorna il giorno della settimana corrente come DayOfWeek
- */
+export function getWeekId(d: Date): string {
+  const mon = getMonday(d);
+  return `${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
+}
+
+export function getCurrentWeekId(): string {
+  return getWeekId(new Date());
+}
+
 export function getTodayDayOfWeek(): DayOfWeek {
   const days: DayOfWeek[] = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
   return days[new Date().getDay()];
+}
+
+export function getDatesOfWeek(weekId: string): Date[] {
+  const [y, m, d] = weekId.split('-').map(Number);
+  const mon = new Date(y, m - 1, d);
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const nextDay = new Date(mon);
+    nextDay.setDate(mon.getDate() + i);
+    dates.push(nextDay);
+  }
+  return dates;
+}
+
+export function getNextWeekId(weekId: string): string {
+  const [y, m, d] = weekId.split('-').map(Number);
+  const mon = new Date(y, m - 1, d);
+  mon.setDate(mon.getDate() + 7);
+  return getWeekId(mon);
+}
+
+export function getPrevWeekId(weekId: string): string {
+  const [y, m, d] = weekId.split('-').map(Number);
+  const mon = new Date(y, m - 1, d);
+  mon.setDate(mon.getDate() - 7);
+  return getWeekId(mon);
 }
