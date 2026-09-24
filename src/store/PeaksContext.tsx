@@ -8,6 +8,7 @@ interface PeaksState {
   peaks: Peak[];
   streak: number;
   lastActiveDate?: string;
+  totalCompletedHours: number;
   isLoading: boolean;
 }
 
@@ -18,6 +19,7 @@ interface PeaksActions {
   toggleCamp: (peakId: string, campId: string) => void;
   deleteCamp: (peakId: string, campId: string) => void;
   reorderCamps: (peakId: string, camps: Camp[]) => void;
+  addCompletedHours: (hours: number) => void;
 }
 
 type PeaksContextType = PeaksState & PeaksActions;
@@ -28,6 +30,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
   const [peaks, setPeaks] = useState<Peak[]>([]);
   const [streak, setStreak] = useState(0);
   const [lastActiveDate, setLastActiveDate] = useState<string | undefined>();
+  const [totalCompletedHours, setTotalCompletedHours] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
   // Carica dati all'avvio
@@ -38,6 +41,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         setPeaks(loadedPeaks);
         setStreak(streakData.streak);
         setLastActiveDate(streakData.lastActiveDate);
+        setTotalCompletedHours(streakData.totalCompletedHours);
       } catch (e) {
         console.error('Errore caricamento dati:', e);
       } finally {
@@ -53,14 +57,19 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
     }
   }, [peaks, isLoading]);
 
-  // Salva streak ogni volta che cambia
+  // Salva streak e ore ogni volta che cambiano
   useEffect(() => {
     if (!isLoading && lastActiveDate) {
-      saveStreak(streak, lastActiveDate).catch((e) =>
+      saveStreak(streak, lastActiveDate, totalCompletedHours).catch((e) =>
         console.error('Errore salvataggio streak:', e)
       );
     }
-  }, [streak, lastActiveDate, isLoading]);
+  }, [streak, lastActiveDate, totalCompletedHours, isLoading]);
+
+  const addCompletedHours = useCallback((hours: number) => {
+    setTotalCompletedHours((prev) => prev + hours);
+    recordActivity();
+  }, []);
 
   const recordActivity = useCallback(() => {
     const updated = updateStreak(streak, lastActiveDate);
@@ -172,6 +181,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         peaks,
         streak,
         lastActiveDate,
+        totalCompletedHours,
         isLoading,
         addPeak,
         deletePeak,
@@ -179,6 +189,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         toggleCamp,
         deleteCamp,
         reorderCamps,
+        addCompletedHours,
       }}
     >
       {children}

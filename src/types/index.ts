@@ -33,8 +33,70 @@ export interface WeeklyBlock {
 }
 
 export interface UserStats {
-  totalAltitude: number; // 100m per campo completato
+  totalAltitude: number; // 100m per campo completato + 1m per ora completata
   peaksReached: number;
   currentStreak: number;
   lastActiveDate?: string; // ISO 8601 (solo data, YYYY-MM-DD)
+  totalCompletedHours: number; // Incrementato quando un blocco viene completato
+}
+
+// ── Weekly Planner types ──
+
+export type DayOfWeek = 'lun' | 'mar' | 'mer' | 'gio' | 'ven' | 'sab' | 'dom';
+
+export const DAYS_OF_WEEK: DayOfWeek[] = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
+
+export const DAY_LABELS: Record<DayOfWeek, string> = {
+  lun: 'Lunedì',
+  mar: 'Martedì',
+  mer: 'Mercoledì',
+  gio: 'Giovedì',
+  ven: 'Venerdì',
+  sab: 'Sabato',
+  dom: 'Domenica',
+};
+
+export type TimeSlot = 'mattina' | 'pomeriggio' | 'sera';
+
+export const TIME_SLOTS: TimeSlot[] = ['mattina', 'pomeriggio', 'sera'];
+
+export const TIME_SLOT_LABELS: Record<TimeSlot, string> = {
+  mattina: '🌅 Mattina',
+  pomeriggio: '☀️ Pomeriggio',
+  sera: '🌙 Sera',
+};
+
+export interface Category {
+  id: string;
+  name: string;
+  color: string;
+  emoji: string;
+  targetHoursPerWeek: number;
+}
+
+export interface BlockTemplate {
+  id: string;
+  name: string;
+  categoryId: string;
+  durationHours: number;
+  peakId?: string; // collegamento opzionale a una vetta
+}
+
+export interface ScheduledBlock {
+  id: string;
+  templateId?: string; // opzionale se è one-off
+  day: DayOfWeek;
+  timeSlot: TimeSlot;
+  done: boolean;
+  // Campi per blocchi one-off temporanei
+  isOneOff?: boolean;
+  oneOffName?: string;
+  oneOffCategoryId?: string;
+  oneOffDuration?: number;
+}
+
+/** Settimana identificata da ISO week string, es. "2026-W39" */
+export interface WeeklyPlan {
+  weekId: string;
+  blocks: ScheduledBlock[];
 }

@@ -22,7 +22,7 @@ type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: HomeProps) {
   const { colors, isDark } = useThemeColors();
-  const { peaks, streak, lastActiveDate, addPeak } = usePeaks();
+  const { peaks, streak, lastActiveDate, totalCompletedHours, addPeak } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState('');
@@ -36,7 +36,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
     });
   }, [navigation, colors]);
 
-  const stats = computeStats(peaks, streak, lastActiveDate);
+  const stats = computeStats(peaks, streak, lastActiveDate, totalCompletedHours);
 
   const handleCreate = () => {
     const trimmed = name.trim();
