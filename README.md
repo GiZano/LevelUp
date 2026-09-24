@@ -141,14 +141,6 @@ See [ROADMAP.md](./ROADMAP.md) for the complete development plan.
 | **Phase 2** | Weekly Planner | 🟢 Completed |
 | **Phase 3** | CI/CD and automation | 🟡 In Progress |
 
----
-
-## 🧠 Philosophy
-
-- **Ship > Perfect**: better an ugly app you use than a beautiful one you never finish
-- **AI-assisted development**: AI writes the UI code, you are the architect
-- **Timebox everything**: each phase has an hour budget, not a feature budget
-- **The app is the scaffolding, not the building**: the day time-boxing comes natural and you no longer need the app, you have won
 
 ---
 
