@@ -78,6 +78,7 @@ export interface ScheduledBlock {
   day: DayOfWeek;
   startTime: string; // formato "HH:mm", es. "09:30" o "22:00"
   done: boolean;
+  calendarEventId?: string; // ID dell'evento su Google Calendar per poterlo cancellare
   // Campi per blocchi one-off temporanei
   isOneOff?: boolean;
   oneOffName?: string;

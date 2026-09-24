@@ -51,14 +51,26 @@ export async function createCalendarEvent(title: string, day: DayOfWeek, startTi
     const durationMs = durationHours * 60 * 60 * 1000;
     endDate.setTime(targetDate.getTime() + durationMs);
 
-    await Calendar.createEventAsync(calendarId, {
+    const eventId = await Calendar.createEventAsync(calendarId, {
       title,
       startDate: targetDate,
       endDate,
       timeZone: 'Europe/Rome',
       alarms: [{ relativeOffset: -10 }] // Notifica 10 min prima
     });
+    return eventId;
   } catch (e) {
     console.error('Errore calendario:', e);
+    return null;
+  }
+}
+
+export async function deleteCalendarEvent(eventId: string) {
+  try {
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status !== 'granted') return;
+    await Calendar.deleteEventAsync(eventId);
+  } catch (e) {
+    console.error('Errore cancellazione calendario:', e);
   }
 }

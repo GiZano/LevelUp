@@ -9,8 +9,8 @@ import {
   saveWeeklyPlan,
   loadWeeklyPlan,
 } from './plannerStorage';
-import { getCurrentWeekId } from '../types/weekUtils';
-import { createCalendarEvent } from '../utils/calendar';
+import { getCurrentWeekId, getPrevWeekId } from '../types/weekUtils';
+import { createCalendarEvent, deleteCalendarEvent } from '../utils/calendar';
 
 // ── Categorie predefinite ──
 
@@ -43,6 +43,7 @@ interface PlannerActions {
   scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
   unscheduleBlock: (blockId: string) => void;
   toggleBlockDone: (blockId: string) => void;
+  copyPreviousWeek: () => void;
   getTemplateById: (id: string) => BlockTemplate | undefined;
   getCategoryById: (id: string) => Category | undefined;
   getCategoryHours: (categoryId: string) => { scheduled: number; completed: number; target: number };
@@ -147,32 +148,40 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, startTime: string) => {
+    const newId = generateId();
     setCurrentPlan((prev) => {
       const newBlock: ScheduledBlock = {
-        id: generateId(),
+        id: newId,
         templateId,
         day,
         startTime,
         done: false,
       };
-
-      // Sincronizza con Google Calendar in background
-      const template = templates.find(t => t.id === templateId);
-      if (template) {
-        createCalendarEvent(template.name, day, startTime, template.durationHours).catch(console.error);
-      }
-
       return {
         ...prev,
         blocks: [...prev.blocks, newBlock],
       };
     });
+
+    // Sincronizza con Google Calendar in background e salva l'ID
+    const template = templates.find(t => t.id === templateId);
+    if (template) {
+      createCalendarEvent(template.name, day, startTime, template.durationHours).then(eventId => {
+        if (eventId) {
+          setCurrentPlan(prev => ({
+            ...prev,
+            blocks: prev.blocks.map(b => b.id === newId ? { ...b, calendarEventId: eventId } : b)
+          }));
+        }
+      }).catch(console.error);
+    }
   }, [templates]);
 
   const scheduleOneOffBlock = useCallback((name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => {
+    const newId = generateId();
     setCurrentPlan((prev) => {
       const newBlock: ScheduledBlock = {
-        id: generateId(),
+        id: newId,
         day,
         startTime,
         done: false,
@@ -181,23 +190,77 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         oneOffCategoryId: categoryId,
         oneOffDuration: durationHours,
       };
-
-      // Sincronizza con Google Calendar in background
-      createCalendarEvent(name, day, startTime, durationHours).catch(console.error);
-
       return {
         ...prev,
         blocks: [...prev.blocks, newBlock],
       };
     });
+
+    // Sincronizza con Google Calendar in background
+    createCalendarEvent(name, day, startTime, durationHours).then(eventId => {
+      if (eventId) {
+        setCurrentPlan(prev => ({
+          ...prev,
+          blocks: prev.blocks.map(b => b.id === newId ? { ...b, calendarEventId: eventId } : b)
+        }));
+      }
+    }).catch(console.error);
   }, [templates]);
 
   const unscheduleBlock = useCallback((blockId: string) => {
-    setCurrentPlan((prev) => ({
-      ...prev,
-      blocks: prev.blocks.filter((b) => b.id !== blockId),
-    }));
+    setCurrentPlan((prev) => {
+      const block = prev.blocks.find(b => b.id === blockId);
+      if (block?.calendarEventId) {
+        deleteCalendarEvent(block.calendarEventId).catch(console.error);
+      }
+      return {
+        ...prev,
+        blocks: prev.blocks.filter((b) => b.id !== blockId),
+      };
+    });
   }, []);
+
+  const copyPreviousWeek = useCallback(async () => {
+    try {
+      const prevWeekId = getPrevWeekId(currentWeekId);
+      const prevPlan = await loadWeeklyPlan(prevWeekId);
+      if (!prevPlan || prevPlan.blocks.length === 0) return;
+
+      const newBlocks: ScheduledBlock[] = [];
+      for (const b of prevPlan.blocks) {
+        if (b.isOneOff) continue; // Non copiamo eventi una tantum
+        const template = templates.find(t => t.id === b.templateId);
+        if (!template) continue;
+
+        const newId = generateId();
+        const newBlock: ScheduledBlock = {
+          id: newId,
+          templateId: b.templateId,
+          day: b.day,
+          startTime: b.startTime,
+          done: false,
+        };
+        newBlocks.push(newBlock);
+
+        // Crea eventi sul nuovo calendario in background
+        createCalendarEvent(template.name, b.day, b.startTime, template.durationHours).then(eventId => {
+          if (eventId) {
+            setCurrentPlan(prev => ({
+              ...prev,
+              blocks: prev.blocks.map(blk => blk.id === newId ? { ...blk, calendarEventId: eventId } : blk)
+            }));
+          }
+        }).catch(console.error);
+      }
+
+      setCurrentPlan(prev => ({
+        ...prev,
+        blocks: [...prev.blocks, ...newBlocks],
+      }));
+    } catch (e) {
+      console.error('Errore copia settimana precedente:', e);
+    }
+  }, [currentWeekId, templates]);
 
   const toggleBlockDone = useCallback((blockId: string) => {
     setCurrentPlan((prev) => {
@@ -266,6 +329,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         scheduleOneOffBlock,
         unscheduleBlock,
         toggleBlockDone,
+        copyPreviousWeek,
         getTemplateById,
         getCategoryById,
         getCategoryHours,

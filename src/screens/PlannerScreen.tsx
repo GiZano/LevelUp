@@ -13,7 +13,7 @@ import { getDatesOfWeek, getNextWeekId, getPrevWeekId, getCurrentWeekId, getToda
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors, isDark } = useThemeColors();
-  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours, changeWeek } = usePlanner();
+  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -119,6 +119,23 @@ export default function PlannerScreen({ navigation }: any) {
       </View>
 
       {/* Grid */}
+      {currentPlan.blocks.length === 0 && (
+        <View style={{padding: Spacing.md, alignItems: 'center'}}>
+          <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>Questa settimana è vuota.</Text>
+          <Pressable 
+            onPress={() => {
+              Alert.alert('Copia', 'Vuoi copiare i blocchi ricorrenti dalla settimana precedente?', [
+                { text: 'Annulla', style: 'cancel' },
+                { text: 'Copia', onPress: copyPreviousWeek }
+              ])
+            }}
+            style={[styles.btn, {backgroundColor: colors.primary}]}
+          >
+            <Text style={{color: '#fff', fontWeight: 'bold'}}>🔄 Copia Settimana Precedente</Text>
+          </Pressable>
+        </View>
+      )}
+
       <ScrollView style={styles.gridScroll}>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.grid}>
