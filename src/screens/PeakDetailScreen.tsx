@@ -1,3 +1,4 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useLayoutEffect, useState } from 'react';
 import {
   Alert,

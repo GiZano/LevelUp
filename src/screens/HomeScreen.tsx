@@ -1,9 +1,9 @@
+import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useLayoutEffect, useState } from 'react';
 import {
   FlatList,
   Modal,
   Pressable,
-  SafeAreaView,
   StyleSheet,
   Text,
   TextInput,

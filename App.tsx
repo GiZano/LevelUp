@@ -93,6 +93,7 @@ function TabNavigator() {
   );
 }
 
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Text } from 'react-native';
 
 const LightNavTheme = {
@@ -124,13 +125,15 @@ export default function App() {
   const isDark = scheme === 'dark';
 
   return (
-    <PeaksProvider>
-      <PlannerProvider>
-        <NavigationContainer theme={isDark ? DarkNavTheme : LightNavTheme}>
-          <TabNavigator />
-        </NavigationContainer>
-        <StatusBar style="auto" />
-      </PlannerProvider>
-    </PeaksProvider>
+    <SafeAreaProvider>
+      <PeaksProvider>
+        <PlannerProvider>
+          <NavigationContainer theme={isDark ? DarkNavTheme : LightNavTheme}>
+            <TabNavigator />
+          </NavigationContainer>
+          <StatusBar style="auto" />
+        </PlannerProvider>
+      </PeaksProvider>
+    </SafeAreaProvider>
   );
 }
