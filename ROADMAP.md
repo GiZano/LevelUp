@@ -99,6 +99,7 @@ The time-blocking that solves the original problem: "I don't know what to do".
 > These features only exist here. Do not touch until Phase 2 is stable and used daily for at least 2 weeks.
 
 - [ ] **Achievements/Badges**: Unlockable trophies every X meters climbed (e.g. "Everest Base Camp - 5364m", "Mont Blanc - 4809m")
+- [ ] **Personal Inventory**: Track items, electronics, and important belongings (useful for keeping track of maintenance, warranties, etc.)
 - [ ] Native internal notifications/reminders for scheduled blocks (if Google Calendar isn't enough)
 - [ ] Android widget for daily view
 - [ ] Historical charts (progress over time, hours per week)
