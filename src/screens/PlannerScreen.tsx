@@ -61,7 +61,22 @@ export default function PlannerScreen({ navigation }: any) {
 
   const handleAddPress = (day: DayOfWeek) => {
     setSelectedDay(day);
-    setStartTime(new Date(new Date().setHours(9, 0, 0, 0)));
+
+    const dayBlocks = currentPlan.blocks.filter(b => b.day === day).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    if (dayBlocks.length > 0) {
+      const lastBlock = dayBlocks[dayBlocks.length - 1];
+      let dur = 0;
+      if (lastBlock.isOneOff && lastBlock.oneOffDuration) dur = lastBlock.oneOffDuration;
+      else if (lastBlock.templateId) dur = getTemplateById(lastBlock.templateId)?.durationHours || 0;
+      
+      const [hh, mm] = lastBlock.startTime.split(':').map(Number);
+      const startMs = new Date().setHours(hh, mm, 0, 0);
+      const endMs = startMs + dur * 60 * 60 * 1000;
+      setStartTime(new Date(endMs));
+    } else {
+      setStartTime(new Date(new Date().setHours(9, 0, 0, 0)));
+    }
+
     setModalVisible(true);
   };
 
