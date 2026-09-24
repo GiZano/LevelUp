@@ -10,6 +10,7 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.gizano.levelup",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -22,7 +23,14 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "@react-native-community/datetimepicker"
+      "@react-native-community/datetimepicker",
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "L'app necessita dell'accesso al calendario per sincronizzare i tuoi blocchi di produttività.",
+          "calendarWritePermission": "L'app necessita dell'accesso in scrittura per salvare automaticamente i blocchi sul tuo Google Calendar."
+        }
+      ]
     ]
   }
 }
