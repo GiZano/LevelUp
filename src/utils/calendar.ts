@@ -7,34 +7,51 @@ async function getDefaultCalendarSource() {
   return defaultCalendar.source;
 }
 
-export async function createCalendarEvent(title: string, day: DayOfWeek, startTime: string, durationHours: number) {
+async function getOrCreateCategoryCalendar(catName: string, catColor: string): Promise<string | null> {
+  const { status } = await Calendar.requestCalendarPermissionsAsync();
+  if (status !== 'granted') return null;
+
+  const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
+  const calName = `LevelUp - ${catName}`;
+  const existing = calendars.find(c => c.title === calName);
+  if (existing) {
+    // Se il colore è cambiato, potremmo aggiornarlo, ma per ora teniamo semplice
+    return existing.id;
+  }
+
+  let source;
+  if (Platform.OS === 'ios') {
+    source = await getDefaultCalendarSource();
+  } else {
+    const primaryCal = calendars.find(c => c.isPrimary) || calendars.find(c => c.source.name.includes('@'));
+    source = primaryCal?.source;
+  }
+
+  if (!source) return calendars.find(c => c.isPrimary)?.id || null;
+
   try {
-    const { status } = await Calendar.requestCalendarPermissionsAsync();
-    if (status !== 'granted') {
-      return;
-    }
+    const newCalId = await Calendar.createCalendarAsync({
+      title: calName,
+      color: catColor,
+      entityType: Calendar.EntityTypes.EVENT,
+      sourceId: source.id,
+      source: source,
+      name: calName,
+      ownerAccount: source.name,
+      accessLevel: Calendar.CalendarAccessLevel.OWNER,
+    });
+    return newCalId;
+  } catch (e) {
+    console.error('Errore creazione calendario:', e);
+    return calendars.find(c => c.isPrimary)?.id || null; // Fallback al primario
+  }
+}
 
-    const calendars = await Calendar.getCalendarsAsync(Calendar.EntityTypes.EVENT);
-    let calendarId = calendars.find(c => c.isPrimary)?.id;
+export async function createCalendarEvent(title: string, day: DayOfWeek, startTime: string, durationHours: number, catName: string, catColor: string) {
+  try {
+    const calendarId = await getOrCreateCategoryCalendar(catName, catColor);
+    if (!calendarId) return null;
 
-    if (!calendarId && Platform.OS === 'ios') {
-      const defaultCalendarSource = await getDefaultCalendarSource();
-      const newCalendarID = await Calendar.createCalendarAsync({
-        title: 'LevelUp Planner',
-        color: 'blue',
-        entityType: Calendar.EntityTypes.EVENT,
-        sourceId: defaultCalendarSource.id,
-        source: defaultCalendarSource,
-        name: 'internalCalendarName',
-        ownerAccount: 'personal',
-        accessLevel: Calendar.CalendarAccessLevel.OWNER,
-      });
-      calendarId = newCalendarID;
-    }
-
-    if (!calendarId) return;
-
-    // Calcola la data e l'ora
     const now = new Date();
     const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1; // 0=Lun, 6=Dom
     const targetDays = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
@@ -60,7 +77,7 @@ export async function createCalendarEvent(title: string, day: DayOfWeek, startTi
     });
     return eventId;
   } catch (e) {
-    console.error('Errore calendario:', e);
+    console.error('Errore creazione evento:', e);
     return null;
   }
 }
