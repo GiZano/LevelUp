@@ -24,6 +24,8 @@ export default function PlannerScreen({ navigation }: any) {
 
   const [editBlockId, setEditBlockId] = useState<string | null>(null);
   const [editBlockDesc, setEditBlockDesc] = useState('');
+  const editBlock = editBlockId ? currentPlan.blocks.find(b => b.id === editBlockId) : null;
+  const isDone = editBlock?.done;
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -263,8 +265,8 @@ export default function PlannerScreen({ navigation }: any) {
                 <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.danger }} onPress={handleDeleteBlock}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>Delete</Text>
                 </Pressable>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.success }} onPress={handleToggleBlock}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>✓ Toggle</Text>
+                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success }} onPress={handleToggleBlock}>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{isDone ? 'X Toggle' : '✓ Toggle'}</Text>
                 </Pressable>
               </View>
               <View style={{flexDirection: 'row', gap: 8}}>
