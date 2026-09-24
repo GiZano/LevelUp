@@ -132,44 +132,74 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, timeSlot: TimeSlot) => {
-    const newBlock: ScheduledBlock = {
-      id: generateId(),
-      templateId,
-      day,
-      timeSlot,
-      done: false,
-    };
-    setCurrentPlan((prev) => ({
-      ...prev,
-      blocks: [...prev.blocks, newBlock],
-    }));
+    setCurrentPlan((prev) => {
+      // Calcola l'offset ore per posizionare il blocco dopo quelli già presenti nello stesso slot
+      const slotBlocks = prev.blocks.filter(b => b.day === day && b.timeSlot === timeSlot);
+      let offsetHours = 0;
+      for (const b of slotBlocks) {
+        if (b.isOneOff) {
+          offsetHours += b.oneOffDuration || 0;
+        } else if (b.templateId) {
+          const t = templates.find(temp => temp.id === b.templateId);
+          if (t) offsetHours += t.durationHours;
+        }
+      }
 
-    // Sincronizza con Google Calendar
-    const template = templates.find(t => t.id === templateId);
-    if (template) {
-      createCalendarEvent(template.name, day, timeSlot, template.durationHours).catch(console.error);
-    }
+      const newBlock: ScheduledBlock = {
+        id: generateId(),
+        templateId,
+        day,
+        timeSlot,
+        done: false,
+      };
+
+      // Sincronizza con Google Calendar in background usando il prev state aggiornato con offset
+      const template = templates.find(t => t.id === templateId);
+      if (template) {
+        createCalendarEvent(template.name, day, timeSlot, template.durationHours, offsetHours).catch(console.error);
+      }
+
+      return {
+        ...prev,
+        blocks: [...prev.blocks, newBlock],
+      };
+    });
   }, [templates]);
 
   const scheduleOneOffBlock = useCallback((name: string, categoryId: string, durationHours: number, day: DayOfWeek, timeSlot: TimeSlot) => {
-    const newBlock: ScheduledBlock = {
-      id: generateId(),
-      day,
-      timeSlot,
-      done: false,
-      isOneOff: true,
-      oneOffName: name,
-      oneOffCategoryId: categoryId,
-      oneOffDuration: durationHours,
-    };
-    setCurrentPlan((prev) => ({
-      ...prev,
-      blocks: [...prev.blocks, newBlock],
-    }));
+    setCurrentPlan((prev) => {
+      // Calcola l'offset ore per posizionare il blocco dopo quelli già presenti nello stesso slot
+      const slotBlocks = prev.blocks.filter(b => b.day === day && b.timeSlot === timeSlot);
+      let offsetHours = 0;
+      for (const b of slotBlocks) {
+        if (b.isOneOff) {
+          offsetHours += b.oneOffDuration || 0;
+        } else if (b.templateId) {
+          const t = templates.find(temp => temp.id === b.templateId);
+          if (t) offsetHours += t.durationHours;
+        }
+      }
 
-    // Sincronizza con Google Calendar
-    createCalendarEvent(name, day, timeSlot, durationHours).catch(console.error);
-  }, []);
+      const newBlock: ScheduledBlock = {
+        id: generateId(),
+        day,
+        timeSlot,
+        done: false,
+        isOneOff: true,
+        oneOffName: name,
+        oneOffCategoryId: categoryId,
+        oneOffDuration: durationHours,
+      };
+
+      // Sincronizza con Google Calendar in background
+      createCalendarEvent(name, day, timeSlot, durationHours, offsetHours).catch(console.error);
+
+      return {
+        ...prev,
+        blocks: [...prev.blocks, newBlock],
+      };
+    });
+  }, [templates]);
 
   const unscheduleBlock = useCallback((blockId: string) => {
     setCurrentPlan((prev) => ({
