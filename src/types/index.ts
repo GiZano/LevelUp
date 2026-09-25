@@ -48,13 +48,13 @@ export type DayOfWeek = 'lun' | 'mar' | 'mer' | 'gio' | 'ven' | 'sab' | 'dom';
 export const DAYS_OF_WEEK: DayOfWeek[] = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
 
 export const DAY_LABELS: Record<DayOfWeek, string> = {
-  lun: t('days.mon'),
-  mar: t('days.tue'),
-  mer: t('days.wed'),
-  gio: t('days.thu'),
-  ven: t('days.fri'),
-  sab: t('days.sat'),
-  dom: t('days.sun'),
+  lun: t('days.lun'),
+  mar: t('days.mar'),
+  mer: t('days.mer'),
+  gio: t('days.gio'),
+  ven: t('days.ven'),
+  sab: t('days.sab'),
+  dom: t('days.dom'),
 };
 
 export interface Category {
