@@ -39,8 +39,10 @@ interface PlannerActions {
   addCategory: (name: string, emoji: string, color: string, targetHours: number) => void;
   editCategory: (id: string, updates: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
+  archiveCategory: (id: string) => void;
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
   deleteTemplate: (id: string) => void;
+  archiveTemplate: (id: string) => void;
   scheduleBlock: (templateId: string, day: DayOfWeek, startTime: string) => void;
   scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
   unscheduleBlock: (blockId: string) => void;
@@ -135,6 +137,10 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }]);
   }, []);
 
+  const archiveCategory = useCallback((id: string) => {
+    setCategories((prev) => prev.map(c => c.id === id ? { ...c, isArchived: true } : c));
+  }, []);
+
   const deleteCategory = useCallback((id: string) => {
     setCategories((prev) => prev.filter((c) => c.id !== id));
   }, []);
@@ -151,6 +157,10 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       durationHours,
       peakId,
     }]);
+  }, []);
+
+  const archiveTemplate = useCallback((id: string) => {
+    setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: true } : t));
   }, []);
 
   const deleteTemplate = useCallback((id: string) => {
@@ -357,8 +367,10 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         addCategory,
         editCategory,
         deleteCategory,
+        archiveCategory,
         addTemplate,
         deleteTemplate,
+        archiveTemplate,
         scheduleBlock,
         scheduleOneOffBlock,
         unscheduleBlock,

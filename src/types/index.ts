@@ -30,7 +30,8 @@ export interface WeeklyBlock {
   category: string;
   color: string;
   estimatedHours: number;
-  peakId?: string; // optional link to a peak
+  peakId?: string;
+  isArchived?: boolean;
 }
 
 export interface UserStats {
@@ -63,6 +64,7 @@ export interface Category {
   color: string;
   emoji: string;
   targetHoursPerWeek: number;
+  isArchived?: boolean;
 }
 
 export interface BlockTemplate {
@@ -70,7 +72,8 @@ export interface BlockTemplate {
   name: string;
   categoryId: string;
   durationHours: number;
-  peakId?: string; // optional link to a peak
+  peakId?: string;
+  isArchived?: boolean;
 }
 
 export interface ScheduledBlock {

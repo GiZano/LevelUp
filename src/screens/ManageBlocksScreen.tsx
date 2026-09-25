@@ -10,7 +10,7 @@ const DURATION_OPTIONS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 8];
 
 export default function ManageBlocksScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const { categories, templates, addTemplate, deleteTemplate, getCategoryById, editCategory, addCategory, deleteCategory } = usePlanner();
+  const { categories, templates, addTemplate, getCategoryById, editCategory, addCategory, archiveCategory, archiveTemplate } = usePlanner();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -33,7 +33,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const [catEmoji, setCatEmoji] = useState('⭐');
   const [catColor, setCatColor] = useState('#EF4444');
   const CATEGORY_COLORS = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280'];
-  const totalHours = categories.reduce((sum, c) => sum + c.targetHoursPerWeek, 0);
+  const activeCategories = categories.filter(c => !c.isArchived);
+  const activeTemplates = templates.filter(t => !t.isArchived);
+  const totalHours = activeCategories.reduce((sum, c) => sum + c.targetHoursPerWeek, 0);
 
   const resetModal = () => {
     setBlockName('');
@@ -50,9 +52,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
   };
 
   const handleDeleteBlock = (id: string, name: string) => {
-    Alert.alert(t('manage.deleteBlockTitle'), `Sei sicuro di voler eliminare "${name}"?`, [
+    Alert.alert('Archivia Blocco', `Sei sicuro di voler archiviare "${name}"?`, [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: t('common.delete'), style: 'destructive', onPress: () => deleteTemplate(id) },
+      { text: 'Archivia', style: 'destructive', onPress: () => archiveTemplate(id) },
     ]);
   };
 
@@ -94,15 +96,15 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const handleDeleteCategory = () => {
     if (!editCatId) return;
     Alert.alert(
-      t('common.delete'),
-      "Sei sicuro di voler eliminare questa categoria?",
+      'Archivia Categoria',
+      "Sei sicuro di voler archiviare questa categoria? Non sarà più visibile tra le categorie attive, ma lo storico verrà conservato.",
       [
         { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: t('common.delete'), 
+          text: 'Archivia', 
           style: 'destructive',
           onPress: () => {
-            deleteCategory(editCatId);
+            archiveCategory(editCatId);
             setCatModalVisible(false);
           }
         }
@@ -111,7 +113,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   };
 
   // Group templates by category
-  const templatesByCategory = categories.map((c) => ({
+  const templatesByCategory = activeCategories.map((c) => ({
     categoryId: c.id,
     items: templates.filter((t) => t.categoryId === c.id),
   }));
@@ -131,7 +133,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
           Monte ore target settimanale: {totalHours}h / 168h ({168 - totalHours}h libere)
         </Text>
         
-        {categories.map((c) => (
+        {activeCategories.map((c) => (
           <Pressable key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]} onPress={() => openEditCategory(c)}>
             <Text style={styles.catEmoji}>{c.emoji}</Text>
             <Text style={[styles.catName, { color: colors.text }]}>{c.name}</Text>
@@ -143,7 +145,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: Spacing.xl }]}>{t('manage.activityBlocks')}</Text>
 
-        {templates.length === 0 && (
+        {activeTemplates.length === 0 && (
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
             Nessun blocco definito. Creane uno usando il tasto in basso.
           </Text>
@@ -287,7 +289,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.category')}</Text>
             <View style={styles.chipsRow}>
-              {categories.map((c) => {
+              {activeCategories.map((c) => {
                 const selected = selectedCategoryId === c.id;
                 return (
                   <Pressable

@@ -322,7 +322,7 @@ export default function PlannerScreen({ navigation }: any) {
               )}
             </View>
 
-            {templates.length === 0 ? (
+            {templates.filter(t => !t.isArchived).length === 0 ? (
               <View style={{padding: Spacing.lg, alignItems: 'center'}}>
                 <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>{t('planner.createFirst')}</Text>
                 <Pressable onPress={() => { setModalVisible(false); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
@@ -331,7 +331,7 @@ export default function PlannerScreen({ navigation }: any) {
               </View>
             ) : (
               <ScrollView style={{maxHeight: 300}}>
-                {templates.map(t => {
+                {templates.filter(t => !t.isArchived).map(t => {
                   const cat = getCategoryById(t.categoryId);
                   return (
                     <Pressable key={t.id} style={[styles.templateItem, {borderBottomColor: colors.border}]} onPress={() => handlePickTemplate(t.id)}>
