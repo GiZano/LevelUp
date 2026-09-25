@@ -38,7 +38,7 @@ export default function BlockChip({
         },
       ]}
     >
-      <Text style={styles.emoji}>{categoryEmoji}</Text>
+      <MaterialCommunityIcons name={categoryEmoji as any} size={16} color={categoryColor} style={styles.emoji} />
 
       <View style={styles.nameContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>

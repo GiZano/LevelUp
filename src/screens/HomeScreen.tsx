@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: Spacing.sm,
+    gap: Spacing.md,
     marginTop: Spacing.md,
   },
   modalButton: {

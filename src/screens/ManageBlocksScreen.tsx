@@ -1,6 +1,7 @@
 import { t } from "../utils/i18n";
 import React, { useState, useLayoutEffect } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import IconPicker from '../components/IconPicker';
 import { LayoutAnimation, View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -32,8 +33,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const [editCatId, setEditCatId] = useState<string | null>(null);
   const [catTargetHours, setCatTargetHours] = useState('');
   const [catName, setCatName] = useState('');
-  const [catEmoji, setCatEmoji] = useState('⭐');
+  const [catEmoji, setCatEmoji] = useState('star');
   const [catColor, setCatColor] = useState('#EF4444');
+  const [iconPickerVisible, setIconPickerVisible] = useState(false);
   const CATEGORY_COLORS = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280'];
   const activeCategories = categories.filter(c => !c.isArchived);
   const activeTemplates = templates.filter(t => !t.isArchived);
@@ -65,7 +67,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const openNewCategory = () => {
     setEditCatId(null);
     setCatName('');
-    setCatEmoji('⭐');
+    setCatEmoji('star');
     setCatColor('#EF4444');
     setCatTargetHours('10');
     setCatModalVisible(true);
@@ -289,13 +291,15 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   onChangeText={setCatName}
                 />
                 
-                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Emoji</Text>
-                <TextInput
-                  style={[styles.input, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
-                  value={catEmoji}
-                  onChangeText={setCatEmoji}
-                  maxLength={2}
-                />
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Icona</Text>
+                <TouchableOpacity
+                  style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, flexDirection: 'row', alignItems: 'center' }]}
+                  onPress={() => setIconPickerVisible(true)}
+                >
+                  <MaterialCommunityIcons name={catEmoji as any} size={24} color={colors.text} style={{ marginRight: 8 }} />
+                  <Text style={{ color: colors.textSecondary }}>Tocca per cambiare...</Text>
+                </TouchableOpacity>
+                <IconPicker visible={iconPickerVisible} onSelect={(i) => { setCatEmoji(i); setIconPickerVisible(false); }} onClose={() => setIconPickerVisible(false)} />
 
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Color</Text>
                 <View style={[styles.chipsRow, {marginBottom: Spacing.md}]}>
@@ -442,7 +446,7 @@ const styles = StyleSheet.create({
   chipText: { fontSize: FontSize.sm },
   durChip: { paddingVertical: Spacing.xs, paddingHorizontal: Spacing.md, borderRadius: BorderRadius.full, borderWidth: 1 },
   durChipText: { fontSize: FontSize.sm, fontWeight: '600' },
-  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.sm, marginTop: Spacing.md },
+  modalButtons: { flexDirection: 'row', justifyContent: 'flex-end', gap: Spacing.md, marginTop: Spacing.md },
   modalButton: { paddingVertical: Spacing.sm, paddingHorizontal: Spacing.md, borderRadius: BorderRadius.md },
   modalButtonText: { fontSize: FontSize.md, fontWeight: '600' }
 });
