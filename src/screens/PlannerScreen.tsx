@@ -271,20 +271,20 @@ export default function PlannerScreen({ navigation }: any) {
               onChangeText={setEditBlockDesc}
             />
             
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
-              <View style={{flexDirection: 'row', gap: 8}}>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.danger }} onPress={handleDeleteBlock}>
+            <View style={{flexDirection: 'column', gap: 12, marginTop: 16}}>
+              <View style={{flexDirection: 'row', gap: 12}}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.danger, alignItems: 'center' }} onPress={handleDeleteBlock}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.delete')}</Text>
                 </Pressable>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success }} onPress={handleToggleBlock}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success, alignItems: 'center' }} onPress={handleToggleBlock}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{isDone ? 'X Toggle' : '✓ Toggle'}</Text>
                 </Pressable>
               </View>
-              <View style={{flexDirection: 'row', gap: 8}}>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.background }} onPress={() => setEditBlockId(null)}>
+              <View style={{flexDirection: 'row', gap: 12}}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.background, alignItems: 'center' }} onPress={() => setEditBlockId(null)}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>{t('common.cancel')}</Text>
                 </Pressable>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.primary }} onPress={saveBlockDesc}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center' }} onPress={saveBlockDesc}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.save')}</Text>
                 </Pressable>
               </View>
@@ -348,7 +348,7 @@ export default function PlannerScreen({ navigation }: any) {
                     </Pressable>
                   ))}
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', justifyContent: 'flex-end', gap: 16}}>
                   <Pressable onPress={() => setSelectedTemplateId(null)} style={{padding: 12}}>
                     <Text style={{color: colors.textSecondary}}>{t('common.cancel')}</Text>
                   </Pressable>
