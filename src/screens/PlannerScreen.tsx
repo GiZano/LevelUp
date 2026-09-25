@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   dayHeader: { textAlign: 'center', fontWeight: 'bold', marginBottom: Spacing.sm },
   slotContainer: { minHeight: 120 },
   addSlotBtn: { alignItems: 'center', justifyContent: 'center', padding: Spacing.sm, borderRadius: BorderRadius.md, marginTop: Spacing.xs },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
+  modalOverlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'flex-end' },
   modalContent: { borderTopLeftRadius: BorderRadius.lg, borderTopRightRadius: BorderRadius.lg, padding: Spacing.lg, paddingBottom: 40 },
   modalTitle: { fontSize: FontSize.xl, fontWeight: 'bold', marginBottom: Spacing.md },
   templateItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.md, borderBottomWidth: 1 },

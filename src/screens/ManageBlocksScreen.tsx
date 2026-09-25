@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: FontSize.md, textAlign: 'center', paddingVertical: Spacing.lg },
   fab: { position: 'absolute', bottom: Spacing.xl, right: Spacing.lg, width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.27, shadowRadius: 4.65 },
   fabText: { color: '#fff', fontSize: 28, lineHeight: 30, fontWeight: '600' },
-  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: Spacing.lg },
+  modalOverlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', padding: Spacing.lg },
   modalContent: { borderRadius: BorderRadius.lg, padding: Spacing.lg },
   modalTitle: { fontSize: FontSize.xl, fontWeight: '700', marginBottom: Spacing.md },
   input: { borderWidth: 1, borderRadius: BorderRadius.md, padding: Spacing.sm, fontSize: FontSize.md, marginBottom: Spacing.md },

@@ -4,6 +4,10 @@ import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
+import { useFonts, Outfit_400Regular, Outfit_500Medium, Outfit_700Bold } from '@expo-google-fonts/outfit';
+import * as SplashScreen from 'expo-splash-screen';
+
+SplashScreen.preventAutoHideAsync();
 
 import { PeaksProvider } from './src/store/PeaksContext';
 import { PlannerProvider } from './src/store/PlannerContext';
@@ -30,7 +34,7 @@ function VetteStack() {
     <Stack.Navigator
       screenOptions={{
         headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: { fontFamily: 'Outfit_700Bold' },
       }}
     >
       <Stack.Screen name="Home" component={HomeScreen} />
@@ -44,7 +48,7 @@ function PlannerStackNavigator() {
     <PlannerStack.Navigator
       screenOptions={{
         headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: { fontFamily: 'Outfit_700Bold' },
       }}
     >
       <PlannerStack.Screen name="PlannerHome" component={PlannerScreen} />
@@ -57,7 +61,7 @@ function BlocchiStack() {
     <BlocchiStackNav.Navigator
       screenOptions={{
         headerShadowVisible: false,
-        headerTitleStyle: { fontWeight: '700' },
+        headerTitleStyle: { fontFamily: 'Outfit_700Bold' },
       }}
     >
       <BlocchiStackNav.Screen name="GestisciBlocchi" component={ManageBlocksScreen} />
@@ -78,7 +82,8 @@ function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
-        tabBarStyle: {
+        tabBarLabelStyle: { fontFamily: 'Outfit_500Medium' },
+          tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
         },
@@ -89,7 +94,7 @@ function TabNavigator() {
         component={TodayScreen} 
         options={{ 
           title: t('tabs.today'),
-          tabBarIcon: ({ color }) => <Text style={{color}}>🌅</Text> 
+          tabBarIcon: ({ color, size }) => <Ionicons name="sunny-outline" size={size} color={color} /> 
         }} 
       />
       <Tab.Screen 
@@ -97,7 +102,7 @@ function TabNavigator() {
         component={VetteStack} 
         options={{ 
           title: t('tabs.peaks'),
-          tabBarIcon: ({ color }) => <Text style={{color}}>🏔️</Text> 
+          tabBarIcon: ({ color, size }) => <Ionicons name="flag-outline" size={size} color={color} /> 
         }} 
       />
       <Tab.Screen 
@@ -105,7 +110,7 @@ function TabNavigator() {
         component={PlannerStackNavigator} 
         options={{ 
           title: t('tabs.planner'),
-          tabBarIcon: ({ color }) => <Text style={{color}}>📅</Text> 
+          tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size} color={color} /> 
         }} 
       />
       <Tab.Screen 
@@ -113,7 +118,7 @@ function TabNavigator() {
         component={BlocchiStack} 
         options={{ 
           title: t('tabs.blocks'),
-          tabBarIcon: ({ color }) => <Text style={{color}}>🧩</Text> 
+          tabBarIcon: ({ color, size }) => <Ionicons name="cube-outline" size={size} color={color} /> 
         }} 
       />
       <Tab.Screen 
@@ -121,7 +126,7 @@ function TabNavigator() {
         component={SettingsScreen} 
         options={{ 
           title: t('tabs.settings'),
-          tabBarIcon: ({ color }) => <Text style={{color}}>⚙️</Text> 
+          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" size={size} color={color} /> 
         }} 
       />
     </Tab.Navigator>
@@ -130,6 +135,7 @@ function TabNavigator() {
 
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Text } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 
 const LightNavTheme = {
   ...DefaultTheme,
@@ -170,7 +176,7 @@ function RootNavigator() {
         <TabNavigator />
       </NavigationContainer>
       {isReloading && (
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' }]}>
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center' }]}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={{ marginTop: 20, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>
             {locale === 'it' ? 'Cambio lingua...' : 'Changing language...'}
@@ -181,7 +187,24 @@ function RootNavigator() {
   );
 }
 
+
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Outfit_400Regular,
+    Outfit_500Medium,
+    Outfit_700Bold,
+  });
+
+  React.useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
+
   return (
     <SafeAreaProvider>
       <LocaleProvider>

@@ -1,54 +1,56 @@
 /**
  * LevelUp — Theme constants
  *
- * Palette ispirata alla montagna:
- * - Slate blues per il cielo e gli sfondi
- * - Gold/amber per i progressi e gli achievement
- * - Emerald per i completamenti
+ * Palette "Alpine Dusk":
+ * - Warm stone and charcoal for backgrounds
+ * - Alpine lake teal for primary
+ * - Sunset amber for progress and achievements
  */
 
 export const Colors = {
   light: {
-    background: '#F8FAFC',
-    surface: '#FFFFFF',
-    surfaceAlt: '#F1F5F9',
-    text: '#1E293B',
-    textSecondary: '#64748B',
-    textTertiary: '#94A3B8',
-    border: '#E2E8F0',
-    primary: '#3B82F6',
-    primaryDark: '#2563EB',
-    accent: '#F59E0B',
-    accentLight: '#FEF3C7',
-    success: '#10B981',
-    successLight: '#D1FAE5',
-    danger: '#EF4444',
-    dangerLight: '#FEE2E2',
-    streak: '#F97316',
-    mountain: '#CBD5E1',
-    mountainFilled: '#F59E0B',
-    mountainPeak: '#FBBF24',
+    background: '#F5F3EE',
+    surface: '#FDFCFA',
+    surfaceAlt: '#EBE8E2',
+    text: '#2D3436',
+    textSecondary: '#78848C',
+    textTertiary: '#A0AAB2',
+    border: '#DDD8D0',
+    primary: '#3D7C98',
+    primaryDark: '#2B5F75',
+    accent: '#D4955A',
+    accentLight: '#F5E6D8',
+    success: '#5A9E6F',
+    successLight: '#D9EADF',
+    danger: '#C25B56',
+    dangerLight: '#F2D7D6',
+    streak: '#E8873A',
+    mountain: '#C8C1B6',
+    mountainFilled: '#D4955A',
+    mountainPeak: '#F2C94C',
+    overlay: 'rgba(45, 52, 54, 0.4)',
   },
   dark: {
-    background: '#0F172A',
-    surface: '#1E293B',
-    surfaceAlt: '#334155',
-    text: '#F1F5F9',
-    textSecondary: '#94A3B8',
-    textTertiary: '#64748B',
-    border: '#334155',
-    primary: '#60A5FA',
-    primaryDark: '#3B82F6',
-    accent: '#FBBF24',
-    accentLight: '#78350F',
-    success: '#34D399',
-    successLight: '#064E3B',
-    danger: '#F87171',
-    dangerLight: '#7F1D1D',
-    streak: '#FB923C',
-    mountain: '#475569',
-    mountainFilled: '#FBBF24',
-    mountainPeak: '#FDE68A',
+    background: '#0D1117',
+    surface: '#161B22',
+    surfaceAlt: '#21262D',
+    text: '#E6E1DC',
+    textSecondary: '#8B949E',
+    textTertiary: '#646D76',
+    border: '#30363D',
+    primary: '#58A6C7',
+    primaryDark: '#3D7C98',
+    accent: '#E8A954',
+    accentLight: '#5C4321',
+    success: '#56D364',
+    successLight: '#235329',
+    danger: '#F47068',
+    dangerLight: '#612D29',
+    streak: '#F0883E',
+    mountain: '#3B4048',
+    mountainFilled: '#E8A954',
+    mountainPeak: '#FBD87F',
+    overlay: 'rgba(13, 17, 23, 0.7)',
   },
 } as const;
 
