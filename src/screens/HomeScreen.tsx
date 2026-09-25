@@ -159,7 +159,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       
       {/* Peaks Stats Modal */}
       <Modal visible={peaksModalVisible} transparent animationType="slide" onRequestClose={() => setPeaksModalVisible(false)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.peaksHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
@@ -196,7 +196,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
       {/* Altitude Stats Modal */}
       <Modal visible={altModalVisible} transparent animationType="slide" onRequestClose={() => setAltModalVisible(false)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.altHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
@@ -223,7 +223,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         animationType="fade"
         onRequestClose={handleCancel}
       >
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.newPeak')}</Text>
 
@@ -330,7 +330,7 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     flex: 1,
-    backgroundColor: colors.overlay,
+    backgroundColor: 'rgba(0,0,0,0.5)',
     justifyContent: 'center',
     alignItems: 'center',
     padding: Spacing.lg,

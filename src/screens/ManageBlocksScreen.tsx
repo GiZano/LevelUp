@@ -1,6 +1,6 @@
 import { t } from "../utils/i18n";
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert, TouchableOpacity } from 'react-native';
+import { LayoutAnimation, View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -102,7 +102,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
     if (template) {
       const cat = getCategoryById(template.categoryId);
       if (cat?.isArchived) {
-        un{ LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); archiveCategory(cat.id); };
+        unarchiveCategory(cat.id);
       }
       unarchiveTemplate(templateId);
     }
@@ -228,7 +228,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <Text style={[styles.blockName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]} numberOfLines={1}>
                     {t.name}
                   </Text>
-                  <Pressable onPress={() => handleUn{ LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); archiveTemplate(t.id); }} hitSlop={8}>
+                  <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); handleUnarchiveTemplate(t.id); }} hitSlop={8}>
                     <Text style={{fontSize: 16}}>♻️</Text>
                   </Pressable>
                 </View>
@@ -249,7 +249,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
             {/* Selector Modal */}
       <Modal visible={selectorModalVisible} transparent animationType="fade" onRequestClose={() => setSelectorModalVisible(false)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, padding: Spacing.xl }]}>
             <Text style={[styles.modalTitle, { color: colors.text, textAlign: 'center', marginBottom: Spacing.xl }]}>{t('manage.whatToCreate')}</Text>
             
@@ -276,7 +276,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
       {/* Category Modal */}
       <Modal visible={catModalVisible} transparent animationType="fade" onRequestClose={() => setCatModalVisible(false)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{editCatId ? t('manage.editCategory') : 'New Category'}</Text>
             
@@ -333,7 +333,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
       {/* New Block Modal */}
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={resetModal}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('manage.newBlock')}</Text>
 
@@ -431,7 +431,7 @@ const styles = StyleSheet.create({
   emptyText: { fontSize: FontSize.md, textAlign: 'center', paddingVertical: Spacing.lg },
   fab: { position: 'absolute', bottom: Spacing.xl, right: Spacing.lg, width: 56, height: 56, borderRadius: 28, justifyContent: 'center', alignItems: 'center', elevation: 6, shadowColor: '#000', shadowOffset: { width: 0, height: 3 }, shadowOpacity: 0.27, shadowRadius: 4.65 },
   fabText: { color: '#fff', fontSize: 28, lineHeight: 30, fontWeight: '600' },
-  modalOverlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'center', padding: Spacing.lg },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', padding: Spacing.lg },
   modalContent: { borderRadius: BorderRadius.lg, padding: Spacing.lg },
   modalTitle: { fontSize: FontSize.xl, fontWeight: '700', marginBottom: Spacing.md },
   input: { borderWidth: 1, borderRadius: BorderRadius.md, padding: Spacing.sm, fontSize: FontSize.md, marginBottom: Spacing.md },

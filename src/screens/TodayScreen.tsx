@@ -11,10 +11,10 @@ import { DAY_LABELS } from '../types';
 
 const getGreeting = () => {
   const hour = new Date().getHours();
-  if (hour < 12) return '☀️ ' + (t('today.morning') || 'Buongiorno');
-  if (hour < 17) return '🌤️ ' + (t('today.afternoon') || 'Buon pomeriggio');
-  if (hour < 21) return '🌅 ' + (t('today.evening') || 'Buonasera');
-  return '🌙 ' + (t('today.night') || 'Buonanotte');
+  if (hour < 12) return '☀️ ' + (t('today.greetingMorning') || 'Buongiorno');
+  if (hour < 17) return '🌤️ ' + (t('today.greetingAfternoon') || 'Buon pomeriggio');
+  if (hour < 21) return '🌅 ' + (t('today.greetingEvening') || 'Buonasera');
+  return '🌙 ' + (t('today.greetingNight') || 'Buonanotte');
 };
 
 export default function TodayScreen({ navigation }: any) {

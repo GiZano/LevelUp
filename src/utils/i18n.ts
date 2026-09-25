@@ -115,10 +115,10 @@ const translations = {
     // Today
     today: {
       title: 'Today',
-      morning: 'Good morning',
-      afternoon: 'Good afternoon',
-      evening: 'Good evening',
-      night: 'Good night',
+      greetingMorning: 'Good morning',
+      greetingAfternoon: 'Good afternoon',
+      greetingEvening: 'Good evening',
+      greetingNight: 'Good night',
       morning: '🌅 Morning',
       afternoon: '☀️ Afternoon',
       evening: '🌙 Evening',
@@ -259,10 +259,10 @@ const translations = {
     // Today
     today: {
       title: 'Oggi',
-      morning: 'Buongiorno',
-      afternoon: 'Buon pomeriggio',
-      evening: 'Buonasera',
-      night: 'Buonanotte',
+      greetingMorning: 'Buongiorno',
+      greetingAfternoon: 'Buon pomeriggio',
+      greetingEvening: 'Buonasera',
+      greetingNight: 'Buonanotte',
       morning: '🌅 Mattina',
       afternoon: '☀️ Pomeriggio',
       evening: '🌙 Sera',

@@ -254,7 +254,7 @@ export default function PlannerScreen({ navigation }: any) {
 
       {/* Edit Block Modal */}
       <Modal visible={!!editBlockId} transparent animationType="fade" onRequestClose={() => setEditBlockId(null)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>Block Details</Text>
             
@@ -294,7 +294,7 @@ export default function PlannerScreen({ navigation }: any) {
 
       {/* Template Picker Modal */}
       <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => { setModalVisible(false); setSelectedTemplateId(null); }}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('planner.scheduleBlock')}</Text>
             
@@ -422,7 +422,7 @@ const styles = StyleSheet.create({
   dayHeader: { textAlign: 'center', fontWeight: 'bold', marginBottom: Spacing.sm },
   slotContainer: { minHeight: 120 },
   addSlotBtn: { alignItems: 'center', justifyContent: 'center', padding: Spacing.sm, borderRadius: BorderRadius.md, marginTop: Spacing.xs },
-  modalOverlay: { flex: 1, backgroundColor: colors.overlay, justifyContent: 'flex-end' },
+  modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: { borderTopLeftRadius: BorderRadius.lg, borderTopRightRadius: BorderRadius.lg, padding: Spacing.lg, paddingBottom: 40 },
   modalTitle: { fontSize: FontSize.xl, fontWeight: 'bold', marginBottom: Spacing.md },
   templateItem: { flexDirection: 'row', alignItems: 'center', paddingVertical: Spacing.md, borderBottomWidth: 1 },
