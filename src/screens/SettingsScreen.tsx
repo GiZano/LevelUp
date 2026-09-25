@@ -144,7 +144,7 @@ export default function SettingsScreen() {
               <ActivityIndicator color={colors.primary} style={{marginRight: 8}} />
             ) : null}
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>
-              {isImporting ? 'Importazione...' : t('settings.importBtn')}
+              {isImporting ? t('settings.importing') : t('settings.importBtn')}
             </Text>
           </Pressable>
         </View>
