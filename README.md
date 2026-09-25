@@ -1,6 +1,17 @@
-# 🏔️ LevelUp
-
-**Gamify your goals. Conquer your peaks.**
+<div align="center">
+  <img src="./assets/icon.png" width="120" style="border-radius: 24px; margin-bottom: 20px;" alt="LevelUp Logo" />
+  <h1>🏔️ LevelUp</h1>
+  <p><b>Gamify your goals. Conquer your peaks.</b></p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
+    <img src="https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
+    <img src="https://img.shields.io/badge/Open_Source-4CAF50?style=for-the-badge&logo=open-source-initiative&logoColor=white" alt="Open Source" />
+  </p>
+  <p><i>An open-source productivity engine, built by developers, for everyone.</i></p>
+</div>
 
 LevelUp is a mobile app for long-term goal tracking, built around the metaphor of **mountain climbing**: every goal is a peak to reach, every sub-goal is a base camp along the way. It includes a weekly planner to organize your week in blocks and eliminate *decision fatigue*.
 
@@ -143,6 +154,14 @@ See [ROADMAP.md](./ROADMAP.md) for the complete development plan.
 
 
 ---
+
+---
+
+## 🤝 Community & Security
+
+- **Open Source Philosophy**: LevelUp is 100% open-source, built by developers for everyone. We believe in transparency and community-driven tools.
+- **Code of Conduct**: Please refer to our [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) to understand the standards for participating in our community.
+- **Security**: If you discover any security vulnerabilities, please check our [SECURITY.md](./SECURITY.md) for reporting guidelines.
 
 ## 📄 License
 

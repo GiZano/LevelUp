@@ -101,6 +101,7 @@ The time-blocking that solves the original problem: "I don't know what to do".
 - [ ] **Achievements/Badges**: Unlockable trophies every X meters climbed (e.g. "Everest Base Camp - 5364m", "Mont Blanc - 4809m")
 - [ ] **Personal Inventory**: Track items, electronics, and important belongings (useful for keeping track of maintenance, warranties, etc.)
 - [ ] **Onboarding Flow**: Initial setup questionnaire (with skip option) to configure default categories, first peaks, and weekly targets
+- [ ] **Quality Assurance**: Integrate strict code quality checks (e.g., SonarCloud) into the CI pipeline to ensure long-term maintainability
 - [ ] Native internal notifications/reminders for scheduled blocks (if Google Calendar isn't enough)
 - [ ] Android widget for daily view
 - [ ] Historical charts (progress over time, hours per week)
