@@ -179,7 +179,7 @@ export default function PlannerScreen({ navigation }: any) {
             }}
             style={[styles.btn, {backgroundColor: colors.primary}]}
           >
-            <Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="content-copy" size={20} color="#fff" style={{marginRight: 8}} /><Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text></View>
           </Pressable>
         </View>
       )}
