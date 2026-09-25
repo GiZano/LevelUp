@@ -72,9 +72,20 @@ export default function HomeScreen({ navigation }: HomeProps) {
           color: cat ? cat.color : '#888',
           hours: catTotals[catId]
         };
-      }).sort((a,b) => b.hours - a.hours);
+      });
 
-      setAltStats(statsArray);
+      const peakStats = peaks.map((p: any) => {
+        const completedCamps = p.camps.filter((c: any) => c.done).length;
+        return {
+          name: p.name,
+          emoji: '⛰️',
+          color: colors.success || '#10B981',
+          hours: completedCamps * 100
+        };
+      }).filter((p: any) => p.hours > 0);
+
+      const allStats = [...statsArray, ...peakStats].sort((a,b) => b.hours - a.hours);
+      setAltStats(allStats);
       setAltModalVisible(true);
     } catch(e) {
       console.log(e);
