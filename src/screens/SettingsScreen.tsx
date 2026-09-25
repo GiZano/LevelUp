@@ -10,10 +10,14 @@ import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import i18n, { t } from '../utils/i18n';
 import { useLocale } from '../store/LocaleContext';
+import { usePeaks } from '../store/PeaksContext';
+import { usePlanner } from '../store/PlannerContext';
 
 export default function SettingsScreen() {
   const { colors } = useThemeColors();
   const { locale, changeLocale } = useLocale();
+  const { refreshData: refreshPeaks } = usePeaks();
+  const { refreshData: refreshPlanner } = usePlanner();
   const currentLang = locale.startsWith('it') ? 'it' : 'en';
 
   const changeLanguage = async (lang: string) => {
@@ -67,11 +71,17 @@ export default function SettingsScreen() {
             const res = await DocumentPicker.getDocumentAsync({ type: ['application/json', 'text/plain', '*/*'] });
             if (res.canceled || !res.assets || res.assets.length === 0) return;
             const fileUri = res.assets[0].uri;
-            const fileContent = await FileSystem.readAsStringAsync(fileUri);
+                        let fileContent = '';
+            try {
+              fileContent = await FileSystem.readAsStringAsync(fileUri);
+            } catch (readErr) {
+              const response = await fetch(fileUri);
+              fileContent = await response.text();
+            }
             const backupData = JSON.parse(fileContent);
             
             if (backupData && backupData.data) {
-              const entries = Object.entries(backupData.data) as [string, string][];
+              const entries = Object.entries(backupData.data).filter(([_, v]) => v !== null) as [string, string][];
               
               const allKeys = await AsyncStorage.getAllKeys();
               const levelUpKeys = allKeys.filter(k => k.startsWith('@levelup/'));
@@ -80,12 +90,14 @@ export default function SettingsScreen() {
               }
               
               await AsyncStorage.multiSet(entries);
-              Alert.alert(t('settings.importConfirmTitle'), t('settings.importSuccess'));
+              await refreshPeaks();
+              await refreshPlanner();
+              Alert.alert(t('settings.importConfirmTitle'), t('settings.importSuccess') || 'Import successful!');
             } else {
               throw new Error('Invalid format');
             }
           } catch (e) {
-            Alert.alert('Error', t('settings.importError'));
+            Alert.alert('Error', (t('settings.importError') || 'Failed to import data') + ': ' + String(e));
           }
         },
       },

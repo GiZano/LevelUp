@@ -20,6 +20,7 @@ interface PeaksActions {
   deleteCamp: (peakId: string, campId: string) => void;
   reorderCamps: (peakId: string, camps: Camp[]) => void;
   addCompletedHours: (hours: number) => void;
+  refreshData: () => Promise<void>;
 }
 
 type PeaksContextType = PeaksState & PeaksActions;
@@ -34,21 +35,25 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Load data on startup
-  useEffect(() => {
-    (async () => {
-      try {
-        const [loadedPeaks, streakData] = await Promise.all([loadPeaks(), loadStreak()]);
-        setPeaks(loadedPeaks);
-        setStreak(streakData.streak);
-        setLastActiveDate(streakData.lastActiveDate);
-        setTotalCompletedHours(streakData.totalCompletedHours);
-      } catch (e) {
-        console.error('Errore caricamento dati:', e);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
+    const refreshData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [loadedPeaks, streakData] = await Promise.all([loadPeaks(), loadStreak()]);
+      setPeaks(loadedPeaks);
+      setStreak(streakData.streak);
+      setLastActiveDate(streakData.lastActiveDate);
+      setTotalCompletedHours(streakData.totalCompletedHours);
+    } catch (e) {
+      console.error('Errore caricamento dati:', e);
+    } finally {
+      setIsLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    refreshData();
+  }, [refreshData]);
 
   // Save peaks whenever they change
   useEffect(() => {
@@ -190,6 +195,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         deleteCamp,
         reorderCamps,
         addCompletedHours,
+    refreshData,
       }}
     >
       {children}

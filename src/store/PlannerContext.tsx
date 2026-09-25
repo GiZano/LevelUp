@@ -36,6 +36,7 @@ interface PlannerState {
 
 interface PlannerActions {
   changeWeek: (weekId: string) => void;
+  refreshData: () => Promise<void>;
   addCategory: (name: string, emoji: string, color: string, targetHours: number) => void;
   editCategory: (id: string, updates: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
@@ -68,32 +69,38 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Load data on startup
-  useEffect(() => {
-    (async () => {
-      try {
-        const [cats, tmpl, plan] = await Promise.all([
-          loadCategories(),
-          loadTemplates(),
-          loadWeeklyPlan(currentWeekId),
-        ]);
-        if (cats.length > 0) {
-          const merged = [...cats];
-          for (const def of DEFAULT_CATEGORIES) {
-            if (!merged.find(c => c.id === def.id)) {
-              merged.push(def);
-            }
+  const refreshData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [cats, tmpl, plan] = await Promise.all([
+        loadCategories(),
+        loadTemplates(),
+        loadWeeklyPlan(currentWeekId),
+      ]);
+      if (cats.length > 0) {
+        const merged = [...cats];
+        for (const def of DEFAULT_CATEGORIES) {
+          if (!merged.find(c => c.id === def.id)) {
+            merged.push(def);
           }
-          setCategories(merged);
         }
-        setTemplates(tmpl);
-        if (plan) setCurrentPlan(plan);
-      } catch (e) {
-        console.error('Errore caricamento planner:', e);
-      } finally {
-        setIsLoading(false);
+        setCategories(merged);
+      } else {
+        setCategories(DEFAULT_CATEGORIES);
       }
-    })();
-  }, []);
+      setTemplates(tmpl);
+      if (plan) setCurrentPlan(plan);
+    } catch (e) {
+      console.error('Errore caricamento planner:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentWeekId]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    refreshData();
+  }, [refreshData]);
 
   const changeWeek = useCallback(async (newWeekId: string) => {
     setIsLoading(true);
@@ -375,6 +382,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         currentWeekId,
         isLoading,
         changeWeek,
+    refreshData,
         addCategory,
         editCategory,
         deleteCategory,
