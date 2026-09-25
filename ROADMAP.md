@@ -107,6 +107,12 @@ The time-blocking that solves the original problem: "I don't know what to do".
 - [ ] Historical charts (progress over time, hours per week)
 - [ ] Data export (JSON/CSV)
 - [ ] **Internationalization (i18n)**: Community-driven translations for major global languages (Mandarin, Spanish, German, French) once the userbase grows
+- [ ] **Local Privacy-First AI Assistant**:
+  - Integrate `onnxruntime-react-native` to run 1B-3B quantized LLMs (e.g., Llama-3.2-1B-Instruct) entirely on-device, zero internet connection required.
+  - **Dynamic Model Download**: Model is fetched via `expo-file-system` after installation to keep the base APK size minimal.
+  - **Camp Generator**: Automatically breaks down large Peaks into 5 actionable Camps and directly parses the JSON output into the local SQLite store.
+  - **Decision Fatigue Savior**: Analyzes daily free time, current streak, and uncompleted WeeklyBlocks to suggest the single best task to start right now.
+  - **Weekly AI Review**: Simple RAG over `expo-sqlite` history to summarize accomplishments and hype up upcoming tasks.
 
 ---
 
