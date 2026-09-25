@@ -5,19 +5,15 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import i18n, { t } from '../utils/i18n';
+import { useLocale } from '../store/LocaleContext';
 
 export default function SettingsScreen() {
   const { colors } = useThemeColors();
-  const [currentLang, setCurrentLang] = useState(i18n.locale.startsWith('it') ? 'it' : 'en');
+  const { locale, changeLocale } = useLocale();
+  const currentLang = locale.startsWith('it') ? 'it' : 'en';
 
   const changeLanguage = async (lang: string) => {
-    i18n.locale = lang;
-    setCurrentLang(lang);
-    await AsyncStorage.setItem('app_language', lang);
-    Alert.alert(
-      lang === 'it' ? 'Lingua cambiata' : 'Language changed',
-      lang === 'it' ? 'Riavvia l\'app per applicare le modifiche su tutte le schermate.' : 'Please restart the app to apply changes across all screens.'
-    );
+    await changeLocale(lang);
   };
 
   

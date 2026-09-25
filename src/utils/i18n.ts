@@ -9,6 +9,7 @@ const translations = {
       peaks: 'Peaks',
       planner: 'Planner',
       blocks: 'Blocks',
+      settings: 'Settings',
     },
     days: {
       mon: 'Monday',
@@ -109,6 +110,7 @@ const translations = {
       peaks: 'Vette',
       planner: 'Planner',
       blocks: 'Blocchi',
+      settings: 'Impostazioni',
     },
     days: {
       mon: 'Lunedì',

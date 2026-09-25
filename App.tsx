@@ -7,6 +7,7 @@ import { StatusBar } from 'expo-status-bar';
 
 import { PeaksProvider } from './src/store/PeaksContext';
 import { PlannerProvider } from './src/store/PlannerContext';
+import { LocaleProvider, useLocale } from './src/store/LocaleContext';
 import { Colors } from './src/utils/theme';
 import type { RootStackParamList, PlannerStackParamList, TabParamList } from './src/types/navigation';
 
@@ -119,7 +120,7 @@ function TabNavigator() {
         name="SettingsTab" 
         component={SettingsScreen} 
         options={{ 
-          title: '⚙️',
+          title: t('tabs.settings'),
           tabBarIcon: ({ color }) => <Text style={{color}}>⚙️</Text> 
         }} 
       />
@@ -154,32 +155,43 @@ const DarkNavTheme = {
   },
 };
 
-export default function App() {
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { useThemeColors } from './src/utils/useThemeColors';
+
+function RootNavigator() {
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
-  const [langLoaded, setLangLoaded] = React.useState(false);
-
-  React.useEffect(() => {
-    AsyncStorage.getItem('app_language').then((lang) => {
-      if (lang) {
-        i18n.locale = lang;
-      }
-      setLangLoaded(true);
-    });
-  }, []);
-
-  if (!langLoaded) return null;
+  const { locale, isReloading } = useLocale();
+  const { colors } = useThemeColors();
 
   return (
+    <>
+      <NavigationContainer theme={isDark ? DarkNavTheme : LightNavTheme} key={locale}>
+        <TabNavigator />
+      </NavigationContainer>
+      {isReloading && (
+        <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.6)', justifyContent: 'center', alignItems: 'center' }]}>
+          <ActivityIndicator size="large" color={colors.primary} />
+          <Text style={{ marginTop: 20, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>
+            {locale === 'it' ? 'Cambio lingua...' : 'Changing language...'}
+          </Text>
+        </View>
+      )}
+    </>
+  );
+}
+
+export default function App() {
+  return (
     <SafeAreaProvider>
-      <PeaksProvider>
-        <PlannerProvider>
-          <NavigationContainer theme={isDark ? DarkNavTheme : LightNavTheme}>
-            <TabNavigator />
-          </NavigationContainer>
-          <StatusBar style="auto" />
-        </PlannerProvider>
-      </PeaksProvider>
+      <LocaleProvider>
+        <PeaksProvider>
+          <PlannerProvider>
+            <RootNavigator />
+            <StatusBar style="auto" />
+          </PlannerProvider>
+        </PeaksProvider>
+      </LocaleProvider>
     </SafeAreaProvider>
   );
 }
