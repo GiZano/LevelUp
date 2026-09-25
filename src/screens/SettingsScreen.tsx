@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking } from 'react-native';
+import * as DocumentPicker from 'expo-document-picker';
+import * as FileSystem from 'expo-file-system';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -38,6 +40,43 @@ export default function SettingsScreen() {
     }
   };
 
+  
+  const importBackup = async () => {
+    Alert.alert(t('settings.importConfirmTitle'), t('settings.importConfirmMsg'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: 'OK',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            const res = await DocumentPicker.getDocumentAsync({ type: ['application/json', 'text/plain', '*/*'] });
+            if (res.canceled || !res.assets || res.assets.length === 0) return;
+            const fileUri = res.assets[0].uri;
+            const fileContent = await FileSystem.readAsStringAsync(fileUri);
+            const backupData = JSON.parse(fileContent);
+            
+            if (backupData && backupData.data) {
+              const entries = Object.entries(backupData.data) as [string, string][];
+              
+              const allKeys = await AsyncStorage.getAllKeys();
+              const levelUpKeys = allKeys.filter(k => k.startsWith('@levelup/'));
+              if (levelUpKeys.length > 0) {
+                await AsyncStorage.multiRemove(levelUpKeys);
+              }
+              
+              await AsyncStorage.multiSet(entries);
+              Alert.alert(t('settings.importConfirmTitle'), t('settings.importSuccess'));
+            } else {
+              throw new Error('Invalid format');
+            }
+          } catch (e) {
+            Alert.alert('Error', t('settings.importError'));
+          }
+        },
+      },
+    ]);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
@@ -67,6 +106,9 @@ export default function SettingsScreen() {
           </Text>
           <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.exportBtn')}</Text>
+          </Pressable>
+          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} onPress={importBackup}>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.importBtn')}</Text>
           </Pressable>
         </View>
 
