@@ -48,3 +48,32 @@ LevelUp strictly follows a modular architecture (inspired by large-scale project
 - `src/screens/`: Screen-level orchestration.
 - `src/utils/`: Isolated helpers (e.g., i18n, stats calculations).
 Future modules (like Local AI logic) must be placed in their own isolated domain (e.g., `src/ai/`) so they can be maintained or replaced without side effects on the rest of the application.
+
+## Versioning Policy
+
+LevelUp follows [Semantic Versioning](https://semver.org/) (`MAJOR.MINOR.PATCH`):
+
+| Bump | When | Example |
+|---|---|---|
+| **PATCH** (`x.x.Y`) | Bug fixes, typos, small UI corrections. Released immediately. | `v1.0.1` |
+| **MINOR** (`x.Y.0`) | New self-contained features (e.g., Achievements, new settings). Released after a batch of regular issues is merged. | `v1.1.0` |
+| **MAJOR** (`X.0.0`) | An Epic feature lands. Released when the entire Epic branch is complete, tested, and merged into `main`. | `v2.0.0` |
+
+## Epic Workflow
+
+Issues labeled `epic` represent large, multi-step features that span multiple PRs. They follow a strict workflow:
+
+1. **Epic Branch**: A long-lived branch is created from `main` with the name `epic/<feature-name>` (e.g., `epic/local-ai-chatbot`).
+2. **Sub-issues**: The Epic issue contains a checklist of sub-issues. Each sub-issue is worked on in its own short-lived branch created *from the Epic branch* (e.g., `epic/local-ai-chatbot/step-1-model-selection`).
+3. **Sub-PRs**: Each sub-issue is merged into the Epic branch via a PR. These PRs are reviewed and tested individually.
+4. **No partial merges**: The Epic branch is **never** merged into `main` until *all* sub-issues are resolved and the feature is fully functional end-to-end.
+5. **Final merge**: Once all sub-issues are closed and the Epic branch passes CI, a single PR is opened from the Epic branch into `main`. This triggers a **MAJOR** version bump.
+
+```
+main ─────────────────────────────────●── v2.0.0
+       \                             /
+        epic/feature ───●───●───●───●
+                       s1  s2  s3  s4
+```
+
+This ensures `main` is always stable and releasable, while large features are developed in parallel without blocking regular development.

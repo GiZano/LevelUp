@@ -31,7 +31,9 @@ LevelUp is a mobile app for long-term goal tracking, built around the metaphor o
 - 🌗 **Light/Dark theme**: follows system preferences
 
 ### Weekly Planner *(Phase 2)*
-- 📅 Weekly grid view with drag & drop blocks
+- 📅 Precise weekly grid timeline syncable with Google Calendar
+- 🧩 Dynamic duration overrides upon scheduling
+- 🗃️ Accordion UI and Soft-delete Archives for blocks
 - ⏱️ Target hours per category with progress bars
 - 📋 Daily view "what should I do today"
 - 📝 Sunday weekly review
@@ -150,7 +152,7 @@ See [ROADMAP.md](./ROADMAP.md) for the complete development plan.
 | **Phase 0** | Project Setup | 🟢 Completed |
 | **Phase 1** | MVP: Peaks and Camps | 🟢 Completed |
 | **Phase 2** | Weekly Planner | 🟢 Completed |
-| **Phase 3** | CI/CD and automation | 🟡 In Progress |
+| **Phase 3** | CI/CD and automation | 🟢 Completed |
 
 
 ---

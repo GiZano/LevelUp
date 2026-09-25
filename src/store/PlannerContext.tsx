@@ -36,6 +36,7 @@ interface PlannerState {
 
 interface PlannerActions {
   changeWeek: (weekId: string) => void;
+  refreshData: () => Promise<void>;
   addCategory: (name: string, emoji: string, color: string, targetHours: number) => void;
   editCategory: (id: string, updates: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
@@ -43,7 +44,9 @@ interface PlannerActions {
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
   deleteTemplate: (id: string) => void;
   archiveTemplate: (id: string) => void;
-  scheduleBlock: (templateId: string, day: DayOfWeek, startTime: string) => void;
+  unarchiveCategory: (id: string) => void;
+  unarchiveTemplate: (id: string) => void;
+  scheduleBlock: (templateId: string, day: DayOfWeek, startTime: string, customDuration?: number) => void;
   scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
   unscheduleBlock: (blockId: string) => void;
   toggleBlockDone: (blockId: string) => void;
@@ -66,32 +69,38 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Load data on startup
-  useEffect(() => {
-    (async () => {
-      try {
-        const [cats, tmpl, plan] = await Promise.all([
-          loadCategories(),
-          loadTemplates(),
-          loadWeeklyPlan(currentWeekId),
-        ]);
-        if (cats.length > 0) {
-          const merged = [...cats];
-          for (const def of DEFAULT_CATEGORIES) {
-            if (!merged.find(c => c.id === def.id)) {
-              merged.push(def);
-            }
+  const refreshData = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const [cats, tmpl, plan] = await Promise.all([
+        loadCategories(),
+        loadTemplates(),
+        loadWeeklyPlan(currentWeekId),
+      ]);
+      if (cats.length > 0) {
+        const merged = [...cats];
+        for (const def of DEFAULT_CATEGORIES) {
+          if (!merged.find(c => c.id === def.id)) {
+            merged.push(def);
           }
-          setCategories(merged);
         }
-        setTemplates(tmpl);
-        if (plan) setCurrentPlan(plan);
-      } catch (e) {
-        console.error('Errore caricamento planner:', e);
-      } finally {
-        setIsLoading(false);
+        setCategories(merged);
+      } else {
+        setCategories(DEFAULT_CATEGORIES);
       }
-    })();
-  }, []);
+      setTemplates(tmpl);
+      if (plan) setCurrentPlan(plan);
+    } catch (e) {
+      console.error('Errore caricamento planner:', e);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [currentWeekId]);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    refreshData();
+  }, [refreshData]);
 
   const changeWeek = useCallback(async (newWeekId: string) => {
     setIsLoading(true);
@@ -163,6 +172,14 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: true } : t));
   }, []);
 
+  const unarchiveCategory = useCallback((id: string) => {
+    setCategories((prev) => prev.map(c => c.id === id ? { ...c, isArchived: false } : c));
+  }, []);
+
+  const unarchiveTemplate = useCallback((id: string) => {
+    setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: false } : t));
+  }, []);
+
   const deleteTemplate = useCallback((id: string) => {
     setTemplates((prev) => prev.filter((t) => t.id !== id));
     // Also remove scheduled blocks with this template
@@ -172,7 +189,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     }));
   }, []);
 
-  const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, startTime: string) => {
+  const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, startTime: string, customDuration?: number) => {
     const newId = generateId();
     setCurrentPlan((prev) => {
       const newBlock: ScheduledBlock = {
@@ -181,6 +198,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         day,
         startTime,
         done: false,
+        customDuration,
       };
       return {
         ...prev,
@@ -192,7 +210,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     const template = templates.find(t => t.id === templateId);
     const cat = categories.find(c => c.id === template?.categoryId);
     if (template && cat) {
-      createCalendarEvent(template.name, day, startTime, template.durationHours, cat.name, cat.color).then(eventId => {
+      createCalendarEvent(template.name, day, startTime, customDuration ?? template.durationHours, cat.name, cat.color).then(eventId => {
         if (eventId) {
           setCurrentPlan(prev => ({
             ...prev,
@@ -269,11 +287,12 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
           day: b.day,
           startTime: b.startTime,
           done: false,
+          customDuration: b.customDuration,
         };
         newBlocks.push(newBlock);
 
         // Create events on the new calendar in background
-        createCalendarEvent(template.name, b.day, b.startTime, template.durationHours, cat.name, cat.color).then(eventId => {
+        createCalendarEvent(template.name, b.day, b.startTime, b.customDuration ?? template.durationHours, cat.name, cat.color).then(eventId => {
           if (eventId) {
             setCurrentPlan(prev => ({
               ...prev,
@@ -315,7 +334,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
             duration = b.oneOffDuration || 0;
           } else if (b.templateId) {
             const template = templates.find((t) => t.id === b.templateId);
-            duration = template?.durationHours || 0;
+            duration = b.customDuration ?? (template?.durationHours || 0);
           }
           // We don't have access to PeaksContext here directly to call addCompletedHours.
           // We can let the component doing the toggle call addCompletedHours!
@@ -343,8 +362,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     for (const block of currentPlan.blocks) {
       const template = templates.find((t) => t.id === block.templateId);
       if (template?.categoryId === categoryId) {
-        scheduled += template.durationHours;
-        if (block.done) completed += template.durationHours;
+        scheduled += block.customDuration ?? template.durationHours;
+        if (block.done) completed += block.customDuration ?? template.durationHours;
       }
     }
 
@@ -364,6 +383,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         currentWeekId,
         isLoading,
         changeWeek,
+    refreshData,
         addCategory,
         editCategory,
         deleteCategory,
@@ -371,6 +391,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         addTemplate,
         deleteTemplate,
         archiveTemplate,
+        unarchiveCategory,
+        unarchiveTemplate,
         scheduleBlock,
         scheduleOneOffBlock,
         unscheduleBlock,

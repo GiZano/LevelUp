@@ -52,14 +52,18 @@ To reach camps, you need to put in the hours consistently. *Blocks* are schedule
 == Step 3: Create Block Templates
 1. In the same *Manage Blocks* screen, tap the `+` button and select *Blocco*.
 2. Name the specific activity (e.g., "Deep Work: React Native").
-3. Assign it to the Category you just created and select a standard duration (e.g., 2 hours).
+3. Assign it to the Category you just created and select a *default* duration (e.g., 2 hours).
+4. *Tip:* Block templates are grouped by category using a clean accordion UI. Tap the `▶` icon next to a category to expand and view its blocks.
+5. *Tip:* You can soft-delete (Archive) categories or blocks using the 📦 icon. They will be moved to the *Archive* section at the bottom of the page, where you can restore them (♻️) at any time.
 
 == Step 4: Plan Your Week
 1. Go to the *Planner* tab.
 2. You will see a 7-day grid representing the current week.
-3. Tap any empty slot (`+`) under a day to schedule one of your Block Templates.
-4. Assign an exact *Start Time* to build your timeline.
-5. As you schedule blocks, watch the category progress bars at the top fill up towards your weekly target.
+3. Tap any empty slot (`+`) under a day to open the Template Picker.
+4. Expand a category and tap a block template. 
+5. Select a *Start Time* and *override the duration* if needed for that specific day (e.g., changing a 2h default reading block to 0.5h for today only).
+6. Tap "Conferma" to add it to your timeline.
+7. As you schedule blocks, watch the category progress bars at the top fill up towards your weekly target.
 
 == Step 5: Execute (The Daily View)
 1. Every morning, open the *Today* tab.

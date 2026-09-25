@@ -1,23 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+import { Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import i18n, { t } from '../utils/i18n';
 import { useLocale } from '../store/LocaleContext';
+import { usePeaks } from '../store/PeaksContext';
+import { usePlanner } from '../store/PlannerContext';
 
 export default function SettingsScreen() {
   const { colors } = useThemeColors();
+  const [isImporting, setIsImporting] = useState(false);
   const { locale, changeLocale } = useLocale();
+  const { refreshData: refreshPeaks } = usePeaks();
+  const { refreshData: refreshPlanner } = usePlanner();
   const currentLang = locale.startsWith('it') ? 'it' : 'en';
 
   const changeLanguage = async (lang: string) => {
     await changeLocale(lang);
   };
 
+  
   
   const exportBackup = async () => {
     try {
@@ -31,10 +39,22 @@ export default function SettingsScreen() {
       };
       
       const jsonStr = JSON.stringify(backupData, null, 2);
-      await Share.share({
-        message: jsonStr,
-        title: 'LevelUp Backup'
-      });
+      
+      if (Platform.OS === 'android') {
+        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (permissions.granted) {
+          const uri = await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, 'levelup_backup.json', 'application/json');
+          await FileSystem.writeAsStringAsync(uri, jsonStr, { encoding: FileSystem.EncodingType.UTF8 });
+          Alert.alert('Success', 'Backup exported successfully!');
+          return;
+        }
+      }
+
+      // Fallback to sharing for iOS or if user cancels SAF on Android
+      const fileUri = FileSystem.documentDirectory + 'levelup_backup.json';
+      await FileSystem.writeAsStringAsync(fileUri, jsonStr, { encoding: FileSystem.EncodingType.UTF8 });
+      await Sharing.shareAsync(fileUri, { mimeType: 'application/json', dialogTitle: 'LevelUp Backup' });
+
     } catch (e) {
       Alert.alert('Error', 'Failed to export data');
     }
@@ -51,12 +71,20 @@ export default function SettingsScreen() {
           try {
             const res = await DocumentPicker.getDocumentAsync({ type: ['application/json', 'text/plain', '*/*'] });
             if (res.canceled || !res.assets || res.assets.length === 0) return;
+            setIsImporting(true);
+            await new Promise(r => setTimeout(r, 1000));
             const fileUri = res.assets[0].uri;
-            const fileContent = await FileSystem.readAsStringAsync(fileUri);
+                        let fileContent = '';
+            try {
+              fileContent = await FileSystem.readAsStringAsync(fileUri);
+            } catch (readErr) {
+              const response = await fetch(fileUri);
+              fileContent = await response.text();
+            }
             const backupData = JSON.parse(fileContent);
             
             if (backupData && backupData.data) {
-              const entries = Object.entries(backupData.data) as [string, string][];
+              const entries = Object.entries(backupData.data).filter(([_, v]) => v !== null) as [string, string][];
               
               const allKeys = await AsyncStorage.getAllKeys();
               const levelUpKeys = allKeys.filter(k => k.startsWith('@levelup/'));
@@ -65,12 +93,16 @@ export default function SettingsScreen() {
               }
               
               await AsyncStorage.multiSet(entries);
-              Alert.alert(t('settings.importConfirmTitle'), t('settings.importSuccess'));
+              await refreshPeaks();
+              await refreshPlanner();
+              Alert.alert(t('settings.importConfirmTitle'), t('settings.importSuccess') || 'Import successful!');
             } else {
               throw new Error('Invalid format');
             }
           } catch (e) {
-            Alert.alert('Error', t('settings.importError'));
+            Alert.alert('Error', (t('settings.importError') || 'Failed to import data') + ': ' + String(e));
+          } finally {
+            setIsImporting(false);
           }
         },
       },
@@ -107,8 +139,13 @@ export default function SettingsScreen() {
           <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.exportBtn')}</Text>
           </Pressable>
-          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} onPress={importBackup}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.importBtn')}</Text>
+          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]} onPress={importBackup} disabled={isImporting}>
+            {isImporting ? (
+              <ActivityIndicator color={colors.primary} style={{marginRight: 8}} />
+            ) : null}
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>
+              {isImporting ? t('settings.importing') : t('settings.importBtn')}
+            </Text>
           </Pressable>
         </View>
 
