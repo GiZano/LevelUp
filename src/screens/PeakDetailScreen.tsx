@@ -1,6 +1,6 @@
 import { t } from "../utils/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
-import React, { useLayoutEffect, useState } from 'react';
+import React, { useLayoutEffect, useState, useCallback } from 'react';
 import {
   Alert,
   FlatList,
@@ -32,6 +32,20 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
 
   const peak = peaks.find((p) => p.id === peakId);
 
+  const handleDeletePeak = useCallback(() => {
+    Alert.alert('Elimina vetta', `Vuoi eliminare "${peak?.name}"?`, [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('common.delete'),
+        style: 'destructive',
+        onPress: () => {
+          deletePeak(peakId);
+          navigation.goBack();
+        },
+      },
+    ]);
+  }, [peak?.name, peak?.id, navigation, deletePeak, t]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       title: peak?.name ?? 'Vetta',
@@ -43,7 +57,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
         </Pressable>
       ),
     });
-  }, [navigation, colors, peak?.name]);
+  }, [navigation, colors, peak?.name, handleDeletePeak]);
 
   if (!peak) {
     return (
@@ -61,19 +75,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
   const doneCamps = peak.camps.filter((c) => c.done).length;
   const pct = totalCamps > 0 ? Math.round((doneCamps / totalCamps) * 100) : 0;
 
-  const handleDeletePeak = () => {
-    Alert.alert('Elimina vetta', `Vuoi eliminare "${peak.name}"?`, [
-      { text: t('common.cancel'), style: 'cancel' },
-      {
-        text: t('common.delete'),
-        style: 'destructive',
-        onPress: () => {
-          deletePeak(peakId);
-          navigation.goBack();
-        },
-      },
-    ]);
-  };
+  
 
   const handleAddCamp = () => {
     const trimmed = campName.trim();
@@ -98,7 +100,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
               <MountainSvg progress={progress} isComplete={complete} />
             </View>
 
-            <Text style={[styles.title, { color: colors.text }]}>{peak.name}</Text>
+            <Text style={[styles.title, { color: colors.text }]}>{peak?.name}</Text>
 
             <Text style={[styles.progressText, { color: colors.textSecondary }]}>
               {doneCamps}/{totalCamps} campi • {pct}%
