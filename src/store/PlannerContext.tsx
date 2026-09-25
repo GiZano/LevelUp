@@ -43,6 +43,8 @@ interface PlannerActions {
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
   deleteTemplate: (id: string) => void;
   archiveTemplate: (id: string) => void;
+  unarchiveCategory: (id: string) => void;
+  unarchiveTemplate: (id: string) => void;
   scheduleBlock: (templateId: string, day: DayOfWeek, startTime: string) => void;
   scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
   unscheduleBlock: (blockId: string) => void;
@@ -161,6 +163,14 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const archiveTemplate = useCallback((id: string) => {
     setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: true } : t));
+  }, []);
+
+  const unarchiveCategory = useCallback((id: string) => {
+    setCategories((prev) => prev.map(c => c.id === id ? { ...c, isArchived: false } : c));
+  }, []);
+
+  const unarchiveTemplate = useCallback((id: string) => {
+    setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: false } : t));
   }, []);
 
   const deleteTemplate = useCallback((id: string) => {
@@ -371,6 +381,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         addTemplate,
         deleteTemplate,
         archiveTemplate,
+        unarchiveCategory,
+        unarchiveTemplate,
         scheduleBlock,
         scheduleOneOffBlock,
         unscheduleBlock,

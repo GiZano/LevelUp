@@ -10,7 +10,7 @@ const DURATION_OPTIONS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 8];
 
 export default function ManageBlocksScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const { categories, templates, addTemplate, getCategoryById, editCategory, addCategory, archiveCategory, archiveTemplate } = usePlanner();
+  const { categories, templates, addTemplate, getCategoryById, editCategory, addCategory, archiveCategory, archiveTemplate, unarchiveCategory, unarchiveTemplate } = usePlanner();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -36,6 +36,8 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const CATEGORY_COLORS = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280'];
   const activeCategories = categories.filter(c => !c.isArchived);
   const activeTemplates = templates.filter(t => !t.isArchived);
+  const archivedCategories = categories.filter(c => c.isArchived);
+  const archivedTemplates = templates.filter(t => t.isArchived);
   const totalHours = activeCategories.reduce((sum, c) => sum + c.targetHoursPerWeek, 0);
 
   const resetModal = () => {
@@ -115,7 +117,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   // Group templates by category
   const templatesByCategory = activeCategories.map((c) => ({
     categoryId: c.id,
-    items: templates.filter((t) => t.categoryId === c.id),
+    items: activeTemplates.filter((t) => t.categoryId === c.id),
   }));
 
   return (
@@ -190,6 +192,39 @@ export default function ManageBlocksScreen({ navigation }: any) {
             </View>
           );
         })}
+
+        {/* Archive Section */}
+        {(archivedCategories.length > 0 || archivedTemplates.length > 0) && (
+          <View style={{ marginTop: Spacing.xl }}>
+            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>📦 {t('manage.archive') || 'Archivio'}</Text>
+            
+            {archivedCategories.map(c => (
+              <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surfaceAlt }]}>
+                <Text style={[styles.catEmoji, { opacity: 0.5 }]}>{c.emoji}</Text>
+                <Text style={[styles.catName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]}>{c.name}</Text>
+                <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8}>
+                  <Text style={{fontSize: 16}}>♻️</Text>
+                </Pressable>
+              </View>
+            ))}
+
+            {archivedTemplates.map(t => {
+              const cat = getCategoryById(t.categoryId);
+              return (
+                <View key={t.id} style={[styles.blockRow, { backgroundColor: colors.surfaceAlt }]}>
+                  <View style={[styles.blockColor, { backgroundColor: cat?.color ?? colors.textSecondary, opacity: 0.5 }]} />
+                  <Text style={[styles.blockName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]} numberOfLines={1}>
+                    {t.name}
+                  </Text>
+                  <Pressable onPress={() => unarchiveTemplate(t.id)} hitSlop={8}>
+                    <Text style={{fontSize: 16}}>♻️</Text>
+                  </Pressable>
+                </View>
+              );
+            })}
+          </View>
+        )}
+
       </ScrollView>
 
       {/* FAB - New Block */}
