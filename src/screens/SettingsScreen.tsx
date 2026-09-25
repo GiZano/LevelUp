@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -80,8 +80,25 @@ export default function SettingsScreen() {
             This app is 100% Open Source and built by developers, for everyone.
           </Text>
           
-          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt }]} onPress={() => {}}>
+          <Pressable 
+            style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt }]} 
+            onPress={() => Linking.openURL('https://github.com/gizano/LevelUp')}
+          >
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>⭐ Star on GitHub</Text>
+          </Pressable>
+          
+          <Pressable 
+            style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} 
+            onPress={() => Linking.openURL('https://github.com/gizano/LevelUp/issues')}
+          >
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>🐛 Submit an Issue</Text>
+          </Pressable>
+
+          <Pressable 
+            style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm, opacity: 0.5 }]} 
+            disabled={true}
+          >
+            <Text style={{color: colors.textSecondary, fontWeight: 'bold'}}>⭐ Leave a feedback on Play Store (WIP)</Text>
           </Pressable>
         </View>
       </ScrollView>
