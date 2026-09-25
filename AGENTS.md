@@ -16,7 +16,7 @@ When opening a PR for this repo, always account for AI usage as required by our 
 
 - **Tech Stack**: React Native, Expo, TypeScript, React Navigation.
 - Do not add comments to code or tests unless the comments are genuinely important to the code. Comments should never reference previous code behavior. Notes about previous code behavior belong in commit messages and pull request comments, not in code comments.
-- **UI / UX Philosophy**: Keep UI native, fast, and minimal. Do not add complex libraries unless explicitly requested. Use the `useThemeColors` hook and constants in `src/utils/theme.ts`. Never hardcode colors or sizes.
+- **UI / UX Philosophy**: Keep UI native, fast, and minimal. **Never use text emojis in the UI**; always use `@expo/vector-icons` (`MaterialCommunityIcons`, `Ionicons`). Do not add complex libraries unless explicitly requested. Use the `useThemeColors` hook and constants in `src/utils/theme.ts`. Never hardcode colors or sizes.
 - **Data & State**: Rely on React Context (`PeaksContext.tsx`, `PlannerContext.tsx`). Do not introduce Redux, Zustand, MobX, or Jotai. Use `AsyncStorage` and `expo-sqlite`. Keep data queries efficient and local-first.
 - **i18n**: The app supports multiple languages. Always use `t('key')` from `src/utils/i18n.ts`. Never hardcode text strings in components.
 - Ensure all code quality checks pass before committing. Code quality checks can be run with `npx tsc --noEmit` and `npm run lint`.
