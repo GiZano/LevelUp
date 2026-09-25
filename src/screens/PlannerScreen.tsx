@@ -193,7 +193,7 @@ export default function PlannerScreen({ navigation }: any) {
                     { color: isToday ? colors.primary : colors.text },
                     isToday && { fontWeight: '900' }
                   ]}>
-                    {t('days.' + day).substring(0,3)}
+                    {t('days.' + day).substring(0,3)} {dateStr}
                   </Text>
                   
                   <View style={styles.slotContainer}>
