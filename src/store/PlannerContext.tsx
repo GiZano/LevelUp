@@ -287,6 +287,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
           day: b.day,
           startTime: b.startTime,
           done: false,
+          customDuration: b.customDuration,
         };
         newBlocks.push(newBlock);
 
