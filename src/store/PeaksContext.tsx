@@ -66,16 +66,16 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
     }
   }, [streak, lastActiveDate, totalCompletedHours, isLoading]);
 
-  const addCompletedHours = useCallback((hours: number) => {
-    setTotalCompletedHours((prev) => prev + hours);
-    recordActivity();
-  }, []);
-
   const recordActivity = useCallback(() => {
     const updated = updateStreak(streak, lastActiveDate);
     setStreak(updated.streak);
     setLastActiveDate(updated.lastActiveDate);
   }, [streak, lastActiveDate]);
+
+  const addCompletedHours = useCallback((hours: number) => {
+    setTotalCompletedHours((prev) => prev + hours);
+    recordActivity();
+  }, [recordActivity]);
 
   const addPeak = useCallback(
     (name: string, description?: string) => {
