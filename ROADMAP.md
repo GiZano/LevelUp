@@ -106,6 +106,7 @@ The time-blocking that solves the original problem: "I don't know what to do".
 - [ ] Android widget for daily view
 - [ ] Historical charts (progress over time, hours per week)
 - [ ] Data export (JSON/CSV)
+- [ ] **Internationalization (i18n)**: Community-driven translations for major global languages (Mandarin, Spanish, German, French) once the userbase grows
 
 ---
 

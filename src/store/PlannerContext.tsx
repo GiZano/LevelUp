@@ -37,7 +37,7 @@ interface PlannerState {
 interface PlannerActions {
   changeWeek: (weekId: string) => void;
   addCategory: (name: string, emoji: string, color: string, targetHours: number) => void;
-  editCategory: (id: string, targetHours: number) => void;
+  editCategory: (id: string, updates: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
   addTemplate: (name: string, categoryId: string, durationHours: number, peakId?: string) => void;
   deleteTemplate: (id: string) => void;
@@ -139,8 +139,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     setCategories((prev) => prev.filter((c) => c.id !== id));
   }, []);
 
-  const editCategory = useCallback((id: string, targetHours: number) => {
-    setCategories((prev) => prev.map((c) => c.id === id ? { ...c, targetHoursPerWeek: targetHours } : c));
+  const editCategory = useCallback((id: string, updates: Partial<Category>) => {
+    setCategories((prev) => prev.map((c) => c.id === id ? { ...c, ...updates } : c));
   }, []);
 
   const addTemplate = useCallback((name: string, categoryId: string, durationHours: number, peakId?: string) => {

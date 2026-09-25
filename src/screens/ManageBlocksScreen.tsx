@@ -10,7 +10,7 @@ const DURATION_OPTIONS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 8];
 
 export default function ManageBlocksScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const { categories, templates, addTemplate, deleteTemplate, getCategoryById, editCategory, addCategory } = usePlanner();
+  const { categories, templates, addTemplate, deleteTemplate, getCategoryById, editCategory, addCategory, deleteCategory } = usePlanner();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -32,6 +32,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const [catEmoji, setCatEmoji] = useState('⭐');
   const [catColor, setCatColor] = useState('#EF4444');
   const CATEGORY_COLORS = ['#EF4444', '#F97316', '#F59E0B', '#10B981', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280'];
+  const totalHours = categories.reduce((sum, c) => sum + c.targetHoursPerWeek, 0);
 
   const resetModal = () => {
     setBlockName('');
@@ -65,6 +66,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
   const openEditCategory = (cat: any) => {
     setEditCatId(cat.id);
+    setCatName(cat.name);
+    setCatEmoji(cat.emoji);
+    setCatColor(cat.color);
     setCatTargetHours(String(cat.targetHoursPerWeek));
     setCatModalVisible(true);
   };
@@ -73,12 +77,36 @@ export default function ManageBlocksScreen({ navigation }: any) {
     const hours = parseInt(catTargetHours, 10);
     if (!isNaN(hours)) {
       if (editCatId) {
-        editCategory(editCatId, hours);
+        editCategory(editCatId, {
+          name: catName.trim() || undefined,
+          emoji: catEmoji,
+          color: catColor,
+          targetHoursPerWeek: hours
+        });
       } else if (catName.trim()) {
         addCategory(catName.trim(), catEmoji, catColor, hours);
       }
     }
     setCatModalVisible(false);
+  };
+
+  const handleDeleteCategory = () => {
+    if (!editCatId) return;
+    Alert.alert(
+      t('common.delete'),
+      "Sei sicuro di voler eliminare questa categoria?",
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        { 
+          text: t('common.delete'), 
+          style: 'destructive',
+          onPress: () => {
+            deleteCategory(editCatId);
+            setCatModalVisible(false);
+          }
+        }
+      ]
+    );
   };
 
   // Group templates by category
@@ -159,8 +187,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{editCatId ? t('manage.editCategory') : 'New Category'}</Text>
             
-            {!editCatId && (
-              <>
+            <>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.blockName')}</Text>
                 <TextInput
                   style={[styles.input, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
@@ -187,7 +214,6 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   ))}
                 </View>
               </>
-            )}
 
             <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.targetHoursInput')}</Text>
             <TextInput
@@ -322,7 +348,7 @@ const styles = StyleSheet.create({
   chipText: { fontSize: FontSize.sm },
   durChip: { paddingVertical: Spacing.xs, paddingHorizontal: Spacing.md, borderRadius: BorderRadius.full, borderWidth: 1 },
   durChipText: { fontSize: FontSize.sm, fontWeight: '600' },
-  modalButtons: { flexDirection: 'row', justifyContent: 'flex-end', gap: Spacing.sm, marginTop: Spacing.md },
+  modalButtons: { flexDirection: 'row', justifyContent: 'space-between', gap: Spacing.sm, marginTop: Spacing.md },
   modalButton: { paddingVertical: Spacing.sm, paddingHorizontal: Spacing.md, borderRadius: BorderRadius.md },
   modalButtonText: { fontSize: FontSize.md, fontWeight: '600' }
 });
