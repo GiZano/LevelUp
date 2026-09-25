@@ -1,6 +1,7 @@
 import { t } from "../utils/i18n";
 import React, { useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, LayoutAnimation } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -8,6 +9,14 @@ import { usePlanner } from '../store/PlannerContext';
 import { usePeaks } from '../store/PeaksContext';
 import { getTodayDayOfWeek } from '../types/weekUtils';
 import { DAY_LABELS } from '../types';
+
+const getGreeting = () => {
+  const hour = new Date().getHours();
+  if (hour < 12) return '☀️ ' + (t('today.greetingMorning') || 'Buongiorno');
+  if (hour < 17) return '🌤️ ' + (t('today.greetingAfternoon') || 'Buon pomeriggio');
+  if (hour < 21) return '🌅 ' + (t('today.greetingEvening') || 'Buonasera');
+  return '🌙 ' + (t('today.greetingNight') || 'Buonanotte');
+};
 
 export default function TodayScreen({ navigation }: any) {
   const { colors } = useThemeColors();
@@ -19,7 +28,7 @@ export default function TodayScreen({ navigation }: any) {
     const d = new Date();
     const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
     navigation.setOptions({
-      title: `${t('today.title')}: ${t('days.' + today).substring(0,3)}`,
+      title: t('today.title') + ': ' + t('days.' + today).substring(0,3),
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });
@@ -38,6 +47,7 @@ export default function TodayScreen({ navigation }: any) {
       duration = block.customDuration ?? (template?.durationHours || 0);
     }
     
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
     toggleBlockDone(block.id);
     if (!block.done) addCompletedHours(duration);
     else addCompletedHours(-duration);
@@ -71,14 +81,14 @@ export default function TodayScreen({ navigation }: any) {
                 duration = b.oneOffDuration;
                 const cat = getCategoryById(b.oneOffCategoryId!);
                 catColor = cat?.color || colors.border;
-                catEmoji = cat?.emoji || '';
+                catEmoji = cat?.emoji || 'shape';
               } else {
                 const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
                 const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
                 name = tmpl?.name || 'Sconosciuto';
                 duration = b.customDuration ?? (tmpl?.durationHours || 0);
                 catColor = cat?.color || colors.border;
-                catEmoji = cat?.emoji || '';
+                catEmoji = cat?.emoji || 'shape';
               }
 
               return (
@@ -95,10 +105,10 @@ export default function TodayScreen({ navigation }: any) {
                     ]}
                   >
                     <View style={[styles.checkbox, { borderColor: b.done ? colors.success : colors.textTertiary, backgroundColor: b.done ? colors.success : 'transparent' }]}>
-                      {b.done && <Text style={{color: '#fff', fontSize: 12}}>✓</Text>}
+                      {b.done && <MaterialCommunityIcons name="check-bold" size={12} color="#fff" />}
                     </View>
                     
-                    <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{catEmoji}</Text>
+                    <MaterialCommunityIcons name={catEmoji as any} size={24} color={catColor} style={{marginRight: Spacing.sm}} />
                     
                     <View style={{flex: 1, flexDirection: 'column'}}>
                       <Text style={[styles.blockName, { color: colors.text }, b.done && {textDecorationLine: 'line-through'}]}>{name}</Text>

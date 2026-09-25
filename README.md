@@ -1,6 +1,6 @@
 <div align="center">
   <img src="./assets/icon.png" width="120" style="border-radius: 24px; margin-bottom: 20px;" alt="LevelUp Logo" />
-  <h1>🏔️ LevelUp</h1>
+  <h1>LevelUp</h1>
   <p><b>Gamify your goals. Conquer your peaks.</b></p>
   
   <p>
@@ -23,11 +23,11 @@ LevelUp is a mobile app for long-term goal tracking, built around the metaphor o
 ## ✨ Features
 
 ### MVP — Peaks and Camps
-- 🏔️ **Peaks**: long-term goals (exams, Codeforces rating, personal projects)
-- ⛺ **Camps**: checkable sub-goals along the path to the peak
-- 📊 **Visual progress**: SVG mountain path that fills up gradually
-- 🔥 **Streak**: consecutive days of activity counter
-- 🏁 **Celebrations**: visual feedback upon completing camps and peaks
+- **Peaks**: long-term goals (exams, Codeforces rating, personal projects)
+- **Camps**: checkable sub-goals along the path to the peak
+- **Visual progress**: SVG mountain path that fills up gradually
+- **Streak**: consecutive days of activity counter
+- **Celebrations**: visual feedback upon completing camps and peaks
 - 🌗 **Light/Dark theme**: follows system preferences
 
 ### Weekly Planner *(Phase 2)*

@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Polygon, Rect, Defs, ClipPath } from 'react-native-svg';
 import { useThemeColors } from '../utils/useThemeColors';
 
@@ -48,7 +49,7 @@ export default function MountainSvg({ progress, isComplete }: MountainSvgProps) 
       </Svg>
 
       {isComplete && (
-        <Text style={styles.flag}>🏁</Text>
+        <MaterialCommunityIcons name="flag-checkered" size={24} color={colors.accent} style={styles.flag} />
       )}
     </View>
   );

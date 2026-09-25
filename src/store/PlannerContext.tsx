@@ -16,15 +16,25 @@ import { createCalendarEvent, deleteCalendarEvent, updateCalendarEventDescriptio
 // ── Default Categories ──
 
 const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'sonno', name: t('categories.sleep'), color: '#6366F1', emoji: '😴', targetHoursPerWeek: 56 },
-  { id: 'uni', name: t('categories.uni'), color: '#0EA5E9', emoji: '🎓', targetHoursPerWeek: 20 },
-  { id: 'studio', name: t('categories.study'), color: '#3B82F6', emoji: '📚', targetHoursPerWeek: 20 },
-  { id: 'cp', name: t('categories.cp'), color: '#8B5CF6', emoji: '💻', targetHoursPerWeek: 4 },
-  { id: 'hobby', name: t('categories.hobby'), color: '#10B981', emoji: '♟️', targetHoursPerWeek: 3 },
-  { id: 'lettura', name: t('categories.other'), color: '#F59E0B', emoji: '📖', targetHoursPerWeek: 3 },
-  { id: 'progetto', name: t('categories.other'), color: '#EC4899', emoji: '🚀', targetHoursPerWeek: 2 },
-  { id: 'libero', name: t('categories.freetime'), color: '#6B7280', emoji: '🎮', targetHoursPerWeek: 0 },
+  { id: 'sonno', name: t('categories.sleep'), color: '#6366F1', emoji: 'bed', targetHoursPerWeek: 56 },
+  { id: 'uni', name: t('categories.uni'), color: '#0EA5E9', emoji: 'school', targetHoursPerWeek: 20 },
+  { id: 'studio', name: t('categories.study'), color: '#3B82F6', emoji: 'bookshelf', targetHoursPerWeek: 20 },
+  { id: 'cp', name: t('categories.cp'), color: '#8B5CF6', emoji: 'laptop', targetHoursPerWeek: 4 },
+  { id: 'hobby', name: t('categories.hobby'), color: '#10B981', emoji: 'chess-pawn', targetHoursPerWeek: 3 },
+  { id: 'lettura', name: t('categories.other'), color: '#F59E0B', emoji: 'book-open-page-variant', targetHoursPerWeek: 3 },
+  { id: 'progetto', name: t('categories.other'), color: '#EC4899', emoji: 'rocket-launch', targetHoursPerWeek: 2 },
+  { id: 'libero', name: t('categories.freetime'), color: '#6B7280', emoji: 'controller-classic', targetHoursPerWeek: 0 },
 ];
+
+// Helper to migrate legacy emoji to icon names
+const migrateEmoji = (emoji: string) => {
+  const map: Record<string, string> = {
+    '😴': 'bed', '🎓': 'school', '📚': 'bookshelf', '💻': 'laptop',
+    '♟️': 'chess-pawn', '📖': 'book-open-page-variant', '🚀': 'rocket-launch', '🎮': 'controller-classic'
+  };
+  return map[emoji] || (emoji.match(/[\w-]/) ? emoji : 'shape'); // default icon if it's an unrecognized emoji
+};
+
 
 interface PlannerState {
   categories: Category[];
@@ -78,7 +88,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         loadWeeklyPlan(currentWeekId),
       ]);
       if (cats.length > 0) {
-        const merged = [...cats];
+        const merged = cats.map(c => ({...c, emoji: migrateEmoji(c.emoji)}));
         for (const def of DEFAULT_CATEGORIES) {
           if (!merged.find(c => c.id === def.id)) {
             merged.push(def);

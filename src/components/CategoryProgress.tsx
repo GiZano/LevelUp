@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 
@@ -31,7 +32,7 @@ export default function CategoryProgress({
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <View style={styles.header}>
         <View style={styles.labelRow}>
-          <Text style={styles.emoji}>{emoji}</Text>
+          <MaterialCommunityIcons name={emoji as any} size={18} color={color} style={styles.emoji} />
           <Text
             style={[styles.name, { color: colors.text }]}
             numberOfLines={1}

@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { t } from "../utils/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -69,7 +70,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         const cat = categories.find((c: any) => c.id === catId);
         return {
           name: cat ? cat.name : t('home.deletedArchived'),
-          emoji: cat ? cat.emoji : '📦',
+          emoji: cat ? cat.emoji : 'package-variant-closed',
           color: cat ? cat.color : '#888',
           hours: catTotals[catId]
         };
@@ -79,7 +80,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         const completedCamps = p.camps.filter((c: any) => c.done).length;
         return {
           name: p.name,
-          emoji: '⛰️',
+          emoji: 'image-filter-hdr',
           color: colors.success || '#10B981',
           hours: completedCamps * 100
         };
@@ -133,7 +134,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         contentContainerStyle={peaks.filter((p: any) => !isPeakComplete(p)).length === 0 ? styles.emptyContainer : styles.list}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>🏔️</Text>
+            <MaterialCommunityIcons name="image-filter-hdr" size={64} color={colors.textTertiary} style={styles.emptyEmoji} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
               Aggiungi la tua prima vetta!
             </Text>
@@ -159,7 +160,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       
       {/* Peaks Stats Modal */}
       <Modal visible={peaksModalVisible} transparent animationType="slide" onRequestClose={() => setPeaksModalVisible(false)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.peaksHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
@@ -168,7 +169,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
               <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.sm, marginBottom: Spacing.xs}}>{t('home.completed')}</Text>
               {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
                 <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                  <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
+                  <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
                   <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
                   <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
                 </View>
@@ -180,7 +181,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 const perc = Math.round(peakProgress(p) * 100);
                 return (
                   <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                    <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
+                    <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
                     <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
                     <Text style={{ color: colors.accent || '#3B82F6', fontWeight: '900', fontSize: 16 }}>{perc}%</Text>
                   </View>
@@ -196,14 +197,14 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
       {/* Altitude Stats Modal */}
       <Modal visible={altModalVisible} transparent animationType="slide" onRequestClose={() => setAltModalVisible(false)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.altHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
               {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
               {altStats.map((s, idx) => (
                 <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                  <Text style={{ fontSize: 24, marginRight: 8 }}>{s.emoji}</Text>
+                  <MaterialCommunityIcons name={s.emoji as any} size={24} color={s.color} style={{ marginRight: 8 }} />
                   <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{s.name}</Text>
                   <Text style={{ color: s.color, fontWeight: '900', fontSize: 16 }}>{s.hours}m</Text>
                 </View>
@@ -223,7 +224,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         animationType="fade"
         onRequestClose={handleCancel}
       >
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.newPeak')}</Text>
 
@@ -359,7 +360,7 @@ const styles = StyleSheet.create({
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    gap: Spacing.sm,
+    gap: Spacing.md,
     marginTop: Spacing.md,
   },
   modalButton: {

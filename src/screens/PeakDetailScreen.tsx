@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { t } from "../utils/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useLayoutEffect, useState, useCallback } from 'react';
@@ -53,7 +54,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
       headerTintColor: colors.text,
       headerRight: () => (
         <Pressable onPress={handleDeletePeak} hitSlop={8}>
-          <Text style={{ fontSize: 22 }}>🗑️</Text>
+          <MaterialCommunityIcons name="trash-can-outline" size={24} color={colors.danger} />
         </Pressable>
       ),
     });

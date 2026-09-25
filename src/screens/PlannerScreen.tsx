@@ -1,5 +1,6 @@
 import { t } from "../utils/i18n";
 import React, { useLayoutEffect, useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -178,7 +179,7 @@ export default function PlannerScreen({ navigation }: any) {
             }}
             style={[styles.btn, {backgroundColor: colors.primary}]}
           >
-            <Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="content-copy" size={20} color="#fff" style={{marginRight: 8}} /><Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text></View>
           </Pressable>
         </View>
       )}
@@ -214,14 +215,14 @@ export default function PlannerScreen({ navigation }: any) {
                         duration = block.oneOffDuration!;
                         const cat = getCategoryById(block.oneOffCategoryId!);
                         catColor = cat?.color || colors.primary;
-                        catEmoji = cat?.emoji || '🏷️';
+                        catEmoji = cat?.emoji || 'shape';
                       } else {
                         const tmpl = block.templateId ? getTemplateById(block.templateId) : undefined;
                         const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
                         name = tmpl?.name || 'Sconosciuto';
                         duration = block.customDuration ?? (tmpl?.durationHours || 0);
                         catColor = cat?.color || colors.primary;
-                        catEmoji = cat?.emoji || '🏷️';
+                        catEmoji = cat?.emoji || 'shape';
                       }
                       
                       return (
@@ -254,7 +255,7 @@ export default function PlannerScreen({ navigation }: any) {
 
       {/* Edit Block Modal */}
       <Modal visible={!!editBlockId} transparent animationType="fade" onRequestClose={() => setEditBlockId(null)}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>Block Details</Text>
             
@@ -270,20 +271,20 @@ export default function PlannerScreen({ navigation }: any) {
               onChangeText={setEditBlockDesc}
             />
             
-            <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
-              <View style={{flexDirection: 'row', gap: 8}}>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.danger }} onPress={handleDeleteBlock}>
+            <View style={{flexDirection: 'column', gap: 12, marginTop: 16}}>
+              <View style={{flexDirection: 'row', gap: 12}}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.danger, alignItems: 'center' }} onPress={handleDeleteBlock}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.delete')}</Text>
                 </Pressable>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success }} onPress={handleToggleBlock}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success, alignItems: 'center' }} onPress={handleToggleBlock}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{isDone ? 'X Toggle' : '✓ Toggle'}</Text>
                 </Pressable>
               </View>
-              <View style={{flexDirection: 'row', gap: 8}}>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.background }} onPress={() => setEditBlockId(null)}>
+              <View style={{flexDirection: 'row', gap: 12}}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.background, alignItems: 'center' }} onPress={() => setEditBlockId(null)}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>{t('common.cancel')}</Text>
                 </Pressable>
-                <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.primary }} onPress={saveBlockDesc}>
+                <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: colors.primary, alignItems: 'center' }} onPress={saveBlockDesc}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.save')}</Text>
                 </Pressable>
               </View>
@@ -294,7 +295,7 @@ export default function PlannerScreen({ navigation }: any) {
 
       {/* Template Picker Modal */}
       <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => { setModalVisible(false); setSelectedTemplateId(null); }}>
-        <View style={styles.modalOverlay}>
+        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('planner.scheduleBlock')}</Text>
             
@@ -347,7 +348,7 @@ export default function PlannerScreen({ navigation }: any) {
                     </Pressable>
                   ))}
                 </View>
-                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                <View style={{flexDirection: 'row', justifyContent: 'flex-end', gap: 16}}>
                   <Pressable onPress={() => setSelectedTemplateId(null)} style={{padding: 12}}>
                     <Text style={{color: colors.textSecondary}}>{t('common.cancel')}</Text>
                   </Pressable>
@@ -378,10 +379,10 @@ export default function PlannerScreen({ navigation }: any) {
                           onPress={() => setExpandedCategories(prev => ({...prev, [cat.id]: !prev[cat.id]}))}
                         >
                           <Text style={{ marginRight: 8, fontSize: 14, color: colors.textSecondary }}>
-                            {isExpanded ? '▼' : '▶'}
+                            <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                           </Text>
-                          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>
-                            {cat.emoji} {cat.name}
+                          <Text style={{ fontSize: 16, fontWeight: '600', color: cat.color }}>
+                            <MaterialCommunityIcons name={cat.emoji as any} size={16} color={cat.color} /> {cat.name}
                           </Text>
                         </Pressable>
                         {isExpanded && catTemplates.map(t => (
