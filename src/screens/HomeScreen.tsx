@@ -17,7 +17,7 @@ import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePeaks } from '../store/PeaksContext';
 import { usePlanner } from '../store/PlannerContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { computeStats } from '../utils/stats';
+import { computeStats, isPeakComplete, peakProgress } from '../utils/stats';
 import StatsBar from '../components/StatsBar';
 import PeakCard from '../components/PeakCard';
 import type { RootStackParamList } from '../types/navigation';
@@ -29,6 +29,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
   const { peaks, streak, lastActiveDate, totalCompletedHours, addPeak } = usePeaks();
 
   const [altModalVisible, setAltModalVisible] = useState(false);
+  const [peaksModalVisible, setPeaksModalVisible] = useState(false);
   const [altStats, setAltStats] = useState<{name: string, emoji: string, color: string, hours: number}[]>([]);
   const { categories, templates } = usePlanner();
 
@@ -124,12 +125,12 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatsBar stats={stats} onAltPress={loadAltStats} />
+      <StatsBar stats={stats} onAltPress={loadAltStats} onPeaksPress={() => setPeaksModalVisible(true)} />
 
       <FlatList
-        data={peaks}
+        data={peaks.filter((p: any) => !isPeakComplete(p))}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={peaks.length === 0 ? styles.emptyContainer : styles.list}
+        contentContainerStyle={peaks.filter((p: any) => !isPeakComplete(p)).length === 0 ? styles.emptyContainer : styles.list}
         ListEmptyComponent={
           <View style={styles.emptyState}>
             <Text style={styles.emptyEmoji}>🏔️</Text>
@@ -155,6 +156,44 @@ export default function HomeScreen({ navigation }: HomeProps) {
       </Pressable>
 
       
+      
+      {/* Peaks Stats Modal */}
+      <Modal visible={peaksModalVisible} transparent animationType="slide" onRequestClose={() => setPeaksModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Storico Vette</Text>
+            <ScrollView style={{marginVertical: 16}}>
+              {peaks.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
+              
+              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.sm, marginBottom: Spacing.xs}}>Completate 🏁</Text>
+              {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
+                <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
+                  <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
+                  <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
+                  <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
+                </View>
+              ))}
+              {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>Nessuna vetta completata.</Text>}
+
+              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.md, marginBottom: Spacing.xs}}>In Corso 🧗</Text>
+              {peaks.filter((p: any) => !isPeakComplete(p)).map((p: any) => {
+                const perc = Math.round(peakProgress(p) * 100);
+                return (
+                  <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
+                    <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
+                    <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
+                    <Text style={{ color: colors.accent || '#3B82F6', fontWeight: '900', fontSize: 16 }}>{perc}%</Text>
+                  </View>
+                );
+              })}
+            </ScrollView>
+            <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.primary, alignItems: 'center' }]} onPress={() => setPeaksModalVisible(false)}>
+              <Text style={[styles.modalButtonText, { color: '#fff' }]}>Chiudi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Altitude Stats Modal */}
       <Modal visible={altModalVisible} transparent animationType="slide" onRequestClose={() => setAltModalVisible(false)}>
         <View style={styles.modalOverlay}>
