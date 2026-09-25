@@ -291,17 +291,17 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   onChangeText={setCatName}
                 />
                 
-                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Icona</Text>
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.iconLabel') || 'Icon'}</Text>
                 <TouchableOpacity
                   style={[styles.input, { backgroundColor: colors.background, borderColor: colors.border, flexDirection: 'row', alignItems: 'center' }]}
                   onPress={() => setIconPickerVisible(true)}
                 >
                   <MaterialCommunityIcons name={catEmoji as any} size={24} color={colors.text} style={{ marginRight: 8 }} />
-                  <Text style={{ color: colors.textSecondary }}>Tocca per cambiare...</Text>
+                  <Text style={{ color: colors.textSecondary }}>{t('manage.tapToChange') || 'Tap to change...'}</Text>
                 </TouchableOpacity>
                 <IconPicker visible={iconPickerVisible} onSelect={(i) => { setCatEmoji(i); setIconPickerVisible(false); }} onClose={() => setIconPickerVisible(false)} />
 
-                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Color</Text>
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.colorLabel') || 'Color'}</Text>
                 <View style={[styles.chipsRow, {marginBottom: Spacing.md}]}>
                   {CATEGORY_COLORS.map(c => (
                     <Pressable 

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, FlatList, Pressable } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
+import { t } from '../utils/i18n';
 import { Spacing, BorderRadius } from '../utils/theme';
 
 const ICONS = [
@@ -34,11 +35,11 @@ export default function IconPicker({ visible, onSelect, onClose }: IconPickerPro
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
         <View style={[styles.content, { backgroundColor: colors.surface }]}>
-          <Text style={[styles.title, { color: colors.text }]}>Seleziona un'icona</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{t('manage.selectIcon')}</Text>
           
           <TextInput
             style={[styles.search, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
-            placeholder="Cerca icona..."
+            placeholder={t("manage.searchIcon") || "Search"}
             placeholderTextColor={colors.textSecondary}
             value={search}
             onChangeText={setSearch}
@@ -63,7 +64,7 @@ export default function IconPicker({ visible, onSelect, onClose }: IconPickerPro
           />
           
           <Pressable style={[styles.closeBtn, { backgroundColor: colors.background }]} onPress={onClose}>
-            <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>Chiudi</Text>
+            <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>{t('common.cancel')}</Text>
           </Pressable>
         </View>
       </View>
@@ -102,8 +103,9 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.sm,
   },
   iconCell: {
-    width: 56,
-    height: 56,
+    flex: 1,
+    aspectRatio: 1,
+    maxWidth: '18%',
     borderRadius: BorderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
