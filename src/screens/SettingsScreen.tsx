@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -15,6 +15,7 @@ import { usePlanner } from '../store/PlannerContext';
 
 export default function SettingsScreen() {
   const { colors } = useThemeColors();
+  const [isImporting, setIsImporting] = useState(false);
   const { locale, changeLocale } = useLocale();
   const { refreshData: refreshPeaks } = usePeaks();
   const { refreshData: refreshPlanner } = usePlanner();
@@ -44,7 +45,7 @@ export default function SettingsScreen() {
         if (permissions.granted) {
           const uri = await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, 'levelup_backup.json', 'application/json');
           await FileSystem.writeAsStringAsync(uri, jsonStr, { encoding: FileSystem.EncodingType.UTF8 });
-          Alert.alert('Success', t('settings.importSuccess') || 'Backup exported successfully!');
+          Alert.alert('Success', 'Backup exported successfully!');
           return;
         }
       }
@@ -69,6 +70,9 @@ export default function SettingsScreen() {
         onPress: async () => {
           try {
             const res = await DocumentPicker.getDocumentAsync({ type: ['application/json', 'text/plain', '*/*'] });
+            if (res.canceled || !res.assets || res.assets.length === 0) return;
+            setIsImporting(true);
+            await new Promise(r => setTimeout(r, 1000));
             if (res.canceled || !res.assets || res.assets.length === 0) return;
             const fileUri = res.assets[0].uri;
                         let fileContent = '';
@@ -134,8 +138,13 @@ export default function SettingsScreen() {
           <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.exportBtn')}</Text>
           </Pressable>
-          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} onPress={importBackup}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.importBtn')}</Text>
+          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]} onPress={importBackup} disabled={isImporting}>
+            {isImporting ? (
+              <ActivityIndicator color={colors.primary} style={{marginRight: 8}} />
+            ) : null}
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>
+              {isImporting ? 'Importazione...' : t('settings.importBtn')}
+            </Text>
           </Pressable>
         </View>
 
