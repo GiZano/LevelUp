@@ -28,7 +28,8 @@
           "calendarPermission": "This app needs calendar access to sync your productivity blocks.",
           "calendarWritePermission": "This app needs write access to automatically save blocks to your Google Calendar."
         }
-      ]
+      ],
+      "expo-sharing"
     ]
   }
 }

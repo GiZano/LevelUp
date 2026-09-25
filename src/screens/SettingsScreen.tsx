@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
+import * as Sharing from 'expo-sharing';
+import { Platform } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -19,6 +21,7 @@ export default function SettingsScreen() {
   };
 
   
+  
   const exportBackup = async () => {
     try {
       const keys = await AsyncStorage.getAllKeys();
@@ -31,10 +34,22 @@ export default function SettingsScreen() {
       };
       
       const jsonStr = JSON.stringify(backupData, null, 2);
-      await Share.share({
-        message: jsonStr,
-        title: 'LevelUp Backup'
-      });
+      
+      if (Platform.OS === 'android') {
+        const permissions = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync();
+        if (permissions.granted) {
+          const uri = await FileSystem.StorageAccessFramework.createFileAsync(permissions.directoryUri, 'levelup_backup.json', 'application/json');
+          await FileSystem.writeAsStringAsync(uri, jsonStr, { encoding: FileSystem.EncodingType.UTF8 });
+          Alert.alert('Success', t('settings.importSuccess') || 'Backup exported successfully!');
+          return;
+        }
+      }
+
+      // Fallback to sharing for iOS or if user cancels SAF on Android
+      const fileUri = FileSystem.documentDirectory + 'levelup_backup.json';
+      await FileSystem.writeAsStringAsync(fileUri, jsonStr, { encoding: FileSystem.EncodingType.UTF8 });
+      await Sharing.shareAsync(fileUri, { mimeType: 'application/json', dialogTitle: 'LevelUp Backup' });
+
     } catch (e) {
       Alert.alert('Error', 'Failed to export data');
     }
