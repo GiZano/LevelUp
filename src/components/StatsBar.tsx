@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import type { UserStats } from '../types';
@@ -16,19 +17,19 @@ export default function StatsBar({ stats, onAltPress, onPeaksPress }: StatsBarPr
 
   const cards = [
     {
-      icon: '🏔️',
+      icon: <MaterialCommunityIcons name="image-filter-hdr" size={24} color={colors.primary} />,
       value: `${stats.totalAltitude.toLocaleString()}m`,
       label: t('home.totalAlt'),
       onPress: onAltPress,
     },
     {
-      icon: '⛰️',
+      icon: <MaterialCommunityIcons name="flag-variant" size={24} color={colors.accent} />,
       value: String(stats.peaksReached),
       label: t('home.peaksReached'),
       onPress: onPeaksPress,
     },
     {
-      icon: '🔥',
+      icon: <MaterialCommunityIcons name="fire" size={24} color={colors.streak} />,
       value: String(stats.currentStreak),
       label: t('home.streak'),
     },
@@ -48,7 +49,7 @@ export default function StatsBar({ stats, onAltPress, onPeaksPress }: StatsBarPr
               { backgroundColor: colors.surface, borderColor: colors.border },
             ]}
           >
-            <Text style={styles.icon}>{card.icon}</Text>
+            <View style={styles.icon}>{card.icon}</View>
             <Text style={[styles.value, { color: colors.text }]}>
               {card.value}
             </Text>

@@ -1,5 +1,6 @@
 import { t } from "../utils/i18n";
 import React, { useState, useLayoutEffect } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { LayoutAnimation, View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -181,7 +182,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                 onPress={() => setExpandedCategories(prev => ({...prev, [categoryId]: !prev[categoryId]}))}
               >
                 <Text style={[{ marginRight: 6, fontSize: 14, color: colors.textSecondary }]}>
-                  {isExpanded ? '▼' : '▶'}
+                  <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                 </Text>
                 <Text style={[styles.groupHeader, { color: colors.textSecondary, marginBottom: 0 }]}>
                   {cat?.emoji} {cat?.name ?? 'Altro'}
@@ -215,7 +216,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                 <Text style={[styles.catEmoji, { opacity: 0.5 }]}>{c.emoji}</Text>
                 <Text style={[styles.catName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]}>{c.name}</Text>
                 <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8}>
-                  <Text style={{fontSize: 16}}>♻️</Text>
+                  <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
                 </Pressable>
               </View>
             ))}
@@ -229,7 +230,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                     {t.name}
                   </Text>
                   <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); handleUnarchiveTemplate(t.id); }} hitSlop={8}>
-                    <Text style={{fontSize: 16}}>♻️</Text>
+                    <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
                   </Pressable>
                 </View>
               );

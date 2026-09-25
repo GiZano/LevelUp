@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import type { Camp } from '../types';
@@ -54,7 +55,7 @@ export default function CampItem({ camp, onToggle, onDelete }: CampItemProps) {
         style={styles.deleteButton}
         activeOpacity={0.6}
       >
-        <Text style={[styles.deleteIcon, { color: colors.danger }]}>🗑️</Text>
+        <MaterialCommunityIcons name="trash-can-outline" size={18} color={colors.danger} />
       </TouchableOpacity>
     </View>
   );

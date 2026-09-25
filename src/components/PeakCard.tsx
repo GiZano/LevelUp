@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { peakProgress, isPeakComplete } from '../utils/stats';
@@ -34,7 +35,7 @@ export default function PeakCard({ peak, onPress }: PeakCardProps) {
         >
           {peak.name}
         </Text>
-        {completed && <Text style={styles.badge}>🏁</Text>}
+        {completed && <MaterialCommunityIcons name="flag-checkered" size={20} color={colors.accent} style={styles.badge} />}
       </View>
 
       {peak.description ? (

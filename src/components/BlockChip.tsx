@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 
@@ -41,7 +42,7 @@ export default function BlockChip({
 
       <View style={styles.nameContainer}>
         <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {done && <Text style={[styles.checkmark, { color: colors.success }]}>✓ </Text>}
+          {done && <MaterialCommunityIcons name="check-bold" size={16} color={colors.success} style={{ marginRight: 4 }} />}
           <Text
             style={[
               styles.name,

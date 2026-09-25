@@ -1,6 +1,7 @@
 import { t } from "../utils/i18n";
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, LayoutAnimation } from 'react-native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -104,7 +105,7 @@ export default function TodayScreen({ navigation }: any) {
                     ]}
                   >
                     <View style={[styles.checkbox, { borderColor: b.done ? colors.success : colors.textTertiary, backgroundColor: b.done ? colors.success : 'transparent' }]}>
-                      {b.done && <Text style={{color: '#fff', fontSize: 12}}>✓</Text>}
+                      {b.done && <MaterialCommunityIcons name="check-bold" size={12} color="#fff" />}
                     </View>
                     
                     <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{catEmoji}</Text>

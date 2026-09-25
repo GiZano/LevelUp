@@ -1,5 +1,6 @@
 import { t } from "../utils/i18n";
 import React, { useLayoutEffect, useState } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -378,7 +379,7 @@ export default function PlannerScreen({ navigation }: any) {
                           onPress={() => setExpandedCategories(prev => ({...prev, [cat.id]: !prev[cat.id]}))}
                         >
                           <Text style={{ marginRight: 8, fontSize: 14, color: colors.textSecondary }}>
-                            {isExpanded ? '▼' : '▶'}
+                            <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                           </Text>
                           <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>
                             {cat.emoji} {cat.name}

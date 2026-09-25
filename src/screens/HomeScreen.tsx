@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { t } from "../utils/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -133,7 +134,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         contentContainerStyle={peaks.filter((p: any) => !isPeakComplete(p)).length === 0 ? styles.emptyContainer : styles.list}
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <Text style={styles.emptyEmoji}>🏔️</Text>
+            <MaterialCommunityIcons name="image-filter-hdr" size={64} color={colors.textTertiary} style={styles.emptyEmoji} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
               Aggiungi la tua prima vetta!
             </Text>
@@ -168,7 +169,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
               <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.sm, marginBottom: Spacing.xs}}>{t('home.completed')}</Text>
               {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
                 <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                  <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
+                  <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
                   <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
                   <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
                 </View>
@@ -180,7 +181,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 const perc = Math.round(peakProgress(p) * 100);
                 return (
                   <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                    <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
+                    <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
                     <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
                     <Text style={{ color: colors.accent || '#3B82F6', fontWeight: '900', fontSize: 16 }}>{perc}%</Text>
                   </View>
