@@ -93,19 +93,18 @@ export default function ManageBlocksScreen({ navigation }: any) {
     setCatModalVisible(false);
   };
 
-  const handleDeleteCategory = () => {
-    if (!editCatId) return;
+  const handleArchiveCategory = (id: string, name: string) => {
     Alert.alert(
       'Archivia Categoria',
-      "Sei sicuro di voler archiviare questa categoria? Non sarà più visibile tra le categorie attive, ma lo storico verrà conservato.",
+      `Sei sicuro di voler archiviare "${name}"? Non sarà più visibile tra le categorie attive, ma lo storico verrà conservato.`,
       [
         { text: t('common.cancel'), style: 'cancel' },
         { 
           text: 'Archivia', 
           style: 'destructive',
           onPress: () => {
-            archiveCategory(editCatId);
-            setCatModalVisible(false);
+            archiveCategory(id);
+            if (editCatId === id) setCatModalVisible(false);
           }
         }
       ]
@@ -134,13 +133,18 @@ export default function ManageBlocksScreen({ navigation }: any) {
         </Text>
         
         {activeCategories.map((c) => (
-          <Pressable key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]} onPress={() => openEditCategory(c)}>
-            <Text style={styles.catEmoji}>{c.emoji}</Text>
-            <Text style={[styles.catName, { color: colors.text }]}>{c.name}</Text>
-            <Text style={[styles.catTarget, { color: colors.textSecondary }]}>
-              {c.targetHoursPerWeek}h target ✎
-            </Text>
-          </Pressable>
+          <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]}>
+            <Pressable style={{flexDirection: 'row', alignItems: 'center', flex: 1}} onPress={() => openEditCategory(c)}>
+              <Text style={styles.catEmoji}>{c.emoji}</Text>
+              <Text style={[styles.catName, { color: colors.text }]}>{c.name}</Text>
+              <Text style={[styles.catTarget, { color: colors.textSecondary, marginRight: Spacing.sm }]}>
+                {c.targetHoursPerWeek}h target ✎
+              </Text>
+            </Pressable>
+            <Pressable onPress={() => handleArchiveCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs}}>
+              <Text style={styles.deleteIcon}>📦</Text>
+            </Pressable>
+          </View>
         ))}
 
         <Text style={[styles.sectionTitle, { color: colors.text, marginTop: Spacing.xl }]}>{t('manage.activityBlocks')}</Text>
@@ -169,7 +173,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                     {t.durationHours}h
                   </Text>
                   <Pressable onPress={() => handleDeleteBlock(t.id, t.name)} hitSlop={8}>
-                    <Text style={styles.deleteIcon}>🗑️</Text>
+                    <Text style={styles.deleteIcon}>📦</Text>
                   </Pressable>
                 </View>
               ))}
