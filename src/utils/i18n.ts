@@ -103,9 +103,8 @@ const translations = {
       completedToday: 'hours completed today',
       yourDay: 'Your day',
       todayProgress: 'Today\'s Progress',
-    }
-
-    , settings: {
+    },
+    settings: {
       langTitle: '🌐 Language / Lingua',
       backupTitle: '💾 Backup & Data',
       backupDesc: 'Export all your data (Peaks, Categories, Blocks) in JSON format. You can save it to Google Drive or email it to yourself as a safety backup.',
@@ -219,9 +218,8 @@ const translations = {
       completedToday: 'ore completate oggi',
       yourDay: 'La tua giornata',
       todayProgress: 'Progresso odierno',
-    }
-
-    , settings: {
+    },
+    settings: {
       langTitle: '🌐 Language / Lingua',
       backupTitle: '💾 Backup & Dati',
       backupDesc: 'Esporta tutti i tuoi dati (Vette, Categorie, Blocchi) in formato JSON. Potrai salvarli su Google Drive o inviarteli per email come backup di sicurezza.',
