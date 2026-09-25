@@ -73,7 +73,6 @@ export default function SettingsScreen() {
             if (res.canceled || !res.assets || res.assets.length === 0) return;
             setIsImporting(true);
             await new Promise(r => setTimeout(r, 1000));
-            if (res.canceled || !res.assets || res.assets.length === 0) return;
             const fileUri = res.assets[0].uri;
                         let fileContent = '';
             try {
@@ -102,6 +101,8 @@ export default function SettingsScreen() {
             }
           } catch (e) {
             Alert.alert('Error', (t('settings.importError') || 'Failed to import data') + ': ' + String(e));
+          } finally {
+            setIsImporting(false);
           }
         },
       },
