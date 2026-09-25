@@ -114,7 +114,7 @@ export default function SettingsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.title, { color: colors.text }]}>{t('settings.langTitle')}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 16}}><MaterialCommunityIcons name="translate" size={24} color={colors.primary} style={{marginRight: 8}} /><Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.langTitle')}</Text></View>
           <View style={styles.langRow}>
             <Pressable 
               style={[styles.langBtn, currentLang === 'en' && { backgroundColor: colors.primary }]}
@@ -133,7 +133,7 @@ export default function SettingsScreen() {
 
         
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
-          <Text style={[styles.title, { color: colors.text }]}>{t('settings.backupTitle')}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 16}}><MaterialCommunityIcons name="content-save-outline" size={24} color={colors.primary} style={{marginRight: 8}} /><Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.backupTitle')}</Text></View>
           <Text style={[styles.body, { color: colors.textSecondary }]}>
             {t('settings.backupDesc')}
           </Text>
@@ -149,7 +149,7 @@ export default function SettingsScreen() {
         </View>
 
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
-          <Text style={[styles.title, { color: colors.text }]}>{t('settings.aboutTitle')}</Text>
+          <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 16}}><MaterialCommunityIcons name="information-outline" size={24} color={colors.primary} style={{marginRight: 8}} /><Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.aboutTitle')}</Text></View>
 
           <Text style={[styles.body, { color: colors.textSecondary }]}>
             {t('settings.aboutDesc1')}

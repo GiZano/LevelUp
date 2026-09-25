@@ -128,8 +128,8 @@ const translations = {
       todayProgress: 'Today\'s Progress',
     },
     settings: {
-      langTitle: '🌐 Language / Lingua',
-      backupTitle: '💾 Backup & Data',
+      langTitle: 'Language / Lingua',
+      backupTitle: 'Backup & Data',
       backupDesc: 'Export all your data (Peaks, Categories, Blocks) in JSON format. You can save it to Google Drive or email it to yourself as a safety backup.',
       exportBtn: 'Export JSON Backup',
       importBtn: 'Import JSON Backup',
@@ -138,11 +138,11 @@ const translations = {
       importConfirmMsg: 'Are you sure? This will OVERWRITE all your current data.',
       importSuccess: 'Backup imported successfully!',
       importError: 'Failed to import backup.',
-      aboutTitle: 'ℹ️ About LevelUp',
+      aboutTitle: 'About LevelUp',
       aboutDesc1: 'LevelUp was born from a simple need: eliminating decision fatigue in free time. The mountain climbing metaphor helps tracking long-term goals (Peaks) and breaking them down into actionable steps (Camps).',
       aboutDesc2: 'This app is 100% Open Source and built by developers, for everyone.',
       starGithub: 'Star on GitHub',
-      submitIssue: '🐛 Submit an Issue',
+      submitIssue: 'Submit an Issue',
       feedbackPlayStore: 'Leave a feedback on Play Store (WIP)'
     }
   },
@@ -272,8 +272,8 @@ const translations = {
       todayProgress: 'Progresso odierno',
     },
     settings: {
-      langTitle: '🌐 Language / Lingua',
-      backupTitle: '💾 Backup & Dati',
+      langTitle: 'Language / Lingua',
+      backupTitle: 'Backup & Dati',
       backupDesc: 'Esporta tutti i tuoi dati (Vette, Categorie, Blocchi) in formato JSON. Potrai salvarli su Google Drive o inviarteli per email come backup di sicurezza.',
       exportBtn: 'Esporta Backup JSON',
       importBtn: 'Importa Backup JSON',
@@ -282,11 +282,11 @@ const translations = {
       importConfirmMsg: 'Sei sicuro? Questa operazione SOVRASCRIVERÀ tutti i tuoi dati correnti.',
       importSuccess: 'Backup importato con successo!',
       importError: 'Errore durante l\'importazione del backup.',
-      aboutTitle: 'ℹ️ About LevelUp',
+      aboutTitle: 'About LevelUp',
       aboutDesc1: 'LevelUp nasce da una necessità semplice: eliminare la "decision fatigue" nel tempo libero. La metafora dell\'arrampicata aiuta a tracciare obiettivi a lungo termine (Vette) e suddividerli in passaggi concreti (Campi).',
       aboutDesc2: 'Questa app è 100% Open Source, creata da sviluppatori per tutti.',
       starGithub: 'Metti una stella su GitHub',
-      submitIssue: '🐛 Aggiungi una Issue',
+      submitIssue: 'Aggiungi una Issue',
       feedbackPlayStore: 'Lascia un feedback sul Play Store (WIP)'
     }
   }
