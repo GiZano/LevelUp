@@ -19,7 +19,7 @@ export default function TodayScreen({ navigation }: any) {
     const d = new Date();
     const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
     navigation.setOptions({
-      title: `Oggi: ${DAY_LABELS[today]} ${dateStr}`,
+      title: `${t('today.title')}: ${t('days.' + today).substring(0,3)} ${dateStr}`,
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });
@@ -57,7 +57,7 @@ export default function TodayScreen({ navigation }: any) {
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.slotSection}>
-          <Text style={[styles.slotTitle, { color: colors.textSecondary }]}>La tua giornata</Text>
+          <Text style={[styles.slotTitle, { color: colors.textSecondary }]}>{t('today.yourDay')}</Text>
           
           {todayBlocks.length === 0 ? (
             <Text style={{color: colors.textTertiary, fontStyle: 'italic', marginLeft: Spacing.md, marginTop: Spacing.sm}}>
@@ -121,7 +121,7 @@ export default function TodayScreen({ navigation }: any) {
       {/* Footer summary */}
       <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
         <View style={styles.footerHeader}>
-          <Text style={{color: colors.text, fontWeight: 'bold'}}>Progresso odierno</Text>
+          <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('today.todayProgress')}</Text>
           <Text style={{color: colors.textSecondary}}>{totalCompleted} / {totalScheduled}h</Text>
         </View>
         <View style={[styles.progressBar, { backgroundColor: colors.background }]}>

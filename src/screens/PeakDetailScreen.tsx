@@ -144,7 +144,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
           style={[styles.addButton, { backgroundColor: colors.primary }]}
           onPress={handleAddCamp}
         >
-          <Text style={styles.addButtonText}>Aggiungi</Text>
+          <Text style={styles.addButtonText}>{t('peakDetail.add')}</Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>

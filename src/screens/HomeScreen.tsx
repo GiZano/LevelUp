@@ -95,7 +95,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       >
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Nuova Vetta</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.newPeak')}</Text>
 
             <TextInput
               style={[
@@ -123,7 +123,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
                   borderColor: colors.border,
                 },
               ]}
-              placeholder="Descrizione (opzionale)"
+              placeholder={t('home.descOptional')}
               placeholderTextColor={colors.textSecondary}
               value={description}
               onChangeText={setDescription}
@@ -144,7 +144,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 style={[styles.modalButton, { backgroundColor: colors.primary }]}
                 onPress={handleCreate}
               >
-                <Text style={[styles.modalButtonText, { color: '#fff' }]}>Crea Vetta</Text>
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('home.createPeak')}</Text>
               </Pressable>
             </View>
           </View>

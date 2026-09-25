@@ -101,6 +101,8 @@ const translations = {
       evening: '🌙 Evening',
       noBlocks: 'No blocks',
       completedToday: 'hours completed today',
+      yourDay: 'Your day',
+      todayProgress: 'Today\'s Progress',
     }
   },
   it: {
@@ -202,6 +204,8 @@ const translations = {
       evening: '🌙 Sera',
       noBlocks: 'Nessun blocco',
       completedToday: 'ore completate oggi',
+      yourDay: 'La tua giornata',
+      todayProgress: 'Progresso odierno',
     }
   }
 };

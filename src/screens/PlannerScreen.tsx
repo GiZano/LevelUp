@@ -117,7 +117,7 @@ export default function PlannerScreen({ navigation }: any) {
       <View style={[styles.summaryContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: Spacing.xs}}>
           <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>← Precedente</Text>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('planner.prev')}</Text>
           </Pressable>
           
           <View style={{ alignItems: 'center' }}>
@@ -132,7 +132,7 @@ export default function PlannerScreen({ navigation }: any) {
           </View>
 
           <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>Prossima →</Text>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('planner.next')}</Text>
           </Pressable>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.summaryList}>
@@ -158,7 +158,7 @@ export default function PlannerScreen({ navigation }: any) {
       {/* Grid */}
       {currentPlan.blocks.length === 0 && (
         <View style={{padding: Spacing.md, alignItems: 'center'}}>
-          <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>Questa settimana è vuota.</Text>
+          <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>{t('planner.emptyWeek')}</Text>
           <Pressable 
             onPress={() => {
               Alert.alert(t('planner.copyWeekTitle'), t('planner.copyWeekMsg'), [
@@ -168,7 +168,7 @@ export default function PlannerScreen({ navigation }: any) {
             }}
             style={[styles.btn, {backgroundColor: colors.primary}]}
           >
-            <Text style={{color: '#fff', fontWeight: 'bold'}}>🔄 Copia Settimana Precedente</Text>
+            <Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text>
           </Pressable>
         </View>
       )}
@@ -263,7 +263,7 @@ export default function PlannerScreen({ navigation }: any) {
             <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 16}}>
               <View style={{flexDirection: 'row', gap: 8}}>
                 <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: colors.danger }} onPress={handleDeleteBlock}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>Delete</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.delete')}</Text>
                 </Pressable>
                 <Pressable style={{ paddingVertical: 8, paddingHorizontal: 16, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success }} onPress={handleToggleBlock}>
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{isDone ? 'X Toggle' : '✓ Toggle'}</Text>
@@ -286,10 +286,10 @@ export default function PlannerScreen({ navigation }: any) {
       <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Programma Blocco</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('planner.scheduleBlock')}</Text>
             
             <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md}}>
-              <Text style={{color: colors.text, fontSize: FontSize.md, marginRight: Spacing.sm}}>Ora di inizio:</Text>
+              <Text style={{color: colors.text, fontSize: FontSize.md, marginRight: Spacing.sm}}>{t('planner.startTime')}</Text>
               {Platform.OS === 'ios' ? (
                 <DateTimePicker
                   value={startTime}
@@ -324,9 +324,9 @@ export default function PlannerScreen({ navigation }: any) {
 
             {templates.length === 0 ? (
               <View style={{padding: Spacing.lg, alignItems: 'center'}}>
-                <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>Crea prima un blocco attività!</Text>
+                <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>{t('planner.createFirst')}</Text>
                 <Pressable onPress={() => { setModalVisible(false); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
-                  <Text style={{color: '#fff'}}>Vai a Gestisci Blocchi</Text>
+                  <Text style={{color: '#fff'}}>{t('planner.goToManage')}</Text>
                 </Pressable>
               </View>
             ) : (
@@ -346,7 +346,7 @@ export default function PlannerScreen({ navigation }: any) {
               </ScrollView>
             )}
             <Pressable onPress={() => setModalVisible(false)} style={{padding: Spacing.md, alignItems: 'center'}}>
-              <Text style={{color: colors.textSecondary}}>Annulla</Text>
+              <Text style={{color: colors.textSecondary}}>{t('common.cancel')}</Text>
             </Pressable>
           </View>
         </View>

@@ -95,7 +95,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm}}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('manage.title')}</Text>
           <Pressable onPress={openNewCategory} style={{padding: Spacing.xs, paddingHorizontal: Spacing.sm, backgroundColor: colors.surfaceAlt, borderRadius: BorderRadius.sm}}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>+ New</Text>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>+ {t('common.create')}</Text>
           </Pressable>
         </View>
         <Text style={{color: colors.textSecondary, fontSize: 12, marginBottom: Spacing.sm}}>{t('manage.categoriesInfo')}</Text>
@@ -110,7 +110,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
           </Pressable>
         ))}
 
-        <Text style={[styles.sectionTitle, { color: colors.text, marginTop: Spacing.xl }]}>Blocchi Attività</Text>
+        <Text style={[styles.sectionTitle, { color: colors.text, marginTop: Spacing.xl }]}>{t('manage.activityBlocks')}</Text>
 
         {templates.length === 0 && (
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
@@ -161,7 +161,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
             
             {!editCatId && (
               <>
-                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Name</Text>
+                <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.blockName')}</Text>
                 <TextInput
                   style={[styles.input, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
                   value={catName}
@@ -216,7 +216,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={resetModal}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Nuovo Blocco</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('manage.newBlock')}</Text>
 
             <TextInput
               style={[
@@ -229,7 +229,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
               onChangeText={setBlockName}
             />
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Categoria</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.category')}</Text>
             <View style={styles.chipsRow}>
               {categories.map((c) => {
                 const selected = selectedCategoryId === c.id;
@@ -253,7 +253,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
               })}
             </View>
 
-            <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>Durata</Text>
+            <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.duration')}</Text>
             <View style={styles.chipsRow}>
               {DURATION_OPTIONS.map((d) => {
                 const selected = selectedDuration === d;
@@ -277,14 +277,14 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
             <View style={styles.modalButtons}>
               <Pressable style={[styles.modalButton, { backgroundColor: colors.background }]} onPress={resetModal}>
-                <Text style={[styles.modalButtonText, { color: colors.textSecondary }]}>Annulla</Text>
+                <Text style={[styles.modalButtonText, { color: colors.textSecondary }]}>{t('common.cancel')}</Text>
               </Pressable>
               <Pressable
                 style={[styles.modalButton, { backgroundColor: colors.primary, opacity: blockName.trim() && selectedCategoryId ? 1 : 0.5 }]}
                 onPress={handleCreateBlock}
                 disabled={!blockName.trim() || !selectedCategoryId}
               >
-                <Text style={[styles.modalButtonText, { color: '#fff' }]}>Crea</Text>
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('common.create')}</Text>
               </Pressable>
             </View>
           </View>
