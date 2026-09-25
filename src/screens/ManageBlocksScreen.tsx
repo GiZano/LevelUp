@@ -21,6 +21,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   }, [navigation, colors]);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [blockName, setBlockName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedDuration, setSelectedDuration] = useState<number>(1);
@@ -158,12 +159,21 @@ export default function ManageBlocksScreen({ navigation }: any) {
         {templatesByCategory.map(({ categoryId, items }) => {
           if (items.length === 0) return null;
           const cat = getCategoryById(categoryId);
+          const isExpanded = expandedCategories[categoryId];
           return (
             <View key={categoryId} style={styles.group}>
-              <Text style={[styles.groupHeader, { color: colors.textSecondary }]}>
-                {cat?.emoji} {cat?.name ?? 'Altro'}
-              </Text>
-              {items.map((t) => (
+              <Pressable 
+                style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.xs, paddingVertical: Spacing.xs }}
+                onPress={() => setExpandedCategories(prev => ({...prev, [categoryId]: !prev[categoryId]}))}
+              >
+                <Text style={[{ marginRight: 6, fontSize: 14, color: colors.textSecondary }]}>
+                  {isExpanded ? '▼' : '▶'}
+                </Text>
+                <Text style={[styles.groupHeader, { color: colors.textSecondary, marginBottom: 0 }]}>
+                  {cat?.emoji} {cat?.name ?? 'Altro'}
+                </Text>
+              </Pressable>
+              {isExpanded && items.map((t) => (
                 <View key={t.id} style={[styles.blockRow, { backgroundColor: colors.surface }]}>
                   <View style={[styles.blockColor, { backgroundColor: cat?.color ?? colors.primary }]} />
                   <Text style={[styles.blockName, { color: colors.text }]} numberOfLines={1}>

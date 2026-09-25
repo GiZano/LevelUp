@@ -24,6 +24,7 @@ export default function PlannerScreen({ navigation }: any) {
 
   const [editBlockId, setEditBlockId] = useState<string | null>(null);
   const [editBlockDesc, setEditBlockDesc] = useState('');
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const editBlock = editBlockId ? currentPlan.blocks.find(b => b.id === editBlockId) : null;
   const isDone = editBlock?.done;
 
@@ -331,16 +332,33 @@ export default function PlannerScreen({ navigation }: any) {
               </View>
             ) : (
               <ScrollView style={{maxHeight: 300}}>
-                {templates.filter(t => !t.isArchived).map(t => {
-                  const cat = getCategoryById(t.categoryId);
+                {categories.filter(c => !c.isArchived).map(cat => {
+                  const catTemplates = templates.filter(t => !t.isArchived && t.categoryId === cat.id);
+                  if (catTemplates.length === 0) return null;
+                  const isExpanded = expandedCategories[cat.id];
+                  
                   return (
-                    <Pressable key={t.id} style={[styles.templateItem, {borderBottomColor: colors.border}]} onPress={() => handlePickTemplate(t.id)}>
-                      <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{cat?.emoji}</Text>
-                      <View style={{flex: 1}}>
-                        <Text style={{color: colors.text, fontWeight: '600'}}>{t.name}</Text>
-                      </View>
-                      <Text style={{color: colors.textSecondary}}>{t.durationHours}h</Text>
-                    </Pressable>
+                    <View key={cat.id} style={{ marginBottom: 8 }}>
+                      <Pressable 
+                        style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+                        onPress={() => setExpandedCategories(prev => ({...prev, [cat.id]: !prev[cat.id]}))}
+                      >
+                        <Text style={{ marginRight: 8, fontSize: 14, color: colors.textSecondary }}>
+                          {isExpanded ? '▼' : '▶'}
+                        </Text>
+                        <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>
+                          {cat.emoji} {cat.name}
+                        </Text>
+                      </Pressable>
+                      {isExpanded && catTemplates.map(t => (
+                        <Pressable key={t.id} style={[styles.templateItem, {borderBottomColor: colors.border, marginLeft: 24}]} onPress={() => handlePickTemplate(t.id)}>
+                          <View style={{flex: 1}}>
+                            <Text style={{color: colors.text, fontWeight: '600'}}>{t.name}</Text>
+                          </View>
+                          <Text style={{color: colors.textSecondary}}>{t.durationHours}h</Text>
+                        </Pressable>
+                      ))}
+                    </View>
                   );
                 })}
               </ScrollView>
