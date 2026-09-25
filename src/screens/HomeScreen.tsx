@@ -1,3 +1,4 @@
+import { ScrollView, TouchableOpacity } from 'react-native';
 import { t } from "../utils/i18n";
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useLayoutEffect, useState } from 'react';
@@ -141,6 +142,29 @@ export default function HomeScreen({ navigation }: HomeProps) {
       >
         <Text style={styles.fabText}>+</Text>
       </Pressable>
+
+      
+      {/* Altitude Stats Modal */}
+      <Modal visible={altModalVisible} transparent animationType="slide" onRequestClose={() => setAltModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Storico Metri per Categoria</Text>
+            <ScrollView style={{marginVertical: 16}}>
+              {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
+              {altStats.map((s, idx) => (
+                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
+                  <Text style={{ fontSize: 24, marginRight: 8 }}>{s.emoji}</Text>
+                  <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{s.name}</Text>
+                  <Text style={{ color: s.color, fontWeight: '900', fontSize: 16 }}>{s.hours}m</Text>
+                </View>
+              ))}
+            </ScrollView>
+            <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.primary, alignItems: 'center' }]} onPress={() => setAltModalVisible(false)}>
+              <Text style={[styles.modalButtonText, { color: '#fff' }]}>Chiudi</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Add Peak Modal */}
       <Modal
