@@ -153,14 +153,14 @@ export default function ManageBlocksScreen({ navigation }: any) {
         {activeCategories.map((c) => (
           <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]}>
             <Pressable style={{flexDirection: 'row', alignItems: 'center', flex: 1}} onPress={() => openEditCategory(c)}>
-              <MaterialCommunityIcons name={c.emoji as any} size={24} color={colors.text} style={styles.catEmoji} />
-              <Text style={[styles.catName, { color: colors.text }]}>{c.name}</Text>
+              <MaterialCommunityIcons name={c.emoji as any} size={24} color={c.color} style={styles.catEmoji} />
+              <Text style={[styles.catName, { color: c.color }]}>{c.name}</Text>
               <Text style={[styles.catTarget, { color: colors.textSecondary, marginRight: Spacing.sm }]}>
                 {c.targetHoursPerWeek}h target ✎
               </Text>
             </Pressable>
             <Pressable onPress={() => handleArchiveCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs}}>
-              <Text style={styles.deleteIcon}>📦</Text>
+              <MaterialCommunityIcons name="archive" size={20} color={colors.textSecondary} />
             </Pressable>
           </View>
         ))}
@@ -187,7 +187,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                 </Text>
                 <Text style={[styles.groupHeader, { color: colors.textSecondary, marginBottom: 0 }]}>
-                  <MaterialCommunityIcons name={cat?.emoji as any} size={16} color={colors.textSecondary} /> {cat?.name ?? 'Altro'}
+                  <MaterialCommunityIcons name={cat?.emoji as any} size={16} color={cat?.color ?? colors.textSecondary} /> <Text style={{color: cat?.color ?? colors.textSecondary}}>{cat?.name ?? 'Altro'}</Text>
                 </Text>
               </Pressable>
               {isExpanded && items.map((t) => (
@@ -200,7 +200,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                     {t.durationHours}h
                   </Text>
                   <Pressable onPress={() => handleDeleteBlock(t.id, t.name)} hitSlop={8}>
-                    <Text style={styles.deleteIcon}>📦</Text>
+                    <MaterialCommunityIcons name="archive" size={20} color={colors.textSecondary} />
                   </Pressable>
                 </View>
               ))}
@@ -211,12 +211,12 @@ export default function ManageBlocksScreen({ navigation }: any) {
         {/* Archive Section */}
         {(archivedCategories.length > 0 || archivedTemplates.length > 0) && (
           <View style={{ marginTop: Spacing.xl }}>
-            <Text style={[styles.sectionTitle, { color: colors.textSecondary }]}>📦 {t('manage.archive') || 'Archivio'}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center', marginBottom: 8}}><MaterialCommunityIcons name="archive-outline" size={24} color={colors.textSecondary} style={{marginRight: 8}} /><Text style={[styles.sectionTitle, { color: colors.textSecondary, marginBottom: 0 }]}>{t('manage.archive') || 'Archivio'}</Text></View>
             
             {archivedCategories.map(c => (
               <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surfaceAlt }]}>
-                <MaterialCommunityIcons name={c.emoji as any} size={24} color={colors.text} style={[styles.catEmoji, { opacity: 0.5 }]} />
-                <Text style={[styles.catName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]}>{c.name}</Text>
+                <MaterialCommunityIcons name={c.emoji as any} size={24} color={c.color} style={[styles.catEmoji, { opacity: 0.5 }]} />
+                <Text style={[styles.catName, { color: c.color, textDecorationLine: 'line-through', opacity: 0.5 }]}>{c.name}</Text>
                 <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8}>
                   <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
                 </Pressable>

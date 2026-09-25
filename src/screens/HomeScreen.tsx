@@ -70,7 +70,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         const cat = categories.find((c: any) => c.id === catId);
         return {
           name: cat ? cat.name : t('home.deletedArchived'),
-          emoji: cat ? cat.emoji : '📦',
+          emoji: cat ? cat.emoji : 'package-variant-closed',
           color: cat ? cat.color : '#888',
           hours: catTotals[catId]
         };

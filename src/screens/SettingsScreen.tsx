@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
@@ -119,13 +120,13 @@ export default function SettingsScreen() {
               style={[styles.langBtn, currentLang === 'en' && { backgroundColor: colors.primary }]}
               onPress={() => changeLanguage('en')}
             >
-              <Text style={[styles.langText, { color: currentLang === 'en' ? '#fff' : colors.textSecondary }]}>🇬🇧 English</Text>
+              <Text style={[styles.langText, { color: currentLang === 'en' ? '#fff' : colors.textSecondary }]}>English</Text>
             </Pressable>
             <Pressable 
               style={[styles.langBtn, currentLang === 'it' && { backgroundColor: colors.primary }]}
               onPress={() => changeLanguage('it')}
             >
-              <Text style={[styles.langText, { color: currentLang === 'it' ? '#fff' : colors.textSecondary }]}>🇮🇹 Italiano</Text>
+              <Text style={[styles.langText, { color: currentLang === 'it' ? '#fff' : colors.textSecondary }]}>Italiano</Text>
             </Pressable>
           </View>
         </View>
@@ -137,15 +138,13 @@ export default function SettingsScreen() {
             {t('settings.backupDesc')}
           </Text>
           <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.exportBtn')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="export" size={20} color={colors.primary} style={{marginRight: 8}} /><Text style={[{fontWeight: 'bold'}, {color: colors.text}]}>{t('settings.exportBtn')}</Text></View>
           </Pressable>
           <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }]} onPress={importBackup} disabled={isImporting}>
             {isImporting ? (
               <ActivityIndicator color={colors.primary} style={{marginRight: 8}} />
             ) : null}
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>
-              {isImporting ? t('settings.importing') : t('settings.importBtn')}
-            </Text>
+            {isImporting ? <Text style={[{fontWeight: 'bold'}, {color: colors.text}]}>{t('settings.importing')}</Text> : <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="import" size={20} color={colors.primary} style={{marginRight: 8}} /><Text style={[{fontWeight: 'bold'}, {color: colors.text}]}>{t('settings.importBtn')}</Text></View>}
           </Pressable>
         </View>
 
@@ -163,21 +162,21 @@ export default function SettingsScreen() {
             style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt }]} 
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp')}
           >
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.starGithub')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="github" size={20} color={colors.primary} style={{marginRight: 8}} /><Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.starGithub')}</Text></View>
           </Pressable>
           
           <Pressable 
             style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} 
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp/issues')}
           >
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.submitIssue')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="bug" size={20} color={colors.primary} style={{marginRight: 8}} /><Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.submitIssue')}</Text></View>
           </Pressable>
 
           <Pressable 
             style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm, opacity: 0.5 }]} 
             disabled={true}
           >
-            <Text style={{color: colors.textSecondary, fontWeight: 'bold'}}>{t('settings.feedbackPlayStore')}</Text>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="google-play" size={20} color={colors.textSecondary} style={{marginRight: 8}} /><Text style={{color: colors.textSecondary, fontWeight: 'bold'}}>{t('settings.feedbackPlayStore')}</Text></View>
           </Pressable>
         </View>
       </ScrollView>

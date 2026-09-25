@@ -381,8 +381,8 @@ export default function PlannerScreen({ navigation }: any) {
                           <Text style={{ marginRight: 8, fontSize: 14, color: colors.textSecondary }}>
                             <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                           </Text>
-                          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>
-                            <MaterialCommunityIcons name={cat.emoji as any} size={16} color={colors.textSecondary} /> {cat.name}
+                          <Text style={{ fontSize: 16, fontWeight: '600', color: cat.color }}>
+                            <MaterialCommunityIcons name={cat.emoji as any} size={16} color={cat.color} /> {cat.name}
                           </Text>
                         </Pressable>
                         {isExpanded && catTemplates.map(t => (
