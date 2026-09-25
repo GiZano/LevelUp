@@ -96,6 +96,18 @@ export default function ManageBlocksScreen({ navigation }: any) {
     setCatModalVisible(false);
   };
 
+  
+  const handleUnarchiveTemplate = (templateId: string) => {
+    const template = templates.find(t => t.id === templateId);
+    if (template) {
+      const cat = getCategoryById(template.categoryId);
+      if (cat?.isArchived) {
+        unarchiveCategory(cat.id);
+      }
+      unarchiveTemplate(templateId);
+    }
+  };
+
   const handleArchiveCategory = (id: string, name: string) => {
     Alert.alert(
       t('manage.archiveCategoryTitle'),
@@ -216,7 +228,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <Text style={[styles.blockName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]} numberOfLines={1}>
                     {t.name}
                   </Text>
-                  <Pressable onPress={() => unarchiveTemplate(t.id)} hitSlop={8}>
+                  <Pressable onPress={() => handleUnarchiveTemplate(t.id)} hitSlop={8}>
                     <Text style={{fontSize: 16}}>♻️</Text>
                   </Pressable>
                 </View>

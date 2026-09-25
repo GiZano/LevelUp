@@ -83,7 +83,7 @@ export default function PlannerScreen({ navigation }: any) {
       const lastBlock = dayBlocks[dayBlocks.length - 1];
       let dur = 0;
       if (lastBlock.isOneOff && lastBlock.oneOffDuration) dur = lastBlock.oneOffDuration;
-      else if (lastBlock.templateId) dur = getTemplateById(lastBlock.templateId)?.durationHours || 0;
+      else if (lastBlock.templateId) dur = lastBlock.customDuration ?? getTemplateById(lastBlock.templateId)?.durationHours ?? 0;
       
       const [hh, mm] = lastBlock.startTime.split(':').map(Number);
       const startMs = new Date().setHours(hh, mm, 0, 0);
@@ -293,7 +293,7 @@ export default function PlannerScreen({ navigation }: any) {
       </Modal>
 
       {/* Template Picker Modal */}
-      <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => setModalVisible(false)}>
+      <Modal visible={modalVisible} transparent animationType="slide" onRequestClose={() => { setModalVisible(false); setSelectedTemplateId(null); }}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('planner.scheduleBlock')}</Text>
@@ -335,7 +335,7 @@ export default function PlannerScreen({ navigation }: any) {
             
             {selectedTemplateId ? (
               <View style={{paddingVertical: Spacing.md}}>
-                <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>Durata blocco (ore):</Text>
+                <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>{t('manage.duration')} (h):</Text>
                 <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: Spacing.lg}}>
                   {[0.5, 1, 1.5, 2, 2.5, 3, 4, 8].map(d => (
                     <Pressable 
@@ -349,15 +349,15 @@ export default function PlannerScreen({ navigation }: any) {
                 </View>
                 <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
                   <Pressable onPress={() => setSelectedTemplateId(null)} style={{padding: 12}}>
-                    <Text style={{color: colors.textSecondary}}>Indietro</Text>
+                    <Text style={{color: colors.textSecondary}}>{t('common.cancel')}</Text>
                   </Pressable>
                   <Pressable onPress={confirmSchedule} style={{paddingVertical: 12, paddingHorizontal: 24, backgroundColor: colors.primary, borderRadius: 12}}>
-                    <Text style={{color: '#fff', fontWeight: 'bold'}}>Conferma</Text>
+                    <Text style={{color: '#fff', fontWeight: 'bold'}}>{t('common.save')}</Text>
                   </Pressable>
                 </View>
               </View>
             ) : (
-              templates.filter(t => !t.isArchived).length === 0 ? (
+              templates.filter(t => !t.isArchived && !getCategoryById(t.categoryId)?.isArchived).length === 0 ? (
                 <View style={{padding: Spacing.lg, alignItems: 'center'}}>
                   <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>{t('planner.createFirst')}</Text>
                   <Pressable onPress={() => { setModalVisible(false); setSelectedTemplateId(null); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
