@@ -42,7 +42,7 @@ export default function SettingsScreen() {
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
-          <Text style={[styles.title, { color: colors.text }]}>🌐 Language / Lingua</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{t('settings.langTitle')}</Text>
           <View style={styles.langRow}>
             <Pressable 
               style={[styles.langBtn, currentLang === 'en' && { backgroundColor: colors.primary }]}
@@ -61,44 +61,44 @@ export default function SettingsScreen() {
 
         
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
-          <Text style={[styles.title, { color: colors.text }]}>💾 Backup & Data</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{t('settings.backupTitle')}</Text>
           <Text style={[styles.body, { color: colors.textSecondary }]}>
-            Esporta tutti i tuoi dati (Vette, Categorie, Blocchi) in formato JSON. Potrai salvarli su Google Drive o inviarteli per email come backup di sicurezza.
+            {t('settings.backupDesc')}
           </Text>
           <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>📥 Export JSON Backup</Text>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.exportBtn')}</Text>
           </Pressable>
         </View>
 
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
-          <Text style={[styles.title, { color: colors.text }]}>ℹ️ About LevelUp</Text>
+          <Text style={[styles.title, { color: colors.text }]}>{t('settings.aboutTitle')}</Text>
 
           <Text style={[styles.body, { color: colors.textSecondary }]}>
-            LevelUp was born from a simple need: eliminating decision fatigue in free time. The mountain climbing metaphor helps tracking long-term goals (Peaks) and breaking them down into actionable steps (Camps).
+            {t('settings.aboutDesc1')}
           </Text>
           <Text style={[styles.body, { color: colors.textSecondary, marginTop: Spacing.sm }]}>
-            This app is 100% Open Source and built by developers, for everyone.
+            {t('settings.aboutDesc2')}
           </Text>
           
           <Pressable 
             style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt }]} 
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp')}
           >
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>⭐ Star on GitHub</Text>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.starGithub')}</Text>
           </Pressable>
           
           <Pressable 
             style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} 
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp/issues')}
           >
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>🐛 Submit an Issue</Text>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.submitIssue')}</Text>
           </Pressable>
 
           <Pressable 
             style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm, opacity: 0.5 }]} 
             disabled={true}
           >
-            <Text style={{color: colors.textSecondary, fontWeight: 'bold'}}>⭐ Leave a feedback on Play Store (WIP)</Text>
+            <Text style={{color: colors.textSecondary, fontWeight: 'bold'}}>{t('settings.feedbackPlayStore')}</Text>
           </Pressable>
         </View>
       </ScrollView>

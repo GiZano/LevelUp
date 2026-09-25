@@ -123,11 +123,11 @@ export default function PlannerScreen({ navigation }: any) {
           <View style={{ alignItems: 'center' }}>
             {currentWeekId === realCurrentWeekId && (
               <Text style={{ color: colors.primary, fontSize: 10, fontWeight: 'bold', marginBottom: 2 }}>
-                (Corrente)
+                {t('planner.current')}
               </Text>
             )}
             <Text style={[styles.weekText, { color: colors.textSecondary, marginBottom: 0 }]}>
-              Settimana {currentWeekId}
+              {t('planner.week')} {currentWeekId.split('-').reverse().join('-')}
             </Text>
           </View>
 

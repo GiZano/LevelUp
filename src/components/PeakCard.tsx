@@ -4,6 +4,7 @@ import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { peakProgress, isPeakComplete } from '../utils/stats';
 import type { Peak } from '../types';
+import { t } from '../utils/i18n';
 
 interface PeakCardProps {
   peak: Peak;
@@ -63,7 +64,7 @@ export default function PeakCard({ peak, onPress }: PeakCardProps) {
       </View>
 
       <Text style={[styles.fraction, { color: colors.textTertiary }]}>
-        {doneCamps}/{totalCamps} campi
+        {doneCamps}/{totalCamps} {t('peakDetail.camps')}
       </Text>
     </TouchableOpacity>
   );

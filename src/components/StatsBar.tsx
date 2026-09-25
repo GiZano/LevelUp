@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import type { UserStats } from '../types';
+import { t } from '../utils/i18n';
 
 interface StatsBarProps {
   stats: UserStats;
@@ -15,17 +16,17 @@ export default function StatsBar({ stats }: StatsBarProps) {
     {
       icon: '🏔️',
       value: `${stats.totalAltitude.toLocaleString()}m`,
-      label: 'Altitudine totale',
+      label: t('home.totalAlt'),
     },
     {
       icon: '⛰️',
       value: String(stats.peaksReached),
-      label: 'Vette raggiunte',
+      label: t('home.peaksReached'),
     },
     {
       icon: '🔥',
       value: String(stats.currentStreak),
-      label: 'Streak giorni',
+      label: t('home.streak'),
     },
   ];
 

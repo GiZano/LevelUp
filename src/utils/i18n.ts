@@ -12,13 +12,13 @@ const translations = {
       settings: 'Settings',
     },
     days: {
-      mon: 'Monday',
-      tue: 'Tuesday',
-      wed: 'Wednesday',
-      thu: 'Thursday',
-      fri: 'Friday',
-      sat: 'Saturday',
-      sun: 'Sunday'
+      lun: 'Monday',
+      mar: 'Tuesday',
+      mer: 'Wednesday',
+      gio: 'Thursday',
+      ven: 'Friday',
+      sab: 'Saturday',
+      dom: 'Sunday'
     },
     // Categories
     categories: {
@@ -104,6 +104,19 @@ const translations = {
       yourDay: 'Your day',
       todayProgress: 'Today\'s Progress',
     }
+
+    , settings: {
+      langTitle: '🌐 Language / Lingua',
+      backupTitle: '💾 Backup & Data',
+      backupDesc: 'Export all your data (Peaks, Categories, Blocks) in JSON format. You can save it to Google Drive or email it to yourself as a safety backup.',
+      exportBtn: '📥 Export JSON Backup',
+      aboutTitle: 'ℹ️ About LevelUp',
+      aboutDesc1: 'LevelUp was born from a simple need: eliminating decision fatigue in free time. The mountain climbing metaphor helps tracking long-term goals (Peaks) and breaking them down into actionable steps (Camps).',
+      aboutDesc2: 'This app is 100% Open Source and built by developers, for everyone.',
+      starGithub: '⭐ Star on GitHub',
+      submitIssue: '🐛 Submit an Issue',
+      feedbackPlayStore: '⭐ Leave a feedback on Play Store (WIP)'
+    }
   },
   it: {
     // App.tsx
@@ -115,13 +128,13 @@ const translations = {
       settings: 'Impostazioni',
     },
     days: {
-      mon: 'Lunedì',
-      tue: 'Martedì',
-      wed: 'Mercoledì',
-      thu: 'Giovedì',
-      fri: 'Venerdì',
-      sat: 'Sabato',
-      sun: 'Domenica'
+      lun: 'Lunedì',
+      mar: 'Martedì',
+      mer: 'Mercoledì',
+      gio: 'Giovedì',
+      ven: 'Venerdì',
+      sab: 'Sabato',
+      dom: 'Domenica'
     },
     // Categories
     categories: {
@@ -206,6 +219,19 @@ const translations = {
       completedToday: 'ore completate oggi',
       yourDay: 'La tua giornata',
       todayProgress: 'Progresso odierno',
+    }
+
+    , settings: {
+      langTitle: '🌐 Language / Lingua',
+      backupTitle: '💾 Backup & Dati',
+      backupDesc: 'Esporta tutti i tuoi dati (Vette, Categorie, Blocchi) in formato JSON. Potrai salvarli su Google Drive o inviarteli per email come backup di sicurezza.',
+      exportBtn: '📥 Esporta Backup JSON',
+      aboutTitle: 'ℹ️ About LevelUp',
+      aboutDesc1: 'LevelUp nasce da una necessità semplice: eliminare la "decision fatigue" nel tempo libero. La metafora dell\'arrampicata aiuta a tracciare obiettivi a lungo termine (Vette) e suddividerli in passaggi concreti (Campi).',
+      aboutDesc2: 'Questa app è 100% Open Source, creata da sviluppatori per tutti.',
+      starGithub: '⭐ Metti una stella su GitHub',
+      submitIssue: '🐛 Aggiungi una Issue',
+      feedbackPlayStore: '⭐ Lascia un feedback sul Play Store (WIP)'
     }
   }
 };
