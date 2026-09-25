@@ -215,14 +215,14 @@ export default function PlannerScreen({ navigation }: any) {
                         duration = block.oneOffDuration!;
                         const cat = getCategoryById(block.oneOffCategoryId!);
                         catColor = cat?.color || colors.primary;
-                        catEmoji = cat?.emoji || '🏷️';
+                        catEmoji = cat?.emoji || 'shape';
                       } else {
                         const tmpl = block.templateId ? getTemplateById(block.templateId) : undefined;
                         const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
                         name = tmpl?.name || 'Sconosciuto';
                         duration = block.customDuration ?? (tmpl?.durationHours || 0);
                         catColor = cat?.color || colors.primary;
-                        catEmoji = cat?.emoji || '🏷️';
+                        catEmoji = cat?.emoji || 'shape';
                       }
                       
                       return (

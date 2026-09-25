@@ -81,14 +81,14 @@ export default function TodayScreen({ navigation }: any) {
                 duration = b.oneOffDuration;
                 const cat = getCategoryById(b.oneOffCategoryId!);
                 catColor = cat?.color || colors.border;
-                catEmoji = cat?.emoji || '';
+                catEmoji = cat?.emoji || 'shape';
               } else {
                 const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
                 const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
                 name = tmpl?.name || 'Sconosciuto';
                 duration = b.customDuration ?? (tmpl?.durationHours || 0);
                 catColor = cat?.color || colors.border;
-                catEmoji = cat?.emoji || '';
+                catEmoji = cat?.emoji || 'shape';
               }
 
               return (
