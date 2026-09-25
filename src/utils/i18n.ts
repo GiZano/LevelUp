@@ -115,6 +115,10 @@ const translations = {
     // Today
     today: {
       title: 'Today',
+      morning: 'Good morning',
+      afternoon: 'Good afternoon',
+      evening: 'Good evening',
+      night: 'Good night',
       morning: '🌅 Morning',
       afternoon: '☀️ Afternoon',
       evening: '🌙 Evening',
@@ -255,6 +259,10 @@ const translations = {
     // Today
     today: {
       title: 'Oggi',
+      morning: 'Buongiorno',
+      afternoon: 'Buon pomeriggio',
+      evening: 'Buonasera',
+      night: 'Buonanotte',
       morning: '🌅 Mattina',
       afternoon: '☀️ Pomeriggio',
       evening: '🌙 Sera',

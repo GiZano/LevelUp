@@ -102,7 +102,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
     if (template) {
       const cat = getCategoryById(template.categoryId);
       if (cat?.isArchived) {
-        unarchiveCategory(cat.id);
+        un{ LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); archiveCategory(cat.id); };
       }
       unarchiveTemplate(templateId);
     }
@@ -228,7 +228,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <Text style={[styles.blockName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]} numberOfLines={1}>
                     {t.name}
                   </Text>
-                  <Pressable onPress={() => handleUnarchiveTemplate(t.id)} hitSlop={8}>
+                  <Pressable onPress={() => handleUn{ LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); archiveTemplate(t.id); }} hitSlop={8}>
                     <Text style={{fontSize: 16}}>♻️</Text>
                   </Pressable>
                 </View>
