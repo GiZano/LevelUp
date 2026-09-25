@@ -153,7 +153,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
         {activeCategories.map((c) => (
           <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]}>
             <Pressable style={{flexDirection: 'row', alignItems: 'center', flex: 1}} onPress={() => openEditCategory(c)}>
-              <Text style={styles.catEmoji}>{c.emoji}</Text>
+              <MaterialCommunityIcons name={c.emoji as any} size={24} color={colors.text} style={styles.catEmoji} />
               <Text style={[styles.catName, { color: colors.text }]}>{c.name}</Text>
               <Text style={[styles.catTarget, { color: colors.textSecondary, marginRight: Spacing.sm }]}>
                 {c.targetHoursPerWeek}h target ✎
@@ -187,7 +187,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                 </Text>
                 <Text style={[styles.groupHeader, { color: colors.textSecondary, marginBottom: 0 }]}>
-                  {cat?.emoji} {cat?.name ?? 'Altro'}
+                  <MaterialCommunityIcons name={cat?.emoji as any} size={16} color={colors.textSecondary} /> {cat?.name ?? 'Altro'}
                 </Text>
               </Pressable>
               {isExpanded && items.map((t) => (
@@ -215,7 +215,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
             
             {archivedCategories.map(c => (
               <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surfaceAlt }]}>
-                <Text style={[styles.catEmoji, { opacity: 0.5 }]}>{c.emoji}</Text>
+                <MaterialCommunityIcons name={c.emoji as any} size={24} color={colors.text} style={[styles.catEmoji, { opacity: 0.5 }]} />
                 <Text style={[styles.catName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]}>{c.name}</Text>
                 <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8}>
                   <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
@@ -370,7 +370,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                     onPress={() => setSelectedCategoryId(c.id)}
                   >
                     <Text style={[styles.chipText, { color: selected ? '#fff' : colors.text }]} numberOfLines={1}>
-                      {c.emoji} {c.name}
+                      <MaterialCommunityIcons name={c.emoji as any} size={16} color={selected ? '#fff' : colors.text} /> {c.name}
                     </Text>
                   </Pressable>
                 );
