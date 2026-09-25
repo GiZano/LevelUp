@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
@@ -18,6 +18,28 @@ export default function SettingsScreen() {
       lang === 'it' ? 'Lingua cambiata' : 'Language changed',
       lang === 'it' ? 'Riavvia l\'app per applicare le modifiche su tutte le schermate.' : 'Please restart the app to apply changes across all screens.'
     );
+  };
+
+  
+  const exportBackup = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const levelUpKeys = keys.filter(k => k.startsWith('@levelup/'));
+      const pairs = await AsyncStorage.multiGet(levelUpKeys);
+      const backupData = {
+        version: 1,
+        exportedAt: new Date().toISOString(),
+        data: Object.fromEntries(pairs)
+      };
+      
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      await Share.share({
+        message: jsonStr,
+        title: 'LevelUp Backup'
+      });
+    } catch (e) {
+      Alert.alert('Error', 'Failed to export data');
+    }
   };
 
   return (
@@ -41,8 +63,20 @@ export default function SettingsScreen() {
           </View>
         </View>
 
+        
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
+          <Text style={[styles.title, { color: colors.text }]}>💾 Backup & Data</Text>
+          <Text style={[styles.body, { color: colors.textSecondary }]}>
+            Esporta tutti i tuoi dati (Vette, Categorie, Blocchi) in formato JSON. Potrai salvarli su Google Drive o inviarteli per email come backup di sicurezza.
+          </Text>
+          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
+            <Text style={{color: colors.primary, fontWeight: 'bold'}}>📥 Export JSON Backup</Text>
+          </Pressable>
+        </View>
+
         <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
           <Text style={[styles.title, { color: colors.text }]}>ℹ️ About LevelUp</Text>
+
           <Text style={[styles.body, { color: colors.textSecondary }]}>
             LevelUp was born from a simple need: eliminating decision fatigue in free time. The mountain climbing metaphor helps tracking long-term goals (Peaks) and breaking them down into actionable steps (Camps).
           </Text>
