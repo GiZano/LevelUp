@@ -19,7 +19,7 @@ export default function TodayScreen({ navigation }: any) {
     const d = new Date();
     const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
     navigation.setOptions({
-      title: `${t('today.title')}: ${t('days.' + today).substring(0,3)} ${dateStr}`,
+      title: `${t('today.title')}: ${t('days.' + today).substring(0,3)}`,
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
     });
