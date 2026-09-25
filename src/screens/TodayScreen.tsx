@@ -108,7 +108,7 @@ export default function TodayScreen({ navigation }: any) {
                       {b.done && <MaterialCommunityIcons name="check-bold" size={12} color="#fff" />}
                     </View>
                     
-                    <Text style={{fontSize: FontSize.lg, marginRight: Spacing.sm}}>{catEmoji}</Text>
+                    <MaterialCommunityIcons name={catEmoji as any} size={24} color={catColor} style={{marginRight: Spacing.sm}} />
                     
                     <View style={{flex: 1, flexDirection: 'column'}}>
                       <Text style={[styles.blockName, { color: colors.text }, b.done && {textDecorationLine: 'line-through'}]}>{name}</Text>

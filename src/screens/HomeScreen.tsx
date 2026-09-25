@@ -80,7 +80,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
         const completedCamps = p.camps.filter((c: any) => c.done).length;
         return {
           name: p.name,
-          emoji: '⛰️',
+          emoji: 'image-filter-hdr',
           color: colors.success || '#10B981',
           hours: completedCamps * 100
         };
@@ -204,7 +204,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
               {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
               {altStats.map((s, idx) => (
                 <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                  <Text style={{ fontSize: 24, marginRight: 8 }}>{s.emoji}</Text>
+                  <MaterialCommunityIcons name={s.emoji as any} size={24} color={s.color} style={{ marginRight: 8 }} />
                   <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{s.name}</Text>
                   <Text style={{ color: s.color, fontWeight: '900', fontSize: 16 }}>{s.hours}m</Text>
                 </View>
