@@ -49,6 +49,14 @@ const translations = {
       peakName: 'Peak Name',
       descOptional: 'Description (optional)',
       createPeak: 'Create Peak',
+      altHistoryTitle: 'Altitude History by Category',
+      noHistoricalData: 'No historical data.',
+      deletedArchived: 'Deleted/Archived',
+      peaksHistoryTitle: 'Peaks History',
+      completed: 'Completed 🏁',
+      noCompletedPeaks: 'No completed peaks.',
+      inProgress: 'In Progress 🧗',
+      close: 'Close',
     },
     // Peak Detail
     peakDetail: {
@@ -92,6 +100,16 @@ const translations = {
       targetHoursInput: 'Weekly target hours (e.g. 20)',
       deleteBlockTitle: 'Delete Block',
       deleteBlockMsg: 'Are you sure you want to delete',
+      targetHoursWeekly: 'Weekly target hours:',
+      freeHours: 'free',
+      whatToCreate: 'What do you want to create?',
+      categoryBtn: '⭐ Category',
+      blockBtn: '🧩 Block',
+      archiveCategoryTitle: 'Archive Category',
+      archiveCategoryMsg: 'Are you sure you want to archive this category? It will no longer be visible among active categories, but historical data will be preserved.',
+      archiveBlockTitle: 'Archive Block',
+      archiveBlockMsg: 'Are you sure you want to archive',
+      archiveBtn: 'Archive',
     },
     // Today
     today: {
@@ -169,6 +187,14 @@ const translations = {
       peakName: 'Nome Vetta',
       descOptional: 'Descrizione (opzionale)',
       createPeak: 'Crea Vetta',
+      altHistoryTitle: 'Storico Metri per Categoria',
+      noHistoricalData: 'Nessun dato storico.',
+      deletedArchived: 'Eliminata/Archiviata',
+      peaksHistoryTitle: 'Storico Vette',
+      completed: 'Completate 🏁',
+      noCompletedPeaks: 'Nessuna vetta completata.',
+      inProgress: 'In Corso 🧗',
+      close: 'Chiudi',
     },
     // Peak Detail
     peakDetail: {
@@ -212,6 +238,16 @@ const translations = {
       targetHoursInput: 'Target ore settimanali (es. 20)',
       deleteBlockTitle: 'Elimina Blocco',
       deleteBlockMsg: 'Sei sicuro di voler eliminare',
+      targetHoursWeekly: 'Monte ore target settimanale:',
+      freeHours: 'libere',
+      whatToCreate: 'Cosa vuoi creare?',
+      categoryBtn: '⭐ Categoria',
+      blockBtn: '🧩 Blocco',
+      archiveCategoryTitle: 'Archivia Categoria',
+      archiveCategoryMsg: 'Sei sicuro di voler archiviare questa categoria? Non sarà più visibile tra le categorie attive, ma lo storico verrà conservato.',
+      archiveBlockTitle: 'Archivia Blocco',
+      archiveBlockMsg: 'Sei sicuro di voler archiviare',
+      archiveBtn: 'Archivia',
     },
     // Today
     today: {

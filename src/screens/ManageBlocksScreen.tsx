@@ -52,9 +52,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
   };
 
   const handleDeleteBlock = (id: string, name: string) => {
-    Alert.alert('Archivia Blocco', `Sei sicuro di voler archiviare "${name}"?`, [
+    Alert.alert(t('manage.archiveBlockTitle'), `${t('manage.archiveBlockMsg')} "${name}"?`, [
       { text: t('common.cancel'), style: 'cancel' },
-      { text: 'Archivia', style: 'destructive', onPress: () => archiveTemplate(id) },
+      { text: t('manage.archiveBtn'), style: 'destructive', onPress: () => archiveTemplate(id) },
     ]);
   };
 
@@ -95,12 +95,12 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
   const handleArchiveCategory = (id: string, name: string) => {
     Alert.alert(
-      'Archivia Categoria',
-      `Sei sicuro di voler archiviare "${name}"? Non sarà più visibile tra le categorie attive, ma lo storico verrà conservato.`,
+      t('manage.archiveCategoryTitle'),
+      `${t('manage.archiveCategoryMsg')} (${name})`,
       [
         { text: t('common.cancel'), style: 'cancel' },
         { 
-          text: 'Archivia', 
+          text: t('manage.archiveBtn'), 
           style: 'destructive',
           onPress: () => {
             archiveCategory(id);
@@ -129,7 +129,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
           {t('manage.categoriesInfo')}
         </Text>
         <Text style={{color: colors.primary, fontSize: 13, fontWeight: 'bold', marginBottom: Spacing.md}}>
-          Monte ore target settimanale: {totalHours}h / 168h ({168 - totalHours}h libere)
+          {t('manage.targetHoursWeekly')} {totalHours}h / 168h ({168 - totalHours}h {t('manage.freeHours')})
         </Text>
         
         {activeCategories.map((c) => (
@@ -194,20 +194,20 @@ export default function ManageBlocksScreen({ navigation }: any) {
       <Modal visible={selectorModalVisible} transparent animationType="fade" onRequestClose={() => setSelectorModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, padding: Spacing.xl }]}>
-            <Text style={[styles.modalTitle, { color: colors.text, textAlign: 'center', marginBottom: Spacing.xl }]}>Cosa vuoi creare?</Text>
+            <Text style={[styles.modalTitle, { color: colors.text, textAlign: 'center', marginBottom: Spacing.xl }]}>{t('manage.whatToCreate')}</Text>
             
             <TouchableOpacity 
               style={[styles.modalButton, { backgroundColor: colors.surfaceAlt, marginBottom: Spacing.md, paddingVertical: Spacing.lg }]}
               onPress={() => { setSelectorModalVisible(false); openNewCategory(); }}
             >
-              <Text style={{ color: colors.text, fontSize: FontSize.lg, fontWeight: '600' }}>⭐ Categoria</Text>
+              <Text style={{ color: colors.text, fontSize: FontSize.lg, fontWeight: '600' }}>{t('manage.categoryBtn')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
               style={[styles.modalButton, { backgroundColor: colors.surfaceAlt, paddingVertical: Spacing.lg }]}
               onPress={() => { setSelectorModalVisible(false); setModalVisible(true); }}
             >
-              <Text style={{ color: colors.text, fontSize: FontSize.lg, fontWeight: '600' }}>🧩 Blocco</Text>
+              <Text style={{ color: colors.text, fontSize: FontSize.lg, fontWeight: '600' }}>{t('manage.blockBtn')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={{ marginTop: Spacing.xl, alignItems: 'center' }} onPress={() => setSelectorModalVisible(false)}>

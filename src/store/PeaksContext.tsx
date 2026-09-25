@@ -107,7 +107,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
             done: false,
             order: peak.camps.length,
           };
-          return { ...peak, camps: [...peak.camps, newCamp] };
+          return { ...peak, camps: [...peak.camps, newCamp], completedAt: undefined };
         })
       );
       recordActivity();

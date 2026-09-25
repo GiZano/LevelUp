@@ -9,7 +9,7 @@ export function computeStats(peaks: Peak[], currentStreak: number, lastActiveDat
     const completedCamps = peak.camps.filter((c) => c.done).length;
     totalCampsCompleted += completedCamps;
 
-    if (peak.completedAt) {
+    if (isPeakComplete(peak)) {
       peaksReached++;
     }
   }

@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       const statsArray = Object.keys(catTotals).map(catId => {
         const cat = categories.find((c: any) => c.id === catId);
         return {
-          name: cat ? cat.name : 'Eliminata/Archiviata',
+          name: cat ? cat.name : t('home.deletedArchived'),
           emoji: cat ? cat.emoji : '📦',
           color: cat ? cat.color : '#888',
           hours: catTotals[catId]
@@ -161,11 +161,11 @@ export default function HomeScreen({ navigation }: HomeProps) {
       <Modal visible={peaksModalVisible} transparent animationType="slide" onRequestClose={() => setPeaksModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Storico Vette</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.peaksHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
-              {peaks.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
+              {peaks.length === 0 && <Text style={{color: colors.textSecondary}}>{t('home.noHistoricalData')}</Text>}
               
-              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.sm, marginBottom: Spacing.xs}}>Completate 🏁</Text>
+              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.sm, marginBottom: Spacing.xs}}>{t('home.completed')}</Text>
               {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
                 <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
                   <Text style={{ fontSize: 24, marginRight: 8 }}>⛰️</Text>
@@ -173,9 +173,9 @@ export default function HomeScreen({ navigation }: HomeProps) {
                   <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
                 </View>
               ))}
-              {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>Nessuna vetta completata.</Text>}
+              {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>{t('home.noCompletedPeaks')}</Text>}
 
-              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.md, marginBottom: Spacing.xs}}>In Corso 🧗</Text>
+              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.md, marginBottom: Spacing.xs}}>{t('home.inProgress')}</Text>
               {peaks.filter((p: any) => !isPeakComplete(p)).map((p: any) => {
                 const perc = Math.round(peakProgress(p) * 100);
                 return (
@@ -188,7 +188,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
               })}
             </ScrollView>
             <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.primary, alignItems: 'center' }]} onPress={() => setPeaksModalVisible(false)}>
-              <Text style={[styles.modalButtonText, { color: '#fff' }]}>Chiudi</Text>
+              <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('home.close')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -198,7 +198,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       <Modal visible={altModalVisible} transparent animationType="slide" onRequestClose={() => setAltModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Storico Metri per Categoria</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.altHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
               {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
               {altStats.map((s, idx) => (
