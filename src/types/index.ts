@@ -84,6 +84,7 @@ export interface ScheduledBlock {
   done: boolean;
   description?: string; // Optional instance-specific description
   calendarEventId?: string; // Google Calendar event ID to allow deletion
+  customDuration?: number; // Override template duration
   // Fields for temporary one-off blocks
   isOneOff?: boolean;
   oneOffName?: string;

@@ -35,7 +35,7 @@ export default function TodayScreen({ navigation }: any) {
     if (block.isOneOff) {
       duration = block.oneOffDuration || 0;
     } else {
-      duration = template?.durationHours || 0;
+      duration = block.customDuration ?? (template?.durationHours || 0);
     }
     
     toggleBlockDone(block.id);
@@ -48,7 +48,7 @@ export default function TodayScreen({ navigation }: any) {
 
   todayBlocks.forEach(b => {
     const template = templates.find(t => t.id === b.templateId);
-    const duration = b.isOneOff ? (b.oneOffDuration || 0) : (template?.durationHours || 0);
+    const duration = b.isOneOff ? (b.oneOffDuration || 0) : (b.customDuration ?? (template?.durationHours || 0));
     totalScheduled += duration;
     if (b.done) totalCompleted += duration;
   });
@@ -76,7 +76,7 @@ export default function TodayScreen({ navigation }: any) {
                 const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
                 const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
                 name = tmpl?.name || 'Sconosciuto';
-                duration = tmpl?.durationHours || 0;
+                duration = b.customDuration ?? (tmpl?.durationHours || 0);
                 catColor = cat?.color || colors.border;
                 catEmoji = cat?.emoji || '';
               }

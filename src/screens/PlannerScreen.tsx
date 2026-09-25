@@ -21,6 +21,8 @@ export default function PlannerScreen({ navigation }: any) {
   const [selectedDay, setSelectedDay] = useState<DayOfWeek | null>(null);
   const [startTime, setStartTime] = useState(new Date(new Date().setHours(9, 0, 0, 0)));
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(null);
+  const [selectedDuration, setSelectedDuration] = useState<number>(1);
 
   const [editBlockId, setEditBlockId] = useState<string | null>(null);
   const [editBlockDesc, setEditBlockDesc] = useState('');
@@ -63,7 +65,7 @@ export default function PlannerScreen({ navigation }: any) {
         if (block.isOneOff) duration = block.oneOffDuration || 0;
         else {
           const template = getTemplateById(block.templateId!);
-          duration = template?.durationHours || 0;
+          duration = block.customDuration ?? (template?.durationHours || 0);
         }
         toggleBlockDone(block.id);
         if (!block.done) addCompletedHours(duration);
@@ -101,11 +103,18 @@ export default function PlannerScreen({ navigation }: any) {
   };
 
   const handlePickTemplate = (templateId: string) => {
-    if (selectedDay) {
-      scheduleBlock(templateId, selectedDay, formatTime(startTime));
+    const tmpl = getTemplateById(templateId);
+    if (tmpl) setSelectedDuration(tmpl.durationHours);
+    setSelectedTemplateId(templateId);
+  };
+
+  const confirmSchedule = () => {
+    if (selectedDay && selectedTemplateId) {
+      scheduleBlock(selectedTemplateId, selectedDay, formatTime(startTime), selectedDuration);
     }
     setModalVisible(false);
     setSelectedDay(null);
+    setSelectedTemplateId(null);
   };
 
   const datesOfWeek = getDatesOfWeek(currentWeekId);
@@ -210,7 +219,7 @@ export default function PlannerScreen({ navigation }: any) {
                         const tmpl = block.templateId ? getTemplateById(block.templateId) : undefined;
                         const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
                         name = tmpl?.name || 'Sconosciuto';
-                        duration = tmpl?.durationHours || 0;
+                        duration = block.customDuration ?? (tmpl?.durationHours || 0);
                         catColor = cat?.color || colors.primary;
                         catEmoji = cat?.emoji || '🏷️';
                       }
@@ -323,50 +332,79 @@ export default function PlannerScreen({ navigation }: any) {
               )}
             </View>
 
-            {templates.filter(t => !t.isArchived).length === 0 ? (
-              <View style={{padding: Spacing.lg, alignItems: 'center'}}>
-                <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>{t('planner.createFirst')}</Text>
-                <Pressable onPress={() => { setModalVisible(false); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
-                  <Text style={{color: '#fff'}}>{t('planner.goToManage')}</Text>
-                </Pressable>
+            
+            {selectedTemplateId ? (
+              <View style={{paddingVertical: Spacing.md}}>
+                <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>Durata blocco (ore):</Text>
+                <View style={{flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginBottom: Spacing.lg}}>
+                  {[0.5, 1, 1.5, 2, 2.5, 3, 4, 8].map(d => (
+                    <Pressable 
+                      key={d} 
+                      onPress={() => setSelectedDuration(d)}
+                      style={{paddingVertical: 6, paddingHorizontal: 12, borderRadius: 16, borderWidth: 1, borderColor: selectedDuration === d ? colors.primary : colors.border, backgroundColor: selectedDuration === d ? colors.primary : 'transparent'}}
+                    >
+                      <Text style={{color: selectedDuration === d ? '#fff' : colors.text}}>{d}h</Text>
+                    </Pressable>
+                  ))}
+                </View>
+                <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Pressable onPress={() => setSelectedTemplateId(null)} style={{padding: 12}}>
+                    <Text style={{color: colors.textSecondary}}>Indietro</Text>
+                  </Pressable>
+                  <Pressable onPress={confirmSchedule} style={{paddingVertical: 12, paddingHorizontal: 24, backgroundColor: colors.primary, borderRadius: 12}}>
+                    <Text style={{color: '#fff', fontWeight: 'bold'}}>Conferma</Text>
+                  </Pressable>
+                </View>
               </View>
             ) : (
-              <ScrollView style={{maxHeight: 300}}>
-                {categories.filter(c => !c.isArchived).map(cat => {
-                  const catTemplates = templates.filter(t => !t.isArchived && t.categoryId === cat.id);
-                  if (catTemplates.length === 0) return null;
-                  const isExpanded = expandedCategories[cat.id];
-                  
-                  return (
-                    <View key={cat.id} style={{ marginBottom: 8 }}>
-                      <Pressable 
-                        style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
-                        onPress={() => setExpandedCategories(prev => ({...prev, [cat.id]: !prev[cat.id]}))}
-                      >
-                        <Text style={{ marginRight: 8, fontSize: 14, color: colors.textSecondary }}>
-                          {isExpanded ? '▼' : '▶'}
-                        </Text>
-                        <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>
-                          {cat.emoji} {cat.name}
-                        </Text>
-                      </Pressable>
-                      {isExpanded && catTemplates.map(t => (
-                        <Pressable key={t.id} style={[styles.templateItem, {borderBottomColor: colors.border, marginLeft: 24}]} onPress={() => handlePickTemplate(t.id)}>
-                          <View style={{flex: 1}}>
-                            <Text style={{color: colors.text, fontWeight: '600'}}>{t.name}</Text>
-                          </View>
-                          <Text style={{color: colors.textSecondary}}>{t.durationHours}h</Text>
+              templates.filter(t => !t.isArchived).length === 0 ? (
+                <View style={{padding: Spacing.lg, alignItems: 'center'}}>
+                  <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>{t('planner.createFirst')}</Text>
+                  <Pressable onPress={() => { setModalVisible(false); setSelectedTemplateId(null); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
+                    <Text style={{color: '#fff'}}>{t('planner.goToManage')}</Text>
+                  </Pressable>
+                </View>
+              ) : (
+                <ScrollView style={{maxHeight: 300}}>
+                  {categories.filter(c => !c.isArchived).map(cat => {
+                    const catTemplates = templates.filter(t => !t.isArchived && t.categoryId === cat.id);
+                    if (catTemplates.length === 0) return null;
+                    const isExpanded = expandedCategories[cat.id];
+                    
+                    return (
+                      <View key={cat.id} style={{ marginBottom: 8 }}>
+                        <Pressable 
+                          style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 8 }}
+                          onPress={() => setExpandedCategories(prev => ({...prev, [cat.id]: !prev[cat.id]}))}
+                        >
+                          <Text style={{ marginRight: 8, fontSize: 14, color: colors.textSecondary }}>
+                            {isExpanded ? '▼' : '▶'}
+                          </Text>
+                          <Text style={{ fontSize: 16, fontWeight: '600', color: colors.textSecondary }}>
+                            {cat.emoji} {cat.name}
+                          </Text>
                         </Pressable>
-                      ))}
-                    </View>
-                  );
-                })}
-              </ScrollView>
+                        {isExpanded && catTemplates.map(t => (
+                          <Pressable key={t.id} style={[styles.templateItem, {borderBottomColor: colors.border, marginLeft: 24}]} onPress={() => handlePickTemplate(t.id)}>
+                            <View style={{flex: 1}}>
+                              <Text style={{color: colors.text, fontWeight: '600'}}>{t.name}</Text>
+                            </View>
+                            <Text style={{color: colors.textSecondary}}>{t.durationHours}h</Text>
+                          </Pressable>
+                        ))}
+                      </View>
+                    );
+                  })}
+                </ScrollView>
+              )
             )}
-            <Pressable onPress={() => setModalVisible(false)} style={{padding: Spacing.md, alignItems: 'center'}}>
-              <Text style={{color: colors.textSecondary}}>{t('common.cancel')}</Text>
-            </Pressable>
-          </View>
+            
+            {!selectedTemplateId && (
+              <Pressable onPress={() => { setModalVisible(false); setSelectedTemplateId(null); }} style={{padding: Spacing.md, alignItems: 'center'}}>
+                <Text style={{color: colors.textSecondary}}>{t('common.cancel')}</Text>
+              </Pressable>
+            )}
+</View>
         </View>
       </Modal>
     </View>
