@@ -16,4 +16,5 @@ export type TabParamList = {
   VetteTab: undefined;
   PlannerTab: undefined;
   BlocchiTab: undefined;
+  SettingsTab: undefined;
 };

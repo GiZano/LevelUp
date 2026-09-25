@@ -15,6 +15,9 @@ import PeakDetailScreen from './src/screens/PeakDetailScreen';
 import PlannerScreen from './src/screens/PlannerScreen';
 import ManageBlocksScreen from './src/screens/ManageBlocksScreen';
 import TodayScreen from './src/screens/TodayScreen';
+import SettingsScreen from './src/screens/SettingsScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import i18n from './src/utils/i18n';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const PlannerStack = createNativeStackNavigator<PlannerStackParamList>();
@@ -112,6 +115,14 @@ function TabNavigator() {
           tabBarIcon: ({ color }) => <Text style={{color}}>🧩</Text> 
         }} 
       />
+      <Tab.Screen 
+        name="SettingsTab" 
+        component={SettingsScreen} 
+        options={{ 
+          title: '⚙️',
+          tabBarIcon: ({ color }) => <Text style={{color}}>⚙️</Text> 
+        }} 
+      />
     </Tab.Navigator>
   );
 }
@@ -146,6 +157,18 @@ const DarkNavTheme = {
 export default function App() {
   const scheme = useColorScheme();
   const isDark = scheme === 'dark';
+  const [langLoaded, setLangLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    AsyncStorage.getItem('app_language').then((lang) => {
+      if (lang) {
+        i18n.locale = lang;
+      }
+      setLangLoaded(true);
+    });
+  }, []);
+
+  if (!langLoaded) return null;
 
   return (
     <SafeAreaProvider>
