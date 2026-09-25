@@ -1,6 +1,6 @@
 import { t } from "../utils/i18n";
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Pressable, Modal, TextInput, Alert, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -25,6 +25,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [selectedDuration, setSelectedDuration] = useState<number>(1);
 
+  const [selectorModalVisible, setSelectorModalVisible] = useState(false);
   const [catModalVisible, setCatModalVisible] = useState(false);
   const [editCatId, setEditCatId] = useState<string | null>(null);
   const [catTargetHours, setCatTargetHours] = useState('');
@@ -180,6 +181,33 @@ export default function ManageBlocksScreen({ navigation }: any) {
       >
         <Text style={styles.fabText}>+</Text>
       </Pressable>
+
+            {/* Selector Modal */}
+      <Modal visible={selectorModalVisible} transparent animationType="fade" onRequestClose={() => setSelectorModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: colors.surface, padding: Spacing.xl }]}>
+            <Text style={[styles.modalTitle, { color: colors.text, textAlign: 'center', marginBottom: Spacing.xl }]}>Cosa vuoi creare?</Text>
+            
+            <TouchableOpacity 
+              style={[styles.modalButton, { backgroundColor: colors.surfaceAlt, marginBottom: Spacing.md, paddingVertical: Spacing.lg }]}
+              onPress={() => { setSelectorModalVisible(false); openNewCategory(); }}
+            >
+              <Text style={{ color: colors.text, fontSize: FontSize.lg, fontWeight: '600' }}>⭐ Categoria</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={[styles.modalButton, { backgroundColor: colors.surfaceAlt, paddingVertical: Spacing.lg }]}
+              onPress={() => { setSelectorModalVisible(false); setModalVisible(true); }}
+            >
+              <Text style={{ color: colors.text, fontSize: FontSize.lg, fontWeight: '600' }}>🧩 Blocco</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={{ marginTop: Spacing.xl, alignItems: 'center' }} onPress={() => setSelectorModalVisible(false)}>
+              <Text style={{ color: colors.textSecondary, fontSize: FontSize.md }}>{t('common.cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
 
       {/* Category Modal */}
       <Modal visible={catModalVisible} transparent animationType="fade" onRequestClose={() => setCatModalVisible(false)}>

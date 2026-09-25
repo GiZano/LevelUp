@@ -14,6 +14,8 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePeaks } from '../store/PeaksContext';
+import { usePlanner } from '../store/PlannerContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { computeStats } from '../utils/stats';
 import StatsBar from '../components/StatsBar';
 import PeakCard from '../components/PeakCard';
@@ -24,6 +26,60 @@ type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 export default function HomeScreen({ navigation }: HomeProps) {
   const { colors, isDark } = useThemeColors();
   const { peaks, streak, lastActiveDate, totalCompletedHours, addPeak } = usePeaks();
+
+  const [altModalVisible, setAltModalVisible] = useState(false);
+  const [altStats, setAltStats] = useState<{name: string, emoji: string, color: string, hours: number}[]>([]);
+  const { categories, templates } = usePlanner();
+
+  const loadAltStats = async () => {
+    try {
+      const keys = await AsyncStorage.getAllKeys();
+      const weekKeys = keys.filter((k: string) => k.startsWith('@levelup/week/'));
+      const pairs = await AsyncStorage.multiGet(weekKeys);
+      
+      const catTotals: Record<string, number> = {};
+      
+      pairs.forEach(([_, value]: [string, string | null]) => {
+        if (!value) return;
+        const plan = JSON.parse(value);
+        plan.blocks?.forEach((b: any) => {
+          if (b.done) {
+            let catId: string | null = null;
+            let duration = 0;
+            if (b.isOneOff) {
+              catId = b.oneOffCategoryId;
+              duration = b.oneOffDuration;
+            } else if (b.templateId) {
+              const t = templates.find((temp: any) => temp.id === b.templateId);
+              if (t) {
+                catId = t.categoryId;
+                duration = t.durationHours;
+              }
+            }
+            if (catId && duration) {
+              catTotals[catId] = (catTotals[catId] || 0) + duration;
+            }
+          }
+        });
+      });
+
+      const statsArray = Object.keys(catTotals).map(catId => {
+        const cat = categories.find((c: any) => c.id === catId);
+        return {
+          name: cat ? cat.name : 'Eliminata/Archiviata',
+          emoji: cat ? cat.emoji : '📦',
+          color: cat ? cat.color : '#888',
+          hours: catTotals[catId]
+        };
+      }).sort((a,b) => b.hours - a.hours);
+
+      setAltStats(statsArray);
+      setAltModalVisible(true);
+    } catch(e) {
+      console.log(e);
+    }
+  };
+
 
   const [modalVisible, setModalVisible] = useState(false);
   const [name, setName] = useState('');
@@ -56,7 +112,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatsBar stats={stats} />
+      <StatsBar stats={stats} onAltPress={loadAltStats} />
 
       <FlatList
         data={peaks}
