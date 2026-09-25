@@ -123,11 +123,13 @@ export default function ManageBlocksScreen({ navigation }: any) {
         {/* Categories Section */}
         <View style={{flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: Spacing.sm}}>
           <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('manage.title')}</Text>
-          <Pressable onPress={openNewCategory} style={{padding: Spacing.xs, paddingHorizontal: Spacing.sm, backgroundColor: colors.surfaceAlt, borderRadius: BorderRadius.sm}}>
-            <Text style={{color: colors.primary, fontWeight: 'bold'}}>+ {t('common.create')}</Text>
-          </Pressable>
         </View>
-        <Text style={{color: colors.textSecondary, fontSize: 12, marginBottom: Spacing.sm}}>{t('manage.categoriesInfo')}</Text>
+        <Text style={{color: colors.textSecondary, fontSize: 12, marginBottom: Spacing.xs}}>
+          {t('manage.categoriesInfo')}
+        </Text>
+        <Text style={{color: colors.primary, fontSize: 13, fontWeight: 'bold', marginBottom: Spacing.md}}>
+          Monte ore target settimanale: {totalHours}h / 168h ({168 - totalHours}h libere)
+        </Text>
         
         {categories.map((c) => (
           <Pressable key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]} onPress={() => openEditCategory(c)}>
@@ -177,7 +179,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
       {/* FAB - New Block */}
       <Pressable
         style={[styles.fab, { backgroundColor: colors.primary }]}
-        onPress={() => setModalVisible(true)}
+        onPress={() => setSelectorModalVisible(true)}
       >
         <Text style={styles.fabText}>+</Text>
       </Pressable>
