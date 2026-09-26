@@ -53,3 +53,11 @@ npm-debug.*
 yarn-debug.*
 yarn-error.*
 *.pdf
+
+# Private Docs
+PRIVATE_ROADMAP.md
+
+
+android/
+ios/
+
