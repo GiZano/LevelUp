@@ -45,7 +45,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
         },
       },
     ]);
-  }, [peak?.name, peak?.id, navigation, deletePeak]);
+  }, [peak?.name, peakId, navigation, deletePeak]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
