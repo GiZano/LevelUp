@@ -7,13 +7,16 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePlanner } from '../store/PlannerContext';
+import { usePeaks } from '../store/PeaksContext';
+import { scrubDeletedTemplates } from '../store/plannerStorage';
 import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 const DURATION_OPTIONS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 8];
 
 export default function ManageBlocksScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const { categories, templates, addTemplate, getCategoryById, editCategory, addCategory, archiveCategory, archiveTemplate, unarchiveCategory, unarchiveTemplate } = usePlanner();
+  const { categories, templates, addTemplate, getCategoryById, editCategory, addCategory, archiveCategory, archiveTemplate, unarchiveCategory, unarchiveTemplate, deleteCategory, deleteTemplate } = usePlanner();
+  const { addCompletedHours } = usePeaks();
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -24,6 +27,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
   }, [navigation, colors]);
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({});
   const [blockName, setBlockName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
@@ -130,6 +134,58 @@ export default function ManageBlocksScreen({ navigation }: any) {
     );
   };
 
+  const handleHardDeleteCategory = (id: string, name: string) => {
+    if (isDeleting) return;
+    Alert.alert(
+      t('manage.deleteCategoryTitle'),
+      `${t('manage.deleteCategoryMsg')} (${name})`,
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        { 
+          text: t('common.delete'), 
+          style: 'destructive',
+          onPress: async () => {
+            setIsDeleting(true);
+            try {
+              const templateIds = templates.filter(t => t.categoryId === id).map(t => t.id);
+              const hoursToSubtract = await scrubDeletedTemplates(templateIds, templates, id);
+              if (hoursToSubtract > 0) addCompletedHours(-hoursToSubtract);
+              deleteCategory(id);
+              if (editCatId === id) setCatModalVisible(false);
+            } finally {
+              setIsDeleting(false);
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  const handleHardDeleteTemplate = (id: string, name: string) => {
+    if (isDeleting) return;
+    Alert.alert(
+      t('manage.deleteBlockTitlePerm'),
+      `${t('manage.deleteBlockMsgPerm')} (${name})`,
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        { 
+          text: t('common.delete'), 
+          style: 'destructive',
+          onPress: async () => {
+            setIsDeleting(true);
+            try {
+              const hoursToSubtract = await scrubDeletedTemplates([id], templates);
+              if (hoursToSubtract > 0) addCompletedHours(-hoursToSubtract);
+              deleteTemplate(id);
+            } finally {
+              setIsDeleting(false);
+            }
+          }
+        }
+      ]
+    );
+  };
+
   // Group templates by category
   const templatesByCategory = activeCategories.map((c) => ({
     categoryId: c.id,
@@ -157,12 +213,17 @@ export default function ManageBlocksScreen({ navigation }: any) {
               <MaterialCommunityIcons name={c.emoji as any} size={24} color={c.color} style={styles.catEmoji} />
               <Text style={[styles.catName, { color: c.color }]}>{getCategoryDisplayName(c)}</Text>
               <Text style={[styles.catTarget, { color: colors.textSecondary, marginRight: Spacing.sm }]}>
-                {c.targetHoursPerWeek} {t('manage.targetHours')} ✎
+                {c.targetHoursPerWeek} {t('manage.targetHours')}
               </Text>
             </Pressable>
-            <Pressable onPress={() => handleArchiveCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs}}>
-              <MaterialCommunityIcons name="archive" size={20} color={colors.textSecondary} />
-            </Pressable>
+            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Pressable onPress={() => handleArchiveCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs, marginRight: Spacing.xs}}>
+                <MaterialCommunityIcons name="archive" size={20} color={colors.accent} />
+              </Pressable>
+              <Pressable onPress={() => handleHardDeleteCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs}}>
+                <MaterialCommunityIcons name="delete" size={20} color={colors.danger} />
+              </Pressable>
+            </View>
           </View>
         ))}
 
@@ -200,9 +261,14 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <Text style={[styles.blockDur, { color: colors.textSecondary }]}>
                     {t.durationHours}h
                   </Text>
-                  <Pressable onPress={() => handleDeleteBlock(t.id, t.name)} hitSlop={8}>
-                    <MaterialCommunityIcons name="archive" size={20} color={colors.textSecondary} />
-                  </Pressable>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Pressable onPress={() => handleDeleteBlock(t.id, t.name)} hitSlop={8} style={{padding: Spacing.xs, marginRight: Spacing.xs}}>
+                      <MaterialCommunityIcons name="archive" size={20} color={colors.accent} />
+                    </Pressable>
+                    <Pressable onPress={() => handleHardDeleteTemplate(t.id, t.name)} hitSlop={8} style={{padding: Spacing.xs}}>
+                      <MaterialCommunityIcons name="delete" size={20} color={colors.danger} />
+                    </Pressable>
+                  </View>
                 </View>
               ))}
             </View>
@@ -218,9 +284,14 @@ export default function ManageBlocksScreen({ navigation }: any) {
               <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surfaceAlt }]}>
                 <MaterialCommunityIcons name={c.emoji as any} size={24} color={c.color} style={[styles.catEmoji, { opacity: 0.5 }]} />
                 <Text style={[styles.catName, { color: c.color, textDecorationLine: 'line-through', opacity: 0.5 }]}>{getCategoryDisplayName(c)}</Text>
-                <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8}>
-                  <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
-                </Pressable>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                  <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8} style={{padding: Spacing.xs, marginRight: Spacing.xs}}>
+                    <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
+                  </Pressable>
+                  <Pressable onPress={() => handleHardDeleteCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs}}>
+                    <MaterialCommunityIcons name="delete" size={20} color={colors.danger} />
+                  </Pressable>
+                </View>
               </View>
             ))}
 
@@ -232,9 +303,14 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <Text style={[styles.blockName, { color: colors.textSecondary, textDecorationLine: 'line-through' }]} numberOfLines={1}>
                     {t.name}
                   </Text>
-                  <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); handleUnarchiveTemplate(t.id); }} hitSlop={8}>
-                    <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
-                  </Pressable>
+                  <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Pressable onPress={() => { LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut); handleUnarchiveTemplate(t.id); }} hitSlop={8} style={{padding: Spacing.xs, marginRight: Spacing.xs}}>
+                      <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
+                    </Pressable>
+                    <Pressable onPress={() => handleHardDeleteTemplate(t.id, t.name)} hitSlop={8} style={{padding: Spacing.xs}}>
+                      <MaterialCommunityIcons name="delete" size={20} color={colors.danger} />
+                    </Pressable>
+                  </View>
                 </View>
               );
             })}

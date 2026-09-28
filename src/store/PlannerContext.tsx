@@ -89,11 +89,6 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       ]);
       if (cats.length > 0) {
         const merged = cats.map(c => ({...c, emoji: migrateEmoji(c.emoji)}));
-        for (const def of DEFAULT_CATEGORIES) {
-          if (!merged.find(c => c.id === def.id)) {
-            merged.push(def);
-          }
-        }
         setCategories(merged);
       } else {
         setCategories(DEFAULT_CATEGORIES);
@@ -161,8 +156,16 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const deleteCategory = useCallback((id: string) => {
+    const templatesToDelete = templates.filter(t => t.categoryId === id).map(t => t.id);
+    
     setCategories((prev) => prev.filter((c) => c.id !== id));
-  }, []);
+    setTemplates((prev) => prev.filter(t => t.categoryId !== id));
+    
+    setCurrentPlan(plan => ({
+      ...plan,
+      blocks: plan.blocks.filter(b => b.oneOffCategoryId !== id && (b.templateId === undefined || !templatesToDelete.includes(b.templateId)))
+    }));
+  }, [templates]);
 
   const editCategory = useCallback((id: string, updates: Partial<Category>) => {
     setCategories((prev) => prev.map((c) => c.id === id ? { ...c, ...updates } : c));
