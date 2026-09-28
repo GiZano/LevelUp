@@ -12,6 +12,7 @@ import CategoryProgress from '../components/CategoryProgress';
 import BlockChip from '../components/BlockChip';
 import { DAYS_OF_WEEK, DAY_LABELS, DayOfWeek } from '../types';
 import { getDatesOfWeek, getNextWeekId, getPrevWeekId, getCurrentWeekId, getTodayDayOfWeek } from '../types/weekUtils';
+import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors, isDark } = useThemeColors();
@@ -154,7 +155,7 @@ export default function PlannerScreen({ navigation }: any) {
               <View key={cat.id} style={{ marginRight: Spacing.sm }}>
                 <CategoryProgress
                   emoji={cat.emoji}
-                  name={cat.name}
+                  name={getCategoryDisplayName(cat)}
                   scheduled={hours.scheduled}
                   completed={hours.completed}
                   target={cat.targetHoursPerWeek}
@@ -219,7 +220,7 @@ export default function PlannerScreen({ navigation }: any) {
                       } else {
                         const tmpl = block.templateId ? getTemplateById(block.templateId) : undefined;
                         const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
-                        name = tmpl?.name || 'Sconosciuto';
+                        name = tmpl?.name || t('common.unknown');
                         duration = block.customDuration ?? (tmpl?.durationHours || 0);
                         catColor = cat?.color || colors.primary;
                         catEmoji = cat?.emoji || 'shape';
@@ -257,15 +258,15 @@ export default function PlannerScreen({ navigation }: any) {
       <Modal visible={!!editBlockId} transparent animationType="fade" onRequestClose={() => setEditBlockId(null)}>
         <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Block Details</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('planner.blockDetails')}</Text>
             
-            <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 4, color: colors.textSecondary }}>Specific Task / Description</Text>
+            <Text style={{ fontSize: 14, fontWeight: '600', marginBottom: 4, color: colors.textSecondary }}>{t('planner.taskDescription')}</Text>
             <TextInput
               style={[
                 { borderWidth: 1, borderRadius: 12, padding: 8, fontSize: 16, marginBottom: 16 },
                 { backgroundColor: colors.background, color: colors.text, borderColor: colors.border },
               ]}
-              placeholder="e.g. Chapter 4 exercises"
+              placeholder={t('planner.taskDescPlaceholder')}
               placeholderTextColor={colors.textSecondary}
               value={editBlockDesc}
               onChangeText={setEditBlockDesc}
@@ -277,7 +278,7 @@ export default function PlannerScreen({ navigation }: any) {
                   <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{t('common.delete')}</Text>
                 </Pressable>
                 <Pressable style={{ flex: 1, paddingVertical: 12, borderRadius: 12, backgroundColor: isDone ? colors.danger : colors.success, alignItems: 'center' }} onPress={handleToggleBlock}>
-                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{isDone ? 'X Toggle' : '✓ Toggle'}</Text>
+                  <Text style={{ fontSize: 16, fontWeight: '600', color: '#fff' }}>{isDone ? ('✕ ' + t('planner.markTodo')) : ('✓ ' + t('planner.markDone'))}</Text>
                 </Pressable>
               </View>
               <View style={{flexDirection: 'row', gap: 12}}>
@@ -361,7 +362,7 @@ export default function PlannerScreen({ navigation }: any) {
               templates.filter(t => !t.isArchived && !getCategoryById(t.categoryId)?.isArchived).length === 0 ? (
                 <View style={{padding: Spacing.lg, alignItems: 'center'}}>
                   <Text style={{color: colors.textSecondary, marginBottom: Spacing.md}}>{t('planner.createFirst')}</Text>
-                  <Pressable onPress={() => { setModalVisible(false); setSelectedTemplateId(null); navigation.navigate('ManageBlocks'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
+                  <Pressable onPress={() => { setModalVisible(false); setSelectedTemplateId(null); navigation.navigate('BlocchiTab'); }} style={[styles.btn, {backgroundColor: colors.primary}]}>
                     <Text style={{color: '#fff'}}>{t('planner.goToManage')}</Text>
                   </Pressable>
                 </View>
@@ -382,7 +383,7 @@ export default function PlannerScreen({ navigation }: any) {
                             <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                           </Text>
                           <Text style={{ fontSize: 16, fontWeight: '600', color: cat.color }}>
-                            <MaterialCommunityIcons name={cat.emoji as any} size={16} color={cat.color} /> {cat.name}
+                            <MaterialCommunityIcons name={cat.emoji as any} size={16} color={cat.color} /> {getCategoryDisplayName(cat)}
                           </Text>
                         </Pressable>
                         {isExpanded && catTemplates.map(t => (

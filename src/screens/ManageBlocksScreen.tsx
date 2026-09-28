@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePlanner } from '../store/PlannerContext';
+import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 const DURATION_OPTIONS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 8];
 
@@ -154,9 +155,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
           <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surface }]}>
             <Pressable style={{flexDirection: 'row', alignItems: 'center', flex: 1}} onPress={() => openEditCategory(c)}>
               <MaterialCommunityIcons name={c.emoji as any} size={24} color={c.color} style={styles.catEmoji} />
-              <Text style={[styles.catName, { color: c.color }]}>{c.name}</Text>
+              <Text style={[styles.catName, { color: c.color }]}>{getCategoryDisplayName(c)}</Text>
               <Text style={[styles.catTarget, { color: colors.textSecondary, marginRight: Spacing.sm }]}>
-                {c.targetHoursPerWeek}h target ✎
+                {c.targetHoursPerWeek} {t('manage.targetHours')} ✎
               </Text>
             </Pressable>
             <Pressable onPress={() => handleArchiveCategory(c.id, c.name)} hitSlop={8} style={{padding: Spacing.xs}}>
@@ -169,7 +170,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
 
         {activeTemplates.length === 0 && (
           <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-            Nessun blocco definito. Creane uno usando il tasto in basso.
+            {t('manage.noBlocks')}
           </Text>
         )}
 
@@ -187,7 +188,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                   <MaterialCommunityIcons name={isExpanded ? 'chevron-down' : 'chevron-right'} size={24} color={colors.textSecondary} />
                 </Text>
                 <Text style={[styles.groupHeader, { color: colors.textSecondary, marginBottom: 0 }]}>
-                  <MaterialCommunityIcons name={cat?.emoji as any} size={16} color={cat?.color ?? colors.textSecondary} /> <Text style={{color: cat?.color ?? colors.textSecondary}}>{cat?.name ?? 'Altro'}</Text>
+                  <MaterialCommunityIcons name={cat?.emoji as any} size={16} color={cat?.color ?? colors.textSecondary} /> <Text style={{color: cat?.color ?? colors.textSecondary}}>{getCategoryDisplayName(cat) || t('categories.other')}</Text>
                 </Text>
               </Pressable>
               {isExpanded && items.map((t) => (
@@ -216,7 +217,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
             {archivedCategories.map(c => (
               <View key={c.id} style={[styles.catRow, { backgroundColor: colors.surfaceAlt }]}>
                 <MaterialCommunityIcons name={c.emoji as any} size={24} color={c.color} style={[styles.catEmoji, { opacity: 0.5 }]} />
-                <Text style={[styles.catName, { color: c.color, textDecorationLine: 'line-through', opacity: 0.5 }]}>{c.name}</Text>
+                <Text style={[styles.catName, { color: c.color, textDecorationLine: 'line-through', opacity: 0.5 }]}>{getCategoryDisplayName(c)}</Text>
                 <Pressable onPress={() => unarchiveCategory(c.id)} hitSlop={8}>
                   <MaterialCommunityIcons name="restore" size={20} color={colors.primary} />
                 </Pressable>
@@ -281,7 +282,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
       <Modal visible={catModalVisible} transparent animationType="fade" onRequestClose={() => setCatModalVisible(false)}>
         <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>{editCatId ? t('manage.editCategory') : 'New Category'}</Text>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>{editCatId ? t('manage.editCategory') : t('manage.newCategory')}</Text>
             
             <>
                 <Text style={[styles.fieldLabel, { color: colors.textSecondary }]}>{t('manage.blockName')}</Text>
@@ -347,7 +348,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                 styles.input,
                 { backgroundColor: colors.background, color: colors.text, borderColor: colors.border },
               ]}
-              placeholder="Nome blocco"
+              placeholder={t('manage.blockName')}
               placeholderTextColor={colors.textSecondary}
               value={blockName}
               onChangeText={setBlockName}
@@ -370,7 +371,7 @@ export default function ManageBlocksScreen({ navigation }: any) {
                     onPress={() => setSelectedCategoryId(c.id)}
                   >
                     <Text style={[styles.chipText, { color: selected ? '#fff' : colors.text }]} numberOfLines={1}>
-                      <MaterialCommunityIcons name={c.emoji as any} size={16} color={selected ? '#fff' : colors.text} /> {c.name}
+                      <MaterialCommunityIcons name={c.emoji as any} size={16} color={selected ? '#fff' : colors.text} /> {getCategoryDisplayName(c)}
                     </Text>
                   </Pressable>
                 );

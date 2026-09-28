@@ -27,6 +27,8 @@ const translations = {
       study: 'Study',
       cp: 'Competitive Prog.',
       hobby: 'Hobby',
+      reading: 'Reading',
+      project: 'Project',
       freetime: 'Free Time',
       other: 'Other'
     },
@@ -38,6 +40,7 @@ const translations = {
       delete: 'Delete',
       edit: 'Edit',
       remove: 'Remove',
+      unknown: 'Unknown',
     },
     // Home
     home: {
@@ -60,9 +63,11 @@ const translations = {
     },
     // Peak Detail
     peakDetail: {
+      peak: 'Peak',
+      notFound: 'Peak not found',
       camps: 'camps',
       conquered: 'Peak Conquered!',
-      addCamp: 'Add new camp...',
+      addCamp: 'New camp...',
       add: 'Add',
       deleteTitle: 'Delete Peak',
       deleteMsg: 'Are you sure you want to delete this peak?',
@@ -84,6 +89,9 @@ const translations = {
       markTodo: 'Mark To-Do',
       markDone: 'Completed',
       modifyOrRemove: 'Modify status or remove?',
+      blockDetails: 'Block Details',
+      taskDescription: 'Specific Task / Description',
+      taskDescPlaceholder: 'e.g. Chapter 4 exercises',
     },
     // Manage Blocks
     manage: {
@@ -93,6 +101,7 @@ const translations = {
       activityBlocks: 'Activity Blocks',
       noBlocks: 'No blocks defined. Create one using the button below.',
       newBlock: 'New Block',
+      newCategory: 'New Category',
       blockName: 'Block name',
       category: 'Category',
       duration: 'Duration',
@@ -128,6 +137,7 @@ const translations = {
       afternoon: 'Afternoon',
       evening: 'Evening',
       noBlocks: 'No blocks',
+      emptyToday: 'No blocks for today. Go to Planner!',
       completedToday: 'hours completed today',
       yourDay: 'Your day',
       todayProgress: 'Today\'s Progress',
@@ -143,6 +153,10 @@ const translations = {
       importConfirmMsg: 'Are you sure? This will OVERWRITE all your current data.',
       importSuccess: 'Backup imported successfully!',
       importError: 'Failed to import backup.',
+      exportSuccessTitle: 'Success',
+      exportSuccessMsg: 'Backup exported successfully!',
+      exportErrorTitle: 'Error',
+      exportErrorMsg: 'Failed to export data.',
       aboutTitle: 'About LevelUp',
       aboutDesc1: 'LevelUp was born from a simple need: eliminating decision fatigue in free time. The mountain climbing metaphor helps tracking long-term goals (Peaks) and breaking them down into actionable steps (Camps).',
       aboutDesc2: 'This app is 100% Open Source and built by developers, for everyone.',
@@ -176,6 +190,8 @@ const translations = {
       study: 'Studio',
       cp: 'Competitive Prog.',
       hobby: 'Hobby',
+      reading: 'Lettura',
+      project: 'Progetto',
       freetime: 'Tempo Libero',
       other: 'Altro'
     },
@@ -187,6 +203,7 @@ const translations = {
       delete: 'Elimina',
       edit: 'Modifica',
       remove: 'Rimuovi',
+      unknown: 'Sconosciuto',
     },
     // Home
     home: {
@@ -209,9 +226,11 @@ const translations = {
     },
     // Peak Detail
     peakDetail: {
+      peak: 'Vetta',
+      notFound: 'Vetta non trovata',
       camps: 'campi',
       conquered: 'Vetta conquistata!',
-      addCamp: 'Aggiungi campo...',
+      addCamp: 'Nuovo campo...',
       add: 'Aggiungi',
       deleteTitle: 'Elimina Vetta',
       deleteMsg: 'Sei sicuro di voler eliminare questa vetta?',
@@ -233,6 +252,9 @@ const translations = {
       markTodo: 'Segna da fare',
       markDone: 'Completato',
       modifyOrRemove: 'Vuoi modificare lo stato o rimuoverlo?',
+      blockDetails: 'Dettagli Blocco',
+      taskDescription: 'Attività Specifica / Descrizione',
+      taskDescPlaceholder: 'es. Esercizi Capitolo 4',
     },
     // Manage Blocks
     manage: {
@@ -242,6 +264,7 @@ const translations = {
       activityBlocks: 'Blocchi Attività',
       noBlocks: 'Nessun blocco definito. Creane uno usando il tasto in basso.',
       newBlock: 'Nuovo Blocco',
+      newCategory: 'Nuova Categoria',
       blockName: 'Nome blocco',
       category: 'Categoria',
       duration: 'Durata',
@@ -277,6 +300,7 @@ const translations = {
       afternoon: 'Pomeriggio',
       evening: 'Sera',
       noBlocks: 'Nessun blocco',
+      emptyToday: 'Nessun blocco per oggi. Vai nel Planner!',
       completedToday: 'ore completate oggi',
       yourDay: 'La tua giornata',
       todayProgress: 'Progresso odierno',
@@ -292,6 +316,10 @@ const translations = {
       importConfirmMsg: 'Sei sicuro? Questa operazione SOVRASCRIVERÀ tutti i tuoi dati correnti.',
       importSuccess: 'Backup importato con successo!',
       importError: 'Errore durante l\'importazione del backup.',
+      exportSuccessTitle: 'Successo',
+      exportSuccessMsg: 'Backup esportato con successo!',
+      exportErrorTitle: 'Errore',
+      exportErrorMsg: 'Errore durante l\'esportazione del backup.',
       aboutTitle: 'About LevelUp',
       aboutDesc1: 'LevelUp nasce da una necessità semplice: eliminare la "decision fatigue" nel tempo libero. La metafora dell\'arrampicata aiuta a tracciare obiettivi a lungo termine (Vette) e suddividerli in passaggi concreti (Campi).',
       aboutDesc2: 'Questa app è 100% Open Source, creata da sviluppatori per tutti.',

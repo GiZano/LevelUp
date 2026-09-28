@@ -71,7 +71,7 @@ export default function TodayScreen({ navigation }: any) {
           
           {todayBlocks.length === 0 ? (
             <Text style={{color: colors.textTertiary, fontStyle: 'italic', marginLeft: Spacing.md, marginTop: Spacing.sm}}>
-              Nessun blocco per oggi. Vai nel Planner!
+              {t('today.emptyToday')}
             </Text>
           ) : (
             todayBlocks.map(b => {
@@ -85,7 +85,7 @@ export default function TodayScreen({ navigation }: any) {
               } else {
                 const tmpl = b.templateId ? getTemplateById(b.templateId) : undefined;
                 const cat = tmpl ? getCategoryById(tmpl.categoryId) : undefined;
-                name = tmpl?.name || 'Sconosciuto';
+                name = tmpl?.name || t('common.unknown');
                 duration = b.customDuration ?? (tmpl?.durationHours || 0);
                 catColor = cat?.color || colors.border;
                 catEmoji = cat?.emoji || 'shape';

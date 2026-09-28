@@ -22,6 +22,7 @@ import { computeStats, isPeakComplete, peakProgress } from '../utils/stats';
 import StatsBar from '../components/StatsBar';
 import PeakCard from '../components/PeakCard';
 import type { RootStackParamList } from '../types/navigation';
+import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
@@ -69,7 +70,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       const statsArray = Object.keys(catTotals).map(catId => {
         const cat = categories.find((c: any) => c.id === catId);
         return {
-          name: cat ? cat.name : t('home.deletedArchived'),
+          name: cat ? getCategoryDisplayName(cat) : t('home.deletedArchived'),
           emoji: cat ? cat.emoji : 'package-variant-closed',
           color: cat ? cat.color : '#888',
           hours: catTotals[catId]
@@ -136,7 +137,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
           <View style={styles.emptyState}>
             <MaterialCommunityIcons name="image-filter-hdr" size={64} color={colors.textTertiary} style={styles.emptyEmoji} />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
-              Aggiungi la tua prima vetta!
+              {t('home.addFirst')}
             </Text>
           </View>
         }
@@ -201,7 +202,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
           <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.altHistoryTitle')}</Text>
             <ScrollView style={{marginVertical: 16}}>
-              {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>Nessun dato storico.</Text>}
+              {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>{t('home.noHistoricalData')}</Text>}
               {altStats.map((s, idx) => (
                 <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
                   <MaterialCommunityIcons name={s.emoji as any} size={24} color={s.color} style={{ marginRight: 8 }} />
@@ -211,7 +212,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
               ))}
             </ScrollView>
             <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.primary, alignItems: 'center' }]} onPress={() => setAltModalVisible(false)}>
-              <Text style={[styles.modalButtonText, { color: '#fff' }]}>Chiudi</Text>
+              <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('home.close')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -237,7 +238,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
                   borderColor: colors.border,
                 },
               ]}
-              placeholder="Nome della vetta"
+              placeholder={t('home.peakName')}
               placeholderTextColor={colors.textSecondary}
               value={name}
               onChangeText={setName}
@@ -267,7 +268,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 onPress={handleCancel}
               >
                 <Text style={[styles.modalButtonText, { color: colors.textSecondary }]}>
-                  Annulla
+                  {t('common.cancel')}
                 </Text>
               </Pressable>
 

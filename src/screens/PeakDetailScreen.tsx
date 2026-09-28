@@ -34,7 +34,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
   const peak = peaks.find((p) => p.id === peakId);
 
   const handleDeletePeak = useCallback(() => {
-    Alert.alert('Elimina vetta', `Vuoi eliminare "${peak?.name}"?`, [
+    Alert.alert(t('peakDetail.deleteTitle'), `${t('peakDetail.deleteMsg')} (${peak?.name})`, [
       { text: t('common.cancel'), style: 'cancel' },
       {
         text: t('common.delete'),
@@ -45,11 +45,11 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
         },
       },
     ]);
-  }, [peak?.name, peak?.id, navigation, deletePeak, t]);
+  }, [peak?.name, peak?.id, navigation, deletePeak]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: peak?.name ?? 'Vetta',
+      title: peak?.name ?? t('peakDetail.peak'),
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
       headerRight: () => (
@@ -64,7 +64,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
     return (
       <View style={[styles.centered, { backgroundColor: colors.background }]}>
         <Text style={{ color: colors.textSecondary, fontSize: FontSize.md }}>
-          Vetta non trovata
+          {t('peakDetail.notFound')}
         </Text>
       </View>
     );
@@ -104,13 +104,13 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
             <Text style={[styles.title, { color: colors.text }]}>{peak?.name}</Text>
 
             <Text style={[styles.progressText, { color: colors.textSecondary }]}>
-              {doneCamps}/{totalCamps} campi • {pct}%
+              {doneCamps}/{totalCamps} {t('peakDetail.camps')} • {pct}%
             </Text>
 
             {complete && (
               <View style={[styles.banner, { backgroundColor: colors.primary + '20' }]}>
                 <Text style={[styles.bannerText, { color: colors.primary }]}>
-                  🏁 Vetta conquistata!
+                  🏁 {t('peakDetail.conquered')}
                 </Text>
               </View>
             )}
@@ -136,7 +136,7 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
               borderColor: colors.border,
             },
           ]}
-          placeholder="Nuovo campo..."
+          placeholder={t('peakDetail.addCamp')}
           placeholderTextColor={colors.textSecondary}
           value={campName}
           onChangeText={setCampName}
