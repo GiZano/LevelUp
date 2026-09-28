@@ -13,10 +13,12 @@ import i18n, { t } from '../utils/i18n';
 import { useLocale } from '../store/LocaleContext';
 import { usePeaks } from '../store/PeaksContext';
 import { usePlanner } from '../store/PlannerContext';
+import OnboardingModal from '../components/OnboardingModal';
 
 export default function SettingsScreen() {
   const { colors } = useThemeColors();
   const [isImporting, setIsImporting] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const { locale, changeLocale } = useLocale();
   const { refreshData: refreshPeaks } = usePeaks();
   const { refreshData: refreshPlanner } = usePlanner();
@@ -178,8 +180,17 @@ export default function SettingsScreen() {
           >
             <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="google-play" size={20} color={colors.textSecondary} style={{marginRight: 8}} /><Text style={{color: colors.textSecondary, fontWeight: 'bold'}}>{t('settings.feedbackPlayStore')}</Text></View>
           </Pressable>
+
+          <Pressable 
+            style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.sm }]} 
+            onPress={() => setShowOnboarding(true)}
+          >
+            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="presentation-play" size={20} color={colors.primary} style={{marginRight: 8}} /><Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('settings.replayTutorial')}</Text></View>
+          </Pressable>
         </View>
       </ScrollView>
+
+      <OnboardingModal visible={showOnboarding} onDismiss={() => setShowOnboarding(false)} />
     </SafeAreaView>
   );
 }
