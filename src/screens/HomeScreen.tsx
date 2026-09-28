@@ -21,6 +21,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { computeStats, isPeakComplete, peakProgress } from '../utils/stats';
 import StatsBar from '../components/StatsBar';
 import PeakCard from '../components/PeakCard';
+import OnboardingModal from '../components/OnboardingModal';
 import type { RootStackParamList } from '../types/navigation';
 import { getCategoryDisplayName } from '../utils/categoryUtils';
 
@@ -97,8 +98,32 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
+
+  React.useEffect(() => {
+    const checkOnboarding = async () => {
+      try {
+        const done = await AsyncStorage.getItem('@levelup/onboarding_done');
+        if (!done) {
+          setShowOnboarding(true);
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    };
+    checkOnboarding();
+  }, []);
+
+  const handleDismissOnboarding = async () => {
+    try {
+      await AsyncStorage.setItem('@levelup/onboarding_done', 'true');
+    } catch (e) {
+      console.log(e);
+    }
+    setShowOnboarding(false);
+  };
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -282,6 +307,8 @@ export default function HomeScreen({ navigation }: HomeProps) {
           </View>
         </View>
       </Modal>
+
+      <OnboardingModal visible={showOnboarding} onDismiss={handleDismissOnboarding} />
     </SafeAreaView>
   );
 }

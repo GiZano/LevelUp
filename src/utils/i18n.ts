@@ -162,7 +162,23 @@ const translations = {
       aboutDesc2: 'This app is 100% Open Source and built by developers, for everyone.',
       starGithub: 'Star on GitHub',
       submitIssue: 'Submit an Issue',
-      feedbackPlayStore: 'Leave a feedback on Play Store (WIP)'
+      feedbackPlayStore: 'Leave a feedback on Play Store (WIP)',
+      replayTutorial: 'Replay Tutorial'
+    },
+    // Onboarding
+    onboarding: {
+      slide1Title: 'Peaks & Goals',
+      slide1Desc: 'Track your long-term goals. Break them into Camps (milestones) and climb to the top! At the top you see your Total Altitude and Day Streak.',
+      slide2Title: 'Blocks & Categories',
+      slide2Desc: 'Here you define your weekly activities. Group them into Categories and create Blocks for specific tasks. Tap them to edit or archive.',
+      slide3Title: 'The Planner',
+      slide3Desc: 'Schedule your blocks into a weekly grid. Tap a time slot to add a block with an optional description. Use "Copy Previous Week" to save time!',
+      slide4Title: 'Your Day (Today)',
+      slide4Desc: 'Every morning, open Today and just follow the plan. Complete your scheduled blocks to gain altitude and conquer your peaks!',
+      slide5Title: 'Settings & Data',
+      slide5Desc: 'Change language or export/import your JSON backup to never lose your progress.',
+      dismissBtn: 'Start Climbing',
+      skip: 'Skip'
     }
   },
   it: {
@@ -325,7 +341,23 @@ const translations = {
       aboutDesc2: 'Questa app è 100% Open Source, creata da sviluppatori per tutti.',
       starGithub: 'Metti una stella su GitHub',
       submitIssue: 'Aggiungi una Issue',
-      feedbackPlayStore: 'Lascia un feedback sul Play Store (WIP)'
+      feedbackPlayStore: 'Lascia un feedback sul Play Store (WIP)',
+      replayTutorial: 'Rivedi Tutorial'
+    },
+    // Onboarding
+    onboarding: {
+      slide1Title: 'Le tue Vette',
+      slide1Desc: 'Tocca + per creare una Vetta (obiettivo). Dividila in Campi (tappe) e scalala! In alto vedi Altitudine Totale e Streak.',
+      slide2Title: 'Blocchi & Categorie',
+      slide2Desc: 'Gestisci le tue attività. Crei prima le Categorie e poi i Blocchi da assegnare. Toccali per modificarli o archiviarli.',
+      slide3Title: 'Il Planner',
+      slide3Desc: 'Qui programmi i blocchi nella griglia settimanale con una descrizione. Usa "Copia Settimana Precedente" per fare in fretta!',
+      slide4Title: 'La tua Giornata',
+      slide4Desc: 'Ogni mattina apri Oggi e segui il piano. Completa i blocchi programmati per accumulare altitudine e conquistare le tue vette!',
+      slide5Title: 'Impostazioni & Dati',
+      slide5Desc: 'Cambia lingua o esporta i tuoi dati in un backup JSON per non perdere mai i progressi.',
+      dismissBtn: 'Inizia a Scalare',
+      skip: 'Salta'
     }
   }
 };
