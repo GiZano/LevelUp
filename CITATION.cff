@@ -3,8 +3,6 @@ message: "If you use this software or reference its Agent-Driven Architecture, p
 authors:
   - family-names: "Zanotti"
     given-names: "Giovanni"
-  - family-names: "Righi"
-    given-names: "Gabriele"
 title: "LevelUp: Defeating Decision Fatigue via Gamified Time Management"
 version: 1.0.0
 date-released: "2026-09-25"
