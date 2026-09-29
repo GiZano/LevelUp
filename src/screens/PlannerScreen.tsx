@@ -2,7 +2,7 @@ import { t } from "../utils/i18n";
 import React, { useLayoutEffect, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -10,13 +10,13 @@ import { usePlanner } from '../store/PlannerContext';
 import { usePeaks } from '../store/PeaksContext';
 import CategoryProgress from '../components/CategoryProgress';
 import BlockChip from '../components/BlockChip';
-import { DAYS_OF_WEEK, DAY_LABELS, DayOfWeek } from '../types';
+import { DAYS_OF_WEEK, DayOfWeek } from '../types';
 import { getDatesOfWeek, getNextWeekId, getPrevWeekId, getCurrentWeekId, getTodayDayOfWeek } from '../types/weekUtils';
 import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors, isDark } = useThemeColors();
-  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
+  const { currentWeekId, currentPlan, hasPreviousWeekBlocks, categories, templates, scheduleBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -128,7 +128,7 @@ export default function PlannerScreen({ navigation }: any) {
       {/* Categorie summary */}
       <View style={[styles.summaryContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: Spacing.xs}}>
-          <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
+          <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('planner.prev')}</Text>
           </Pressable>
           
@@ -143,7 +143,7 @@ export default function PlannerScreen({ navigation }: any) {
             </Text>
           </View>
 
-          <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
+          <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('planner.next')}</Text>
           </Pressable>
         </View>
@@ -171,17 +171,19 @@ export default function PlannerScreen({ navigation }: any) {
       {currentPlan.blocks.length === 0 && (
         <View style={{padding: Spacing.md, alignItems: 'center'}}>
           <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>{t('planner.emptyWeek')}</Text>
-          <Pressable 
-            onPress={() => {
-              Alert.alert(t('planner.copyWeekTitle'), t('planner.copyWeekMsg'), [
-                { text: t('common.cancel'), style: 'cancel' },
-                { text: t('planner.copyWeekTitle'), onPress: copyPreviousWeek }
-              ])
-            }}
-            style={[styles.btn, {backgroundColor: colors.primary}]}
-          >
-            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="content-copy" size={20} color="#fff" style={{marginRight: 8}} /><Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text></View>
-          </Pressable>
+          {hasPreviousWeekBlocks && (
+            <Pressable
+              onPress={() => {
+                Alert.alert(t('planner.copyWeekTitle'), t('planner.copyWeekMsg'), [
+                  { text: t('common.cancel'), style: 'cancel' },
+                  { text: t('planner.copyWeekTitle'), onPress: copyPreviousWeek }
+                ])
+              }}
+              style={[styles.btn, {backgroundColor: colors.primary}]}
+            >
+              <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="content-copy" size={20} color="#fff" style={{marginRight: 8}} /><Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text></View>
+            </Pressable>
+          )}
         </View>
       )}
 

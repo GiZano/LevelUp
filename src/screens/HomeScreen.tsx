@@ -28,7 +28,7 @@ import { getCategoryDisplayName } from '../utils/categoryUtils';
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: HomeProps) {
-  const { colors, isDark } = useThemeColors();
+  const { colors } = useThemeColors();
   const { peaks, streak, lastActiveDate, totalCompletedHours, addPeak } = usePeaks();
 
   const [altModalVisible, setAltModalVisible] = useState(false);
@@ -192,7 +192,10 @@ export default function HomeScreen({ navigation }: HomeProps) {
             <ScrollView style={{marginVertical: 16}}>
               {peaks.length === 0 && <Text style={{color: colors.textSecondary}}>{t('home.noHistoricalData')}</Text>}
               
-              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.sm, marginBottom: Spacing.xs}}>{t('home.completed')}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: Spacing.sm, marginBottom: Spacing.xs }}>
+                <MaterialCommunityIcons name="check-circle" size={16} color={colors.text} style={{ marginRight: 4 }} />
+                <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('home.completed')}</Text>
+              </View>
               {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
                 <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
                   <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
@@ -202,7 +205,10 @@ export default function HomeScreen({ navigation }: HomeProps) {
               ))}
               {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>{t('home.noCompletedPeaks')}</Text>}
 
-              <Text style={{color: colors.text, fontWeight: 'bold', marginTop: Spacing.md, marginBottom: Spacing.xs}}>{t('home.inProgress')}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: Spacing.md, marginBottom: Spacing.xs }}>
+                <MaterialCommunityIcons name="hiking" size={16} color={colors.text} style={{ marginRight: 4 }} />
+                <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('home.inProgress')}</Text>
+              </View>
               {peaks.filter((p: any) => !isPeakComplete(p)).map((p: any) => {
                 const perc = Math.round(peakProgress(p) * 100);
                 return (

@@ -41,6 +41,7 @@ interface PlannerState {
   templates: BlockTemplate[];
   currentPlan: WeeklyPlan;
   currentWeekId: string;
+  hasPreviousWeekBlocks: boolean;
   isLoading: boolean;
 }
 
@@ -76,16 +77,18 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const [templates, setTemplates] = useState<BlockTemplate[]>([]);
   const [currentWeekId, setCurrentWeekId] = useState(getCurrentWeekId());
   const [currentPlan, setCurrentPlan] = useState<WeeklyPlan>({ weekId: currentWeekId, blocks: [] });
+  const [hasPreviousWeekBlocks, setHasPreviousWeekBlocks] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   // Load data on startup
   const refreshData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [cats, tmpl, plan] = await Promise.all([
+      const [cats, tmpl, plan, previousPlan] = await Promise.all([
         loadCategories(),
         loadTemplates(),
         loadWeeklyPlan(currentWeekId),
+        loadWeeklyPlan(getPrevWeekId(currentWeekId)),
       ]);
       if (cats.length > 0) {
         const merged = cats.map(c => ({...c, emoji: migrateEmoji(c.emoji)}));
@@ -95,6 +98,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       }
       setTemplates(tmpl);
       if (plan) setCurrentPlan(plan);
+      setHasPreviousWeekBlocks((previousPlan?.blocks.length ?? 0) > 0);
     } catch (e) {
       console.error('Errore caricamento planner:', e);
     } finally {
@@ -110,9 +114,13 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const changeWeek = useCallback(async (newWeekId: string) => {
     setIsLoading(true);
     try {
-      const plan = await loadWeeklyPlan(newWeekId);
+      const [plan, previousPlan] = await Promise.all([
+        loadWeeklyPlan(newWeekId),
+        loadWeeklyPlan(getPrevWeekId(newWeekId)),
+      ]);
       setCurrentWeekId(newWeekId);
       setCurrentPlan(plan || { weekId: newWeekId, blocks: [] });
+      setHasPreviousWeekBlocks((previousPlan?.blocks.length ?? 0) > 0);
     } catch (e) {
       console.error('Errore cambio settimana:', e);
     } finally {
@@ -265,7 +273,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         }
       }).catch(console.error);
     }
-  }, [templates, categories]);
+  }, [categories]);
 
   const unscheduleBlock = useCallback((blockId: string) => {
     setCurrentPlan((prev) => {
@@ -339,16 +347,9 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const toggleBlockDone = useCallback((blockId: string) => {
     setCurrentPlan((prev) => {
-      let duration = 0;
       const newBlocks = prev.blocks.map((b) => {
         if (b.id === blockId) {
           const isNowDone = !b.done;
-          if (b.isOneOff) {
-            duration = b.oneOffDuration || 0;
-          } else if (b.templateId) {
-            const template = templates.find((t) => t.id === b.templateId);
-            duration = b.customDuration ?? (template?.durationHours || 0);
-          }
           // We don't have access to PeaksContext here directly to call addCompletedHours.
           // We can let the component doing the toggle call addCompletedHours!
           return { ...b, done: isNowDone };
@@ -357,7 +358,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       });
       return { ...prev, blocks: newBlocks };
     });
-  }, [templates]);
+  }, []);
 
   const getTemplateById = useCallback((id: string) => {
     return templates.find((t) => t.id === id);
@@ -394,6 +395,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         templates,
         currentPlan,
         currentWeekId,
+        hasPreviousWeekBlocks,
         isLoading,
         changeWeek,
     refreshData,
