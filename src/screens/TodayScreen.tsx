@@ -1,22 +1,15 @@
 import { t } from "../utils/i18n";
 import React, { useLayoutEffect } from 'react';
 import { View, Text, StyleSheet, ScrollView, Pressable, LayoutAnimation } from 'react-native';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
 import { usePlanner } from '../store/PlannerContext';
 import { usePeaks } from '../store/PeaksContext';
 import { getTodayDayOfWeek } from '../types/weekUtils';
-import { DAY_LABELS } from '../types';
 
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return '☀️ ' + (t('today.greetingMorning') || 'Buongiorno');
-  if (hour < 17) return '🌤️ ' + (t('today.greetingAfternoon') || 'Buon pomeriggio');
-  if (hour < 21) return '🌅 ' + (t('today.greetingEvening') || 'Buonasera');
-  return '🌙 ' + (t('today.greetingNight') || 'Buonanotte');
-};
 
 export default function TodayScreen({ navigation }: any) {
   const { colors } = useThemeColors();
@@ -25,8 +18,6 @@ export default function TodayScreen({ navigation }: any) {
   const today = getTodayDayOfWeek();
 
   useLayoutEffect(() => {
-    const d = new Date();
-    const dateStr = `${d.getDate()}/${d.getMonth() + 1}`;
     navigation.setOptions({
       title: t('today.title') + ': ' + t('days.' + today).substring(0,3),
       headerStyle: { backgroundColor: colors.surface },

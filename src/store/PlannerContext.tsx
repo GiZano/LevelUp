@@ -41,6 +41,7 @@ interface PlannerState {
   currentPlan: WeeklyPlan;
   todayPlan: WeeklyPlan;
   currentWeekId: string;
+  hasPreviousWeekBlocks: boolean;
   isLoading: boolean;
 }
 
@@ -81,6 +82,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       [initialWeekId]: { weekId: initialWeekId, blocks: [] },
     };
   });
+  const [hasPreviousWeekBlocks, setHasPreviousWeekBlocks] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const realWeekId = getCurrentWeekId();
@@ -91,11 +93,12 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(true);
     try {
       const realWeek = getCurrentWeekId();
-      const [cats, tmpl, currentPlanLoaded, realPlanLoaded] = await Promise.all([
+      const [cats, tmpl, currentPlanLoaded, realPlanLoaded, previousPlan] = await Promise.all([
         loadCategories(),
         loadTemplates(),
         loadWeeklyPlan(currentWeekId),
         currentWeekId === realWeek ? Promise.resolve(null) : loadWeeklyPlan(realWeek),
+        loadWeeklyPlan(getPrevWeekId(currentWeekId)),
       ]);
       if (cats.length > 0) {
         const merged = cats.map(c => ({...c, emoji: migrateEmoji(c.emoji)}));
@@ -104,13 +107,13 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         setCategories(DEFAULT_CATEGORIES);
       }
       setTemplates(tmpl);
-
       const newPlans: Record<string, WeeklyPlan> = {};
       newPlans[currentWeekId] = currentPlanLoaded || { weekId: currentWeekId, blocks: [] };
       if (realWeek !== currentWeekId) {
         newPlans[realWeek] = realPlanLoaded || { weekId: realWeek, blocks: [] };
       }
       setPlans(newPlans);
+      setHasPreviousWeekBlocks((previousPlan?.blocks.length ?? 0) > 0);
     } catch (e) {
       console.error('Errore caricamento planner:', e);
     } finally {
@@ -126,12 +129,16 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const changeWeek = useCallback(async (newWeekId: string) => {
     setIsLoading(true);
     try {
+      const [plan, previousPlan] = await Promise.all([
+        loadWeeklyPlan(newWeekId),
+        loadWeeklyPlan(getPrevWeekId(newWeekId)),
+      ]);
       setCurrentWeekId(newWeekId);
-      const plan = await loadWeeklyPlan(newWeekId);
       setPlans((prev) => ({
         ...prev,
         [newWeekId]: prev[newWeekId] ?? (plan || { weekId: newWeekId, blocks: [] }),
       }));
+      setHasPreviousWeekBlocks((previousPlan?.blocks.length ?? 0) > 0);
     } catch (e) {
       console.error('Errore cambio settimana:', e);
     } finally {
@@ -482,6 +489,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         currentPlan,
         todayPlan,
         currentWeekId,
+        hasPreviousWeekBlocks,
         isLoading,
         changeWeek,
         refreshData,

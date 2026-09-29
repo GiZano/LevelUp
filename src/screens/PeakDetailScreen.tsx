@@ -1,6 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { t } from "../utils/i18n";
-import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useLayoutEffect, useState, useCallback } from 'react';
 import {
   Alert,
