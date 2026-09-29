@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Share, Linking, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Linking, ActivityIndicator } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -9,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
-import i18n, { t } from '../utils/i18n';
+import { t } from '../utils/i18n';
 import { useLocale } from '../store/LocaleContext';
 import { usePeaks } from '../store/PeaksContext';
 import { usePlanner } from '../store/PlannerContext';
@@ -58,7 +58,7 @@ export default function SettingsScreen() {
       await FileSystem.writeAsStringAsync(fileUri, jsonStr, { encoding: FileSystem.EncodingType.UTF8 });
       await Sharing.shareAsync(fileUri, { mimeType: 'application/json', dialogTitle: 'LevelUp Backup' });
 
-    } catch (e) {
+    } catch {
       Alert.alert(t('settings.exportErrorTitle'), t('settings.exportErrorMsg'));
     }
   };
@@ -80,7 +80,7 @@ export default function SettingsScreen() {
                         let fileContent = '';
             try {
               fileContent = await FileSystem.readAsStringAsync(fileUri);
-            } catch (readErr) {
+            } catch {
               const response = await fetch(fileUri);
               fileContent = await response.text();
             }

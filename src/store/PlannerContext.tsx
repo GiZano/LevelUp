@@ -273,7 +273,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         }
       }).catch(console.error);
     }
-  }, [templates, categories]);
+  }, [categories]);
 
   const unscheduleBlock = useCallback((blockId: string) => {
     setCurrentPlan((prev) => {
@@ -347,16 +347,9 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   const toggleBlockDone = useCallback((blockId: string) => {
     setCurrentPlan((prev) => {
-      let duration = 0;
       const newBlocks = prev.blocks.map((b) => {
         if (b.id === blockId) {
           const isNowDone = !b.done;
-          if (b.isOneOff) {
-            duration = b.oneOffDuration || 0;
-          } else if (b.templateId) {
-            const template = templates.find((t) => t.id === b.templateId);
-            duration = b.customDuration ?? (template?.durationHours || 0);
-          }
           // We don't have access to PeaksContext here directly to call addCompletedHours.
           // We can let the component doing the toggle call addCompletedHours!
           return { ...b, done: isNowDone };
@@ -365,7 +358,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       });
       return { ...prev, blocks: newBlocks };
     });
-  }, [templates]);
+  }, []);
 
   const getTemplateById = useCallback((id: string) => {
     return templates.find((t) => t.id === id);

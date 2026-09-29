@@ -28,7 +28,7 @@ import { getCategoryDisplayName } from '../utils/categoryUtils';
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: HomeProps) {
-  const { colors, isDark } = useThemeColors();
+  const { colors } = useThemeColors();
   const { peaks, streak, lastActiveDate, totalCompletedHours, addPeak } = usePeaks();
 
   const [altModalVisible, setAltModalVisible] = useState(false);

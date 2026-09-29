@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import Svg, { Polygon, Rect, Defs, ClipPath } from 'react-native-svg';
 import { useThemeColors } from '../utils/useThemeColors';

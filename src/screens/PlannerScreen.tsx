@@ -2,7 +2,7 @@ import { t } from "../utils/i18n";
 import React, { useLayoutEffect, useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { View, Text, StyleSheet, ScrollView, Pressable, Modal, Alert, Platform, TextInput } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -10,13 +10,13 @@ import { usePlanner } from '../store/PlannerContext';
 import { usePeaks } from '../store/PeaksContext';
 import CategoryProgress from '../components/CategoryProgress';
 import BlockChip from '../components/BlockChip';
-import { DAYS_OF_WEEK, DAY_LABELS, DayOfWeek } from '../types';
+import { DAYS_OF_WEEK, DayOfWeek } from '../types';
 import { getDatesOfWeek, getNextWeekId, getPrevWeekId, getCurrentWeekId, getTodayDayOfWeek } from '../types/weekUtils';
 import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors, isDark } = useThemeColors();
-  const { currentWeekId, currentPlan, hasPreviousWeekBlocks, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
+  const { currentWeekId, currentPlan, hasPreviousWeekBlocks, categories, templates, scheduleBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
