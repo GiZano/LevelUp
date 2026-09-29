@@ -20,7 +20,7 @@ const getGreeting = () => {
 
 export default function TodayScreen({ navigation }: any) {
   const { colors } = useThemeColors();
-  const { currentPlan, templates, getCategoryById, getTemplateById, toggleBlockDone } = usePlanner();
+  const { todayPlan, templates, getCategoryById, getTemplateById, toggleBlockDone } = usePlanner();
   const { addCompletedHours } = usePeaks();
   const today = getTodayDayOfWeek();
 
@@ -34,7 +34,7 @@ export default function TodayScreen({ navigation }: any) {
     });
   }, [navigation, colors, today]);
 
-  const todayBlocks = currentPlan.blocks
+  const todayBlocks = todayPlan.blocks
     .filter(b => b.day === today)
     .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
