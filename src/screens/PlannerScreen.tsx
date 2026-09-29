@@ -128,7 +128,7 @@ export default function PlannerScreen({ navigation }: any) {
       {/* Categorie summary */}
       <View style={[styles.summaryContainer, { backgroundColor: colors.surface, borderBottomColor: colors.border }]}>
         <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: Spacing.xs}}>
-          <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
+          <Pressable onPress={() => changeWeek(getPrevWeekId(currentWeekId))} style={{padding: Spacing.sm}} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('planner.prev')}</Text>
           </Pressable>
           
@@ -143,7 +143,7 @@ export default function PlannerScreen({ navigation }: any) {
             </Text>
           </View>
 
-          <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}}>
+          <Pressable onPress={() => changeWeek(getNextWeekId(currentWeekId))} style={{padding: Spacing.sm}} hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}>
             <Text style={{color: colors.primary, fontWeight: 'bold'}}>{t('planner.next')}</Text>
           </Pressable>
         </View>
