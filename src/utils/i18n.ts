@@ -58,7 +58,7 @@ const translations = {
       peaksHistoryTitle: 'Peaks History',
       completed: 'Completed',
       noCompletedPeaks: 'No completed peaks.',
-      inProgress: 'In Progress 🧗',
+      inProgress: 'In Progress',
       close: 'Close',
     },
     // Peak Detail
@@ -241,7 +241,7 @@ const translations = {
       peaksHistoryTitle: 'Storico Vette',
       completed: 'Completate',
       noCompletedPeaks: 'Nessuna vetta completata.',
-      inProgress: 'In Corso 🧗',
+      inProgress: 'In Corso',
       close: 'Chiudi',
     },
     // Peak Detail
