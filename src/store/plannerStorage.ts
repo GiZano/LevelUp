@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { Category, BlockTemplate, WeeklyPlan } from '../types';
+import { deleteCalendarEvent } from '../utils/calendar';
 
 const KEYS = {
   CATEGORIES: '@levelup/categories',
@@ -43,4 +44,48 @@ export async function loadWeeklyPlan(weekId: string): Promise<WeeklyPlan | null>
   const raw = await AsyncStorage.getItem(key);
   if (!raw) return null;
   return JSON.parse(raw) as WeeklyPlan;
+}
+
+export async function scrubDeletedTemplates(templateIds: string[], templates: BlockTemplate[], categoryId?: string): Promise<number> {
+  let totalHoursSubtracted = 0;
+  
+  const allKeys = await AsyncStorage.getAllKeys();
+  const planKeys = allKeys.filter(k => k.startsWith(KEYS.WEEKLY_PLAN_PREFIX));
+  
+  for (const key of planKeys) {
+    const raw = await AsyncStorage.getItem(key);
+    if (raw) {
+      const plan = JSON.parse(raw) as WeeklyPlan;
+      let planModified = false;
+      
+      const newBlocks = plan.blocks.filter(b => {
+        const matchesTemplate = b.templateId && templateIds.includes(b.templateId);
+        const matchesOneOffCat = categoryId && b.oneOffCategoryId === categoryId;
+        
+        if (matchesTemplate || matchesOneOffCat) {
+          if (b.done) {
+            let duration = b.customDuration ?? 0;
+            if (matchesTemplate && !b.customDuration) {
+              const template = templates.find(t => t.id === b.templateId);
+              duration = template?.durationHours ?? 0;
+            }
+            totalHoursSubtracted += duration;
+          }
+          if (b.calendarEventId) {
+            deleteCalendarEvent(b.calendarEventId).catch(console.error);
+          }
+          planModified = true;
+          return false;
+        }
+        return true;
+      });
+      
+      if (planModified) {
+        plan.blocks = newBlocks;
+        await AsyncStorage.setItem(key, JSON.stringify(plan));
+      }
+    }
+  }
+  
+  return totalHoursSubtracted;
 }

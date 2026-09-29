@@ -125,6 +125,10 @@ const translations = {
       archiveBlockTitle: 'Archive Block',
       archiveBlockMsg: 'Are you sure you want to archive',
       archiveBtn: 'Archive',
+      deleteCategoryTitle: 'Delete Category Permanently',
+      deleteCategoryMsg: 'WARNING: Permanently deleting this category will result in the irreversible loss of all historical data (completed hours/meters) associated with it. Are you sure you want to proceed?',
+      deleteBlockTitlePerm: 'Delete Block Permanently',
+      deleteBlockMsgPerm: 'WARNING: Permanently deleting this block will result in the irreversible loss of all historical data associated with it. Are you sure you want to proceed?',
     },
     // Today
     today: {
@@ -304,6 +308,10 @@ const translations = {
       archiveBlockTitle: 'Archivia Blocco',
       archiveBlockMsg: 'Sei sicuro di voler archiviare',
       archiveBtn: 'Archivia',
+      deleteCategoryTitle: 'Elimina Definitivamente Categoria',
+      deleteCategoryMsg: 'ATTENZIONE: Eliminando definitivamente questa categoria perderai in modo irreversibile tutto lo storico (ore completate) ad essa associato. Sei sicuro di voler procedere?',
+      deleteBlockTitlePerm: 'Elimina Definitivamente Blocco',
+      deleteBlockMsgPerm: 'ATTENZIONE: Eliminando definitivamente questo blocco perderai in modo irreversibile tutto lo storico ad esso associato. Sei sicuro di voler procedere?',
     },
     // Today
     today: {
