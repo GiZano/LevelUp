@@ -64,7 +64,7 @@ export default function TodayScreen({ navigation }: any) {
   });
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
         <View style={styles.slotSection}>
           <Text style={[styles.slotTitle, { color: colors.textSecondary }]}>{t('today.yourDay')}</Text>
@@ -138,7 +138,7 @@ export default function TodayScreen({ navigation }: any) {
           <View style={[styles.progressFill, { backgroundColor: colors.primary, width: totalScheduled > 0 ? `${(totalCompleted / totalScheduled) * 100}%` : '0%' }]} />
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
