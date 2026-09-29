@@ -16,7 +16,7 @@ import { getCategoryDisplayName } from '../utils/categoryUtils';
 
 export default function PlannerScreen({ navigation }: any) {
   const { colors, isDark } = useThemeColors();
-  const { currentWeekId, currentPlan, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
+  const { currentWeekId, currentPlan, hasPreviousWeekBlocks, categories, templates, scheduleBlock, scheduleOneOffBlock, unscheduleBlock, toggleBlockDone, updateBlockDescription, getTemplateById, getCategoryById, getCategoryHours, changeWeek, copyPreviousWeek } = usePlanner();
   const { addCompletedHours } = usePeaks();
 
   const [modalVisible, setModalVisible] = useState(false);
@@ -171,17 +171,19 @@ export default function PlannerScreen({ navigation }: any) {
       {currentPlan.blocks.length === 0 && (
         <View style={{padding: Spacing.md, alignItems: 'center'}}>
           <Text style={{color: colors.textSecondary, marginBottom: Spacing.sm}}>{t('planner.emptyWeek')}</Text>
-          <Pressable 
-            onPress={() => {
-              Alert.alert(t('planner.copyWeekTitle'), t('planner.copyWeekMsg'), [
-                { text: t('common.cancel'), style: 'cancel' },
-                { text: t('planner.copyWeekTitle'), onPress: copyPreviousWeek }
-              ])
-            }}
-            style={[styles.btn, {backgroundColor: colors.primary}]}
-          >
-            <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="content-copy" size={20} color="#fff" style={{marginRight: 8}} /><Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text></View>
-          </Pressable>
+          {hasPreviousWeekBlocks && (
+            <Pressable
+              onPress={() => {
+                Alert.alert(t('planner.copyWeekTitle'), t('planner.copyWeekMsg'), [
+                  { text: t('common.cancel'), style: 'cancel' },
+                  { text: t('planner.copyWeekTitle'), onPress: copyPreviousWeek }
+                ])
+              }}
+              style={[styles.btn, {backgroundColor: colors.primary}]}
+            >
+              <View style={{flexDirection: 'row', alignItems: 'center'}}><MaterialCommunityIcons name="content-copy" size={20} color="#fff" style={{marginRight: 8}} /><Text style={{color: '#fff', fontWeight: 'bold'}}>{t('planner.copyBtn')}</Text></View>
+            </Pressable>
+          )}
         </View>
       )}
 
