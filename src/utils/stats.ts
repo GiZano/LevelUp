@@ -1,7 +1,12 @@
 import type { Peak, UserStats } from '../types';
 
 /** Calcola le statistiche aggregate da un array di vette */
-export function computeStats(peaks: Peak[], currentStreak: number, lastActiveDate?: string, totalCompletedHours: number = 0): UserStats {
+export function computeStats(
+  peaks: Peak[],
+  currentStreak: number,
+  lastActiveDate?: string,
+  totalCompletedHours: number = 0
+): UserStats {
   let totalCampsCompleted = 0;
   let peaksReached = 0;
 
@@ -15,7 +20,7 @@ export function computeStats(peaks: Peak[], currentStreak: number, lastActiveDat
   }
 
   return {
-    totalAltitude: (totalCampsCompleted * 100) + totalCompletedHours, // 100m per camp + 1m per hour
+    totalAltitude: totalCampsCompleted * 100 + totalCompletedHours, // 100m per camp + 1m per hour
     peaksReached,
     currentStreak,
     lastActiveDate,

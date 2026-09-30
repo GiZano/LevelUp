@@ -32,22 +32,26 @@
 The core of the app. Nothing else.
 
 ### 1.1 — Data model and persistence
+
 - [x] Define data schema (`Peak`, `Camp`, metadata)
 - [x] Local storage setup (`expo-sqlite` or `AsyncStorage` + JSON)
 - [x] Full CRUD: create/edit/delete peaks and camps
 
 ### 1.2 — Main UI
+
 - [x] Home screen: list of peaks with progress (bar or %)
 - [x] Peak detail screen: list of camps with checkboxes
 - [x] SVG mountain visualization with filling path (`react-native-svg`)
 - [x] Aggregate stats: total altitude, peaks reached
 
 ### 1.3 — Basic Gamification
+
 - [x] Streak counter (consecutive days of activity)
 - [x] Visual feedback on camp completion (simple animation)
 - [x] Visual feedback on peak completion (flag + celebration)
 
 ### 1.4 — Minimum Polish
+
 - [x] Light/dark theme (follows system)
 - [x] Smooth navigation between screens (Expo Router or React Navigation)
 - [x] App icon and splash screen
@@ -61,17 +65,20 @@ The core of the app. Nothing else.
 The time-blocking that solves the original problem: "I don't know what to do".
 
 ### 2.1 — Planner data model
+
 - [x] Define `Block` (activity, category, estimated duration, color)
 - [x] Define `WeeklySlot` (day, exact time slot)
 - [x] Link blocks → gamification (completed hours = peak altitude)
 
 ### 2.2 — Planner UI
+
 - [x] Weekly grid view with exact timeline
 - [x] "Copy Week" function for predefined routines
 - [x] Weekly target hours per category (editable progress bar)
 - [x] Daily view: "what should I do today" — the screen you open in the morning
 
 ### 2.3 — External Synchronization
+
 - [x] Native export to Google Calendar
 - [x] Multi-calendar architecture for Google Calendar colors
 
@@ -82,11 +89,13 @@ The time-blocking that solves the original problem: "I don't know what to do".
 ## Phase 3 — Automation and CI/CD `[IN PROGRESS 🏗️]`
 
 ### 3.1 — Automated Build
+
 - [x] EAS Build config (free Expo account)
 - [x] Push updated repository to GitHub remote
 - [x] GitHub Action: on tag/release → build APK → attached to release
 
 ### 3.2 — Quality
+
 - [x] Cleanup remaining deprecation warnings
 - [x] Resolve any TS conflicts
 
@@ -118,14 +127,14 @@ The time-blocking that solves the original problem: "I don't know what to do".
 
 ## Anti-patterns to avoid
 
-| ❌ Don't | ✅ Do instead |
-|---|---|
+| ❌ Don't                                    | ✅ Do instead                                       |
+| ------------------------------------------- | --------------------------------------------------- |
 | Add features to backlog during active phase | Write them on a post-it and ignore until phase ends |
-| Perfect UI before logic works | Ship ugly, polish later |
-| Spend more than 30 mins on a CSS bug | Ask AI, accept result, move on |
-| Compare app to Todoist/Notion/TickTick | This app solves **your** problem, not everyone's |
-| Work on it when you should study | Never during Deep Work blocks |
+| Perfect UI before logic works               | Ship ugly, polish later                             |
+| Spend more than 30 mins on a CSS bug        | Ask AI, accept result, move on                      |
+| Compare app to Todoist/Notion/TickTick      | This app solves **your** problem, not everyone's    |
+| Work on it when you should study            | Never during Deep Work blocks                       |
 
 ---
 
-*Last update: September 2026*
+_Last update: September 2026_

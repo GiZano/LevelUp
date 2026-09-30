@@ -1,22 +1,99 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Modal, TouchableOpacity, TextInput, FlatList, Pressable } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  TouchableOpacity,
+  TextInput,
+  FlatList,
+  Pressable,
+} from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColors } from '../utils/useThemeColors';
 import { t } from '../utils/i18n';
 import { Spacing, BorderRadius } from '../utils/theme';
 
 const ICONS = [
-  'star', 'heart', 'school', 'bookshelf', 'laptop', 'chess-pawn', 'book-open-page-variant',
-  'rocket-launch', 'controller-classic', 'bed', 'briefcase', 'coffee', 'dumbbell',
-  'music', 'palette', 'camera', 'airplane', 'car', 'bike', 'bus', 'walk', 'run',
-  'swim', 'basketball', 'soccer', 'tennis', 'yin-yang', 'meditation', 'tree', 'flower',
-  'leaf', 'food', 'food-apple', 'pizza', 'hamburger', 'cupcake', 'glass-wine',
-  'cash', 'chart-bar', 'chart-line', 'code-braces', 'code-tags', 'database',
-  'pencil', 'brush', 'draw', 'hammer', 'wrench', 'lightbulb', 'flash', 'fire',
-  'water', 'weather-sunny', 'weather-night', 'weather-cloudy', 'weather-rainy',
-  'earth', 'map', 'compass', 'navigation', 'home', 'office-building', 'store',
-  'cart', 'gift', 'tag', 'ticket', 'bookmark', 'calendar', 'clock', 'alarm',
-  'timer', 'bell', 'check', 'close', 'plus', 'minus', 'information', 'help-circle'
+  'star',
+  'heart',
+  'school',
+  'bookshelf',
+  'laptop',
+  'chess-pawn',
+  'book-open-page-variant',
+  'rocket-launch',
+  'controller-classic',
+  'bed',
+  'briefcase',
+  'coffee',
+  'dumbbell',
+  'music',
+  'palette',
+  'camera',
+  'airplane',
+  'car',
+  'bike',
+  'bus',
+  'walk',
+  'run',
+  'swim',
+  'basketball',
+  'soccer',
+  'tennis',
+  'yin-yang',
+  'meditation',
+  'tree',
+  'flower',
+  'leaf',
+  'food',
+  'food-apple',
+  'pizza',
+  'hamburger',
+  'cupcake',
+  'glass-wine',
+  'cash',
+  'chart-bar',
+  'chart-line',
+  'code-braces',
+  'code-tags',
+  'database',
+  'pencil',
+  'brush',
+  'draw',
+  'hammer',
+  'wrench',
+  'lightbulb',
+  'flash',
+  'fire',
+  'water',
+  'weather-sunny',
+  'weather-night',
+  'weather-cloudy',
+  'weather-rainy',
+  'earth',
+  'map',
+  'compass',
+  'navigation',
+  'home',
+  'office-building',
+  'store',
+  'cart',
+  'gift',
+  'tag',
+  'ticket',
+  'bookmark',
+  'calendar',
+  'clock',
+  'alarm',
+  'timer',
+  'bell',
+  'check',
+  'close',
+  'plus',
+  'minus',
+  'information',
+  'help-circle',
 ];
 
 interface IconPickerProps {
@@ -29,17 +106,24 @@ export default function IconPicker({ visible, onSelect, onClose }: IconPickerPro
   const { colors } = useThemeColors();
   const [search, setSearch] = useState('');
 
-  const filteredIcons = ICONS.filter(i => i.toLowerCase().includes(search.toLowerCase()));
+  const filteredIcons = ICONS.filter((i) => i.toLowerCase().includes(search.toLowerCase()));
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <View style={[styles.overlay, { backgroundColor: colors.overlay }]}>
         <View style={[styles.content, { backgroundColor: colors.surface }]}>
           <Text style={[styles.title, { color: colors.text }]}>{t('manage.selectIcon')}</Text>
-          
+
           <TextInput
-            style={[styles.search, { backgroundColor: colors.background, color: colors.text, borderColor: colors.border }]}
-            placeholder={t("manage.searchIcon") || "Search"}
+            style={[
+              styles.search,
+              {
+                backgroundColor: colors.background,
+                color: colors.text,
+                borderColor: colors.border,
+              },
+            ]}
+            placeholder={t('manage.searchIcon') || 'Search'}
             placeholderTextColor={colors.textSecondary}
             value={search}
             onChangeText={setSearch}
@@ -49,7 +133,7 @@ export default function IconPicker({ visible, onSelect, onClose }: IconPickerPro
 
           <FlatList
             data={filteredIcons}
-            keyExtractor={item => item}
+            keyExtractor={(item) => item}
             numColumns={5}
             columnWrapperStyle={styles.row}
             renderItem={({ item }) => (
@@ -62,9 +146,14 @@ export default function IconPicker({ visible, onSelect, onClose }: IconPickerPro
             )}
             style={styles.list}
           />
-          
-          <Pressable style={[styles.closeBtn, { backgroundColor: colors.background }]} onPress={onClose}>
-            <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>{t('common.cancel')}</Text>
+
+          <Pressable
+            style={[styles.closeBtn, { backgroundColor: colors.background }]}
+            onPress={onClose}
+          >
+            <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>
+              {t('common.cancel')}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -115,5 +204,5 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.md,
     alignItems: 'center',
     marginTop: Spacing.md,
-  }
+  },
 });

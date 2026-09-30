@@ -1,4 +1,4 @@
-import { t } from "../utils/i18n";
+import { t } from '../utils/i18n';
 import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { AppState, type AppStateStatus } from 'react-native';
 import type { Category, BlockTemplate, ScheduledBlock, WeeklyPlan, DayOfWeek } from '../types';
@@ -12,26 +12,78 @@ import {
   loadWeeklyPlan,
 } from './plannerStorage';
 import { getCurrentWeekId, getPrevWeekId } from '../types/weekUtils';
-import { createCalendarEvent, deleteCalendarEvent, updateCalendarEventDescription } from '../utils/calendar';
+import {
+  createCalendarEvent,
+  deleteCalendarEvent,
+  updateCalendarEventDescription,
+} from '../utils/calendar';
 
 // ── Default Categories ──
 
 const DEFAULT_CATEGORIES: Category[] = [
-  { id: 'sonno', name: t('categories.sleep'), color: '#6366F1', emoji: 'bed', targetHoursPerWeek: 56 },
-  { id: 'uni', name: t('categories.uni'), color: '#0EA5E9', emoji: 'school', targetHoursPerWeek: 20 },
-  { id: 'studio', name: t('categories.study'), color: '#3B82F6', emoji: 'bookshelf', targetHoursPerWeek: 20 },
+  {
+    id: 'sonno',
+    name: t('categories.sleep'),
+    color: '#6366F1',
+    emoji: 'bed',
+    targetHoursPerWeek: 56,
+  },
+  {
+    id: 'uni',
+    name: t('categories.uni'),
+    color: '#0EA5E9',
+    emoji: 'school',
+    targetHoursPerWeek: 20,
+  },
+  {
+    id: 'studio',
+    name: t('categories.study'),
+    color: '#3B82F6',
+    emoji: 'bookshelf',
+    targetHoursPerWeek: 20,
+  },
   { id: 'cp', name: t('categories.cp'), color: '#8B5CF6', emoji: 'laptop', targetHoursPerWeek: 4 },
-  { id: 'hobby', name: t('categories.hobby'), color: '#10B981', emoji: 'chess-pawn', targetHoursPerWeek: 3 },
-  { id: 'lettura', name: t('categories.other'), color: '#F59E0B', emoji: 'book-open-page-variant', targetHoursPerWeek: 3 },
-  { id: 'progetto', name: t('categories.other'), color: '#EC4899', emoji: 'rocket-launch', targetHoursPerWeek: 2 },
-  { id: 'libero', name: t('categories.freetime'), color: '#6B7280', emoji: 'controller-classic', targetHoursPerWeek: 0 },
+  {
+    id: 'hobby',
+    name: t('categories.hobby'),
+    color: '#10B981',
+    emoji: 'chess-pawn',
+    targetHoursPerWeek: 3,
+  },
+  {
+    id: 'lettura',
+    name: t('categories.other'),
+    color: '#F59E0B',
+    emoji: 'book-open-page-variant',
+    targetHoursPerWeek: 3,
+  },
+  {
+    id: 'progetto',
+    name: t('categories.other'),
+    color: '#EC4899',
+    emoji: 'rocket-launch',
+    targetHoursPerWeek: 2,
+  },
+  {
+    id: 'libero',
+    name: t('categories.freetime'),
+    color: '#6B7280',
+    emoji: 'controller-classic',
+    targetHoursPerWeek: 0,
+  },
 ];
 
 // Helper to migrate legacy emoji to icon names
 const migrateEmoji = (emoji: string) => {
   const map: Record<string, string> = {
-    '😴': 'bed', '🎓': 'school', '📚': 'bookshelf', '💻': 'laptop',
-    '♟️': 'chess-pawn', '📖': 'book-open-page-variant', '🚀': 'rocket-launch', '🎮': 'controller-classic'
+    '😴': 'bed',
+    '🎓': 'school',
+    '📚': 'bookshelf',
+    '💻': 'laptop',
+    '♟️': 'chess-pawn',
+    '📖': 'book-open-page-variant',
+    '🚀': 'rocket-launch',
+    '🎮': 'controller-classic',
   };
   return map[emoji] || (emoji.match(/[\w-]/) ? emoji : 'shape'); // default icon if it's an unrecognized emoji
 };
@@ -58,15 +110,30 @@ interface PlannerActions {
   archiveTemplate: (id: string) => void;
   unarchiveCategory: (id: string) => void;
   unarchiveTemplate: (id: string) => void;
-  scheduleBlock: (templateId: string, day: DayOfWeek, startTime: string, customDuration?: number) => void;
-  scheduleOneOffBlock: (name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => void;
+  scheduleBlock: (
+    templateId: string,
+    day: DayOfWeek,
+    startTime: string,
+    customDuration?: number
+  ) => void;
+  scheduleOneOffBlock: (
+    name: string,
+    categoryId: string,
+    durationHours: number,
+    day: DayOfWeek,
+    startTime: string
+  ) => void;
   unscheduleBlock: (blockId: string) => void;
   toggleBlockDone: (blockId: string) => void;
   updateBlockDescription: (blockId: string, desc: string) => void;
   copyPreviousWeek: () => void;
   getTemplateById: (id: string) => BlockTemplate | undefined;
   getCategoryById: (id: string) => Category | undefined;
-  getCategoryHours: (categoryId: string) => { scheduled: number; completed: number; target: number };
+  getCategoryHours: (categoryId: string) => {
+    scheduled: number;
+    completed: number;
+    target: number;
+  };
 }
 
 type PlannerContextType = PlannerState & PlannerActions;
@@ -107,12 +174,14 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!plans[realWeekId] && !isLoading) {
-      loadWeeklyPlan(realWeekId).then((plan) => {
-        setPlans((prev) => ({
-          ...prev,
-          [realWeekId]: prev[realWeekId] ?? (plan || { weekId: realWeekId, blocks: [] }),
-        }));
-      }).catch(console.error);
+      loadWeeklyPlan(realWeekId)
+        .then((plan) => {
+          setPlans((prev) => ({
+            ...prev,
+            [realWeekId]: prev[realWeekId] ?? (plan || { weekId: realWeekId, blocks: [] }),
+          }));
+        })
+        .catch(console.error);
     }
   }, [realWeekId, plans, isLoading]);
 
@@ -129,7 +198,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         loadWeeklyPlan(getPrevWeekId(currentWeekId)),
       ]);
       if (cats.length > 0) {
-        const merged = cats.map(c => ({...c, emoji: migrateEmoji(c.emoji)}));
+        const merged = cats.map((c) => ({ ...c, emoji: migrateEmoji(c.emoji) }));
         setCategories(merged);
       } else {
         setCategories(DEFAULT_CATEGORIES);
@@ -203,62 +272,81 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
 
   // ── Actions ──
 
-  const addCategory = useCallback((name: string, emoji: string, color: string, targetHours: number) => {
-    setCategories((prev) => [...prev, {
-      id: generateId(),
-      name,
-      emoji,
-      color,
-      targetHoursPerWeek: targetHours,
-    }]);
-  }, []);
+  const addCategory = useCallback(
+    (name: string, emoji: string, color: string, targetHours: number) => {
+      setCategories((prev) => [
+        ...prev,
+        {
+          id: generateId(),
+          name,
+          emoji,
+          color,
+          targetHoursPerWeek: targetHours,
+        },
+      ]);
+    },
+    []
+  );
 
   const archiveCategory = useCallback((id: string) => {
-    setCategories((prev) => prev.map(c => c.id === id ? { ...c, isArchived: true } : c));
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isArchived: true } : c)));
   }, []);
 
-  const deleteCategory = useCallback((id: string) => {
-    const templatesToDelete = templates.filter(t => t.categoryId === id).map(t => t.id);
-    
-    setCategories((prev) => prev.filter((c) => c.id !== id));
-    setTemplates((prev) => prev.filter(t => t.categoryId !== id));
-    
-    setPlans(prev => {
-      const next: Record<string, WeeklyPlan> = {};
-      for (const [wId, plan] of Object.entries(prev)) {
-        next[wId] = {
-          ...plan,
-          blocks: plan.blocks.filter(b => b.oneOffCategoryId !== id && (b.templateId === undefined || !templatesToDelete.includes(b.templateId)))
-        };
-      }
-      return next;
-    });
-  }, [templates]);
+  const deleteCategory = useCallback(
+    (id: string) => {
+      const templatesToDelete = templates.filter((t) => t.categoryId === id).map((t) => t.id);
+
+      setCategories((prev) => prev.filter((c) => c.id !== id));
+      setTemplates((prev) => prev.filter((t) => t.categoryId !== id));
+
+      setPlans((prev) => {
+        const next: Record<string, WeeklyPlan> = {};
+        for (const [wId, plan] of Object.entries(prev)) {
+          next[wId] = {
+            ...plan,
+            blocks: plan.blocks.filter(
+              (b) =>
+                b.oneOffCategoryId !== id &&
+                (b.templateId === undefined || !templatesToDelete.includes(b.templateId))
+            ),
+          };
+        }
+        return next;
+      });
+    },
+    [templates]
+  );
 
   const editCategory = useCallback((id: string, updates: Partial<Category>) => {
-    setCategories((prev) => prev.map((c) => c.id === id ? { ...c, ...updates } : c));
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
   }, []);
 
-  const addTemplate = useCallback((name: string, categoryId: string, durationHours: number, peakId?: string) => {
-    setTemplates((prev) => [...prev, {
-      id: generateId(),
-      name,
-      categoryId,
-      durationHours,
-      peakId,
-    }]);
-  }, []);
+  const addTemplate = useCallback(
+    (name: string, categoryId: string, durationHours: number, peakId?: string) => {
+      setTemplates((prev) => [
+        ...prev,
+        {
+          id: generateId(),
+          name,
+          categoryId,
+          durationHours,
+          peakId,
+        },
+      ]);
+    },
+    []
+  );
 
   const archiveTemplate = useCallback((id: string) => {
-    setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: true } : t));
+    setTemplates((prev) => prev.map((t) => (t.id === id ? { ...t, isArchived: true } : t)));
   }, []);
 
   const unarchiveCategory = useCallback((id: string) => {
-    setCategories((prev) => prev.map(c => c.id === id ? { ...c, isArchived: false } : c));
+    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, isArchived: false } : c)));
   }, []);
 
   const unarchiveTemplate = useCallback((id: string) => {
-    setTemplates((prev) => prev.map(t => t.id === id ? { ...t, isArchived: false } : t));
+    setTemplates((prev) => prev.map((t) => (t.id === id ? { ...t, isArchived: false } : t)));
   }, []);
 
   const deleteTemplate = useCallback((id: string) => {
@@ -275,92 +363,119 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const scheduleBlock = useCallback((templateId: string, day: DayOfWeek, startTime: string, customDuration?: number) => {
-    const newId = generateId();
-    setPlans((prev) => {
-      const plan = prev[currentWeekId] || { weekId: currentWeekId, blocks: [] };
-      const newBlock: ScheduledBlock = {
-        id: newId,
-        templateId,
-        day,
-        startTime,
-        done: false,
-        customDuration,
-      };
-      return {
-        ...prev,
-        [currentWeekId]: {
-          ...plan,
-          blocks: [...plan.blocks, newBlock],
-        },
-      };
-    });
+  const scheduleBlock = useCallback(
+    (templateId: string, day: DayOfWeek, startTime: string, customDuration?: number) => {
+      const newId = generateId();
+      setPlans((prev) => {
+        const plan = prev[currentWeekId] || { weekId: currentWeekId, blocks: [] };
+        const newBlock: ScheduledBlock = {
+          id: newId,
+          templateId,
+          day,
+          startTime,
+          done: false,
+          customDuration,
+        };
+        return {
+          ...prev,
+          [currentWeekId]: {
+            ...plan,
+            blocks: [...plan.blocks, newBlock],
+          },
+        };
+      });
 
-    // Sync with Google Calendar in background and save ID
-    const template = templates.find(t => t.id === templateId);
-    const cat = categories.find(c => c.id === template?.categoryId);
-    if (template && cat) {
-      createCalendarEvent(template.name, day, startTime, customDuration ?? template.durationHours, cat.name, cat.color).then(eventId => {
-        if (eventId) {
-          setPlans(prev => {
-            const plan = prev[currentWeekId];
-            if (!plan) return prev;
-            return {
-              ...prev,
-              [currentWeekId]: {
-                ...plan,
-                blocks: plan.blocks.map(b => b.id === newId ? { ...b, calendarEventId: eventId } : b)
-              }
-            };
-          });
-        }
-      }).catch(console.error);
-    }
-  }, [currentWeekId, templates, categories]);
+      // Sync with Google Calendar in background and save ID
+      const template = templates.find((t) => t.id === templateId);
+      const cat = categories.find((c) => c.id === template?.categoryId);
+      if (template && cat) {
+        createCalendarEvent(
+          template.name,
+          day,
+          startTime,
+          customDuration ?? template.durationHours,
+          cat.name,
+          cat.color
+        )
+          .then((eventId) => {
+            if (eventId) {
+              setPlans((prev) => {
+                const plan = prev[currentWeekId];
+                if (!plan) return prev;
+                return {
+                  ...prev,
+                  [currentWeekId]: {
+                    ...plan,
+                    blocks: plan.blocks.map((b) =>
+                      b.id === newId ? { ...b, calendarEventId: eventId } : b
+                    ),
+                  },
+                };
+              });
+            }
+          })
+          .catch(console.error);
+      }
+    },
+    [currentWeekId, templates, categories]
+  );
 
-  const scheduleOneOffBlock = useCallback((name: string, categoryId: string, durationHours: number, day: DayOfWeek, startTime: string) => {
-    const newId = generateId();
-    setPlans((prev) => {
-      const plan = prev[currentWeekId] || { weekId: currentWeekId, blocks: [] };
-      const newBlock: ScheduledBlock = {
-        id: newId,
-        day,
-        startTime,
-        done: false,
-        isOneOff: true,
-        oneOffName: name,
-        oneOffCategoryId: categoryId,
-        oneOffDuration: durationHours,
-      };
-      return {
-        ...prev,
-        [currentWeekId]: {
-          ...plan,
-          blocks: [...plan.blocks, newBlock],
-        },
-      };
-    });
+  const scheduleOneOffBlock = useCallback(
+    (
+      name: string,
+      categoryId: string,
+      durationHours: number,
+      day: DayOfWeek,
+      startTime: string
+    ) => {
+      const newId = generateId();
+      setPlans((prev) => {
+        const plan = prev[currentWeekId] || { weekId: currentWeekId, blocks: [] };
+        const newBlock: ScheduledBlock = {
+          id: newId,
+          day,
+          startTime,
+          done: false,
+          isOneOff: true,
+          oneOffName: name,
+          oneOffCategoryId: categoryId,
+          oneOffDuration: durationHours,
+        };
+        return {
+          ...prev,
+          [currentWeekId]: {
+            ...plan,
+            blocks: [...plan.blocks, newBlock],
+          },
+        };
+      });
 
-    // Sync with Google Calendar in background
-    const cat = categories.find(c => c.id === categoryId);
-    if (cat) {
-      createCalendarEvent(name, day, startTime, durationHours, cat.name, cat.color).then(eventId => {
-        if (eventId) {
-          setPlans(prev => {
-            const plan = prev[currentWeekId];
-            if (!plan) return prev;
-            return {
-              ...prev,
-              [currentWeekId]: {
-                ...plan,
-                blocks: plan.blocks.map(b => b.id === newId ? { ...b, calendarEventId: eventId } : b)
-              }
-            };
-          });
-        }
-      }).catch(console.error);
-    }
-  }, [currentWeekId, categories]);
+      // Sync with Google Calendar in background
+      const cat = categories.find((c) => c.id === categoryId);
+      if (cat) {
+        createCalendarEvent(name, day, startTime, durationHours, cat.name, cat.color)
+          .then((eventId) => {
+            if (eventId) {
+              setPlans((prev) => {
+                const plan = prev[currentWeekId];
+                if (!plan) return prev;
+                return {
+                  ...prev,
+                  [currentWeekId]: {
+                    ...plan,
+                    blocks: plan.blocks.map((b) =>
+                      b.id === newId ? { ...b, calendarEventId: eventId } : b
+                    ),
+                  },
+                };
+              });
+            }
+          })
+          .catch(console.error);
+      }
+    },
+    [currentWeekId, categories]
+  );
 
   const unscheduleBlock = useCallback((blockId: string) => {
     setPlans((prev) => {
@@ -388,14 +503,14 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   const copyPreviousWeek = useCallback(async () => {
     try {
       const prevWeekId = getPrevWeekId(currentWeekId);
-      const prevPlan = plans[prevWeekId] || await loadWeeklyPlan(prevWeekId);
+      const prevPlan = plans[prevWeekId] || (await loadWeeklyPlan(prevWeekId));
       if (!prevPlan || prevPlan.blocks.length === 0) return;
 
       const newBlocks: ScheduledBlock[] = [];
       for (const b of prevPlan.blocks) {
         if (b.isOneOff) continue; // Do not copy one-off events
-        const template = templates.find(t => t.id === b.templateId);
-        const cat = categories.find(c => c.id === template?.categoryId);
+        const template = templates.find((t) => t.id === b.templateId);
+        const cat = categories.find((c) => c.id === template?.categoryId);
         if (!template || !cat) continue;
 
         const newId = generateId();
@@ -410,24 +525,35 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         newBlocks.push(newBlock);
 
         // Create events on the new calendar in background
-        createCalendarEvent(template.name, b.day, b.startTime, b.customDuration ?? template.durationHours, cat.name, cat.color).then(eventId => {
-          if (eventId) {
-            setPlans(prev => {
-              const plan = prev[currentWeekId];
-              if (!plan) return prev;
-              return {
-                ...prev,
-                [currentWeekId]: {
-                  ...plan,
-                  blocks: plan.blocks.map(blk => blk.id === newId ? { ...blk, calendarEventId: eventId } : blk)
-                }
-              };
-            });
-          }
-        }).catch(console.error);
+        createCalendarEvent(
+          template.name,
+          b.day,
+          b.startTime,
+          b.customDuration ?? template.durationHours,
+          cat.name,
+          cat.color
+        )
+          .then((eventId) => {
+            if (eventId) {
+              setPlans((prev) => {
+                const plan = prev[currentWeekId];
+                if (!plan) return prev;
+                return {
+                  ...prev,
+                  [currentWeekId]: {
+                    ...plan,
+                    blocks: plan.blocks.map((blk) =>
+                      blk.id === newId ? { ...blk, calendarEventId: eventId } : blk
+                    ),
+                  },
+                };
+              });
+            }
+          })
+          .catch(console.error);
       }
 
-      setPlans(prev => {
+      setPlans((prev) => {
         const plan = prev[currentWeekId] || { weekId: currentWeekId, blocks: [] };
         return {
           ...prev,
@@ -474,9 +600,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
           found = true;
           next[wId] = {
             ...plan,
-            blocks: plan.blocks.map((b) =>
-              b.id === blockId ? { ...b, done: !b.done } : b
-            ),
+            blocks: plan.blocks.map((b) => (b.id === blockId ? { ...b, done: !b.done } : b)),
           };
         } else {
           next[wId] = plan;
@@ -486,34 +610,43 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const getTemplateById = useCallback((id: string) => {
-    return templates.find((t) => t.id === id);
-  }, [templates]);
+  const getTemplateById = useCallback(
+    (id: string) => {
+      return templates.find((t) => t.id === id);
+    },
+    [templates]
+  );
 
-  const getCategoryById = useCallback((id: string) => {
-    return categories.find((c) => c.id === id);
-  }, [categories]);
+  const getCategoryById = useCallback(
+    (id: string) => {
+      return categories.find((c) => c.id === id);
+    },
+    [categories]
+  );
 
-  const getCategoryHours = useCallback((categoryId: string) => {
-    const cat = categories.find((c) => c.id === categoryId);
-    let scheduled = 0;
-    let completed = 0;
-    const plan = plans[currentWeekId] || { weekId: currentWeekId, blocks: [] };
+  const getCategoryHours = useCallback(
+    (categoryId: string) => {
+      const cat = categories.find((c) => c.id === categoryId);
+      let scheduled = 0;
+      let completed = 0;
+      const plan = plans[currentWeekId] || { weekId: currentWeekId, blocks: [] };
 
-    for (const block of plan.blocks) {
-      const template = templates.find((t) => t.id === block.templateId);
-      if (template?.categoryId === categoryId) {
-        scheduled += block.customDuration ?? template.durationHours;
-        if (block.done) completed += block.customDuration ?? template.durationHours;
+      for (const block of plan.blocks) {
+        const template = templates.find((t) => t.id === block.templateId);
+        if (template?.categoryId === categoryId) {
+          scheduled += block.customDuration ?? template.durationHours;
+          if (block.done) completed += block.customDuration ?? template.durationHours;
+        }
       }
-    }
 
-    return {
-      scheduled,
-      completed,
-      target: cat?.targetHoursPerWeek ?? 0,
-    };
-  }, [categories, templates, plans, currentWeekId]);
+      return {
+        scheduled,
+        completed,
+        target: cat?.targetHoursPerWeek ?? 0,
+      };
+    },
+    [categories, templates, plans, currentWeekId]
+  );
 
   return (
     <PlannerContext.Provider

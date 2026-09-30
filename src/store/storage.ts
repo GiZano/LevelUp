@@ -21,7 +21,11 @@ export async function loadPeaks(): Promise<Peak[]> {
 }
 
 /** Salva streak e ultima data attiva e ore */
-export async function saveStreak(streak: number, lastActiveDate: string, totalCompletedHours: number = 0): Promise<void> {
+export async function saveStreak(
+  streak: number,
+  lastActiveDate: string,
+  totalCompletedHours: number = 0
+): Promise<void> {
   await AsyncStorage.multiSet([
     [KEYS.STREAK, streak.toString()],
     [KEYS.LAST_ACTIVE, lastActiveDate],
@@ -30,8 +34,16 @@ export async function saveStreak(streak: number, lastActiveDate: string, totalCo
 }
 
 /** Carica streak, ultima data attiva e ore */
-export async function loadStreak(): Promise<{ streak: number; lastActiveDate?: string; totalCompletedHours: number }> {
-  const results = await AsyncStorage.multiGet([KEYS.STREAK, KEYS.LAST_ACTIVE, KEYS.COMPLETED_HOURS]);
+export async function loadStreak(): Promise<{
+  streak: number;
+  lastActiveDate?: string;
+  totalCompletedHours: number;
+}> {
+  const results = await AsyncStorage.multiGet([
+    KEYS.STREAK,
+    KEYS.LAST_ACTIVE,
+    KEYS.COMPLETED_HOURS,
+  ]);
   const streakStr = results[0][1];
   const lastActive = results[1][1];
   const hoursStr = results[2][1];

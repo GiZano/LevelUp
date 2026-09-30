@@ -44,18 +44,11 @@ export default function StatsBar({ stats, onAltPress, onPeaksPress }: StatsBarPr
             key={card.label}
             onPress={card.onPress}
             activeOpacity={card.onPress ? 0.6 : 1}
-            style={[
-              styles.card,
-              { backgroundColor: colors.surface, borderColor: colors.border },
-            ]}
+            style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
           >
             <View style={styles.icon}>{card.icon}</View>
-            <Text style={[styles.value, { color: colors.text }]}>
-              {card.value}
-            </Text>
-            <Text style={[styles.label, { color: colors.textSecondary }]}>
-              {card.label}
-            </Text>
+            <Text style={[styles.value, { color: colors.text }]}>{card.value}</Text>
+            <Text style={[styles.label, { color: colors.textSecondary }]}>{card.label}</Text>
           </Wrapper>
         );
       })}

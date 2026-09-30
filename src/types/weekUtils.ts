@@ -3,15 +3,15 @@ import type { DayOfWeek } from './index';
 export function getMonday(d: Date): Date {
   const date = new Date(d);
   const day = date.getDay();
-  const diff = date.getDate() - day + (day === 0 ? -6 : 1); 
+  const diff = date.getDate() - day + (day === 0 ? -6 : 1);
   date.setDate(diff);
-  date.setHours(0,0,0,0);
+  date.setHours(0, 0, 0, 0);
   return date;
 }
 
 export function getWeekId(d: Date): string {
   const mon = getMonday(d);
-  return `${mon.getFullYear()}-${String(mon.getMonth()+1).padStart(2,'0')}-${String(mon.getDate()).padStart(2,'0')}`;
+  return `${mon.getFullYear()}-${String(mon.getMonth() + 1).padStart(2, '0')}-${String(mon.getDate()).padStart(2, '0')}`;
 }
 
 export function getCurrentWeekId(): string {

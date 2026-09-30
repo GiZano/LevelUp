@@ -35,7 +35,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   // Load data on startup
-    const refreshData = useCallback(async () => {
+  const refreshData = useCallback(async () => {
     setIsLoading(true);
     try {
       const [loadedPeaks, streakData] = await Promise.all([loadPeaks(), loadStreak()]);
@@ -77,10 +77,13 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
     setLastActiveDate(updated.lastActiveDate);
   }, [streak, lastActiveDate]);
 
-  const addCompletedHours = useCallback((hours: number) => {
-    setTotalCompletedHours((prev) => prev + hours);
-    recordActivity();
-  }, [recordActivity]);
+  const addCompletedHours = useCallback(
+    (hours: number) => {
+      setTotalCompletedHours((prev) => prev + hours);
+      recordActivity();
+    },
+    [recordActivity]
+  );
 
   const addPeak = useCallback(
     (name: string, description?: string) => {
@@ -195,7 +198,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         deleteCamp,
         reorderCamps,
         addCompletedHours,
-    refreshData,
+        refreshData,
       }}
     >
       {children}

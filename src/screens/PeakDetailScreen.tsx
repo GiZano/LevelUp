@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { t } from "../utils/i18n";
+import { t } from '../utils/i18n';
 import React, { useLayoutEffect, useState, useCallback } from 'react';
 import {
   Alert,
@@ -75,8 +75,6 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
   const doneCamps = peak.camps.filter((c) => c.done).length;
   const pct = totalCamps > 0 ? Math.round((doneCamps / totalCamps) * 100) : 0;
 
-  
-
   const handleAddCamp = () => {
     const trimmed = campName.trim();
     if (!trimmed) return;
@@ -125,7 +123,9 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
       />
 
       {/* Bottom input bar */}
-      <View style={[styles.inputBar, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View
+        style={[styles.inputBar, { backgroundColor: colors.surface, borderColor: colors.border }]}
+      >
         <TextInput
           style={[
             styles.input,
