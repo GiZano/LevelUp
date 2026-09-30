@@ -105,9 +105,25 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
             </Text>
 
             {complete && (
-              <View style={[styles.banner, { backgroundColor: colors.primary + '20' }]}>
+              <View
+                style={[
+                  styles.banner,
+                  {
+                    backgroundColor: colors.primary + '20',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name="flag-checkered"
+                  size={20}
+                  color={colors.primary}
+                  style={{ marginRight: 8 }}
+                />
                 <Text style={[styles.bannerText, { color: colors.primary }]}>
-                  🏁 {t('peakDetail.conquered')}
+                  {t('peakDetail.conquered')}
                 </Text>
               </View>
             )}
