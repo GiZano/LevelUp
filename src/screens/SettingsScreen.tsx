@@ -1,15 +1,6 @@
 import React, { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import {
-  View,
-  Text,
-  StyleSheet,
-  Pressable,
-  ScrollView,
-  Alert,
-  Linking,
-  ActivityIndicator,
-} from 'react-native';
+import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Linking, ActivityIndicator, Modal } from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -18,7 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
-import { t } from '../utils/i18n';
+import { t, SUPPORTED_LANGUAGES, getSupportedLocale } from '../utils/i18n';
 import { useLocale } from '../store/LocaleContext';
 import { usePeaks } from '../store/PeaksContext';
 import { usePlanner } from '../store/PlannerContext';
@@ -28,10 +19,13 @@ export default function SettingsScreen() {
   const { colors } = useThemeColors();
   const [isImporting, setIsImporting] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showLanguageModal, setShowLanguageModal] = useState(false);
   const { locale, changeLocale } = useLocale();
   const { refreshData: refreshPeaks } = usePeaks();
   const { refreshData: refreshPlanner } = usePlanner();
-  const currentLang = locale.startsWith('it') ? 'it' : 'en';
+  const activeLang = getSupportedLocale(locale);
+  const currentLanguageItem =
+    SUPPORTED_LANGUAGES.find((item) => item.code === activeLang) ?? SUPPORTED_LANGUAGES[0];
 
   const changeLanguage = async (lang: string) => {
     await changeLocale(lang);
@@ -143,84 +137,36 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View
-          style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
-        >
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <MaterialCommunityIcons
-              name="translate"
-              size={24}
-              color={colors.primary}
-              style={{ marginRight: 8 }}
-            />
-            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>
-              {t('settings.langTitle')}
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md }}>
+            <MaterialCommunityIcons name="translate" size={24} color={colors.primary} style={{ marginRight: Spacing.sm }} />
+            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.langTitle')}</Text>
+          </View>
+          <Pressable
+            style={[styles.languageTile, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+            onPress={() => setShowLanguageModal(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`${t('settings.langTitle')}: ${currentLanguageItem.label}`}
+          >
+            <Text style={[styles.languageTileLabel, { color: colors.text }]}>
+              {currentLanguageItem.label}
             </Text>
-          </View>
-          <View style={styles.langRow}>
-            <Pressable
-              style={[styles.langBtn, currentLang === 'en' && { backgroundColor: colors.primary }]}
-              onPress={() => changeLanguage('en')}
-            >
-              <Text
-                style={[
-                  styles.langText,
-                  { color: currentLang === 'en' ? '#fff' : colors.textSecondary },
-                ]}
-              >
-                English
-              </Text>
-            </Pressable>
-            <Pressable
-              style={[styles.langBtn, currentLang === 'it' && { backgroundColor: colors.primary }]}
-              onPress={() => changeLanguage('it')}
-            >
-              <Text
-                style={[
-                  styles.langText,
-                  { color: currentLang === 'it' ? '#fff' : colors.textSecondary },
-                ]}
-              >
-                Italiano
-              </Text>
-            </Pressable>
-          </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color={colors.textSecondary} />
+          </Pressable>
         </View>
 
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl },
-          ]}
-        >
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <MaterialCommunityIcons
-              name="content-save-outline"
-              size={24}
-              color={colors.primary}
-              style={{ marginRight: 8 }}
-            />
-            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>
-              {t('settings.backupTitle')}
-            </Text>
+            <MaterialCommunityIcons name="content-save-outline" size={24} color={colors.primary} style={{ marginRight: 8 }} />
+            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.backupTitle')}</Text>
           </View>
           <Text style={[styles.body, { color: colors.textSecondary }]}>
             {t('settings.backupDesc')}
           </Text>
-          <Pressable
-            style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]}
-            onPress={exportBackup}
-          >
+          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons
-                name="export"
-                size={20}
-                color={colors.primary}
-                style={{ marginRight: 8 }}
-              />
-              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>
-                {t('settings.exportBtn')}
-              </Text>
+              <MaterialCommunityIcons name="export" size={20} color={colors.primary} style={{ marginRight: 8 }} />
+              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>{t('settings.exportBtn')}</Text>
             </View>
           </Pressable>
           <Pressable
@@ -241,41 +187,20 @@ export default function SettingsScreen() {
               <ActivityIndicator color={colors.primary} style={{ marginRight: 8 }} />
             ) : null}
             {isImporting ? (
-              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>
-                {t('settings.importing')}
-              </Text>
+              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>{t('settings.importing')}</Text>
             ) : (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialCommunityIcons
-                  name="import"
-                  size={20}
-                  color={colors.primary}
-                  style={{ marginRight: 8 }}
-                />
-                <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>
-                  {t('settings.importBtn')}
-                </Text>
+                <MaterialCommunityIcons name="import" size={20} color={colors.primary} style={{ marginRight: 8 }} />
+                <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>{t('settings.importBtn')}</Text>
               </View>
             )}
           </Pressable>
         </View>
 
-        <View
-          style={[
-            styles.card,
-            { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl },
-          ]}
-        >
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <MaterialCommunityIcons
-              name="information-outline"
-              size={24}
-              color={colors.primary}
-              style={{ marginRight: 8 }}
-            />
-            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>
-              {t('settings.aboutTitle')}
-            </Text>
+            <MaterialCommunityIcons name="information-outline" size={24} color={colors.primary} style={{ marginRight: 8 }} />
+            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.aboutTitle')}</Text>
           </View>
 
           <Text style={[styles.body, { color: colors.textSecondary }]}>
@@ -290,15 +215,8 @@ export default function SettingsScreen() {
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp')}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons
-                name="github"
-                size={20}
-                color={colors.primary}
-                style={{ marginRight: 8 }}
-              />
-              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
-                {t('settings.starGithub')}
-              </Text>
+              <MaterialCommunityIcons name="github" size={20} color={colors.primary} style={{ marginRight: 8 }} />
+              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>{t('settings.starGithub')}</Text>
             </View>
           </Pressable>
 
@@ -307,15 +225,8 @@ export default function SettingsScreen() {
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp/issues')}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons
-                name="bug"
-                size={20}
-                color={colors.primary}
-                style={{ marginRight: 8 }}
-              />
-              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
-                {t('settings.submitIssue')}
-              </Text>
+              <MaterialCommunityIcons name="bug" size={20} color={colors.primary} style={{ marginRight: 8 }} />
+              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>{t('settings.submitIssue')}</Text>
             </View>
           </Pressable>
 
@@ -327,15 +238,8 @@ export default function SettingsScreen() {
             disabled={true}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons
-                name="google-play"
-                size={20}
-                color={colors.textSecondary}
-                style={{ marginRight: 8 }}
-              />
-              <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>
-                {t('settings.feedbackPlayStore')}
-              </Text>
+              <MaterialCommunityIcons name="google-play" size={20} color={colors.textSecondary} style={{ marginRight: 8 }} />
+              <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>{t('settings.feedbackPlayStore')}</Text>
             </View>
           </Pressable>
 
@@ -344,19 +248,82 @@ export default function SettingsScreen() {
             onPress={() => setShowOnboarding(true)}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons
-                name="presentation-play"
-                size={20}
-                color={colors.primary}
-                style={{ marginRight: 8 }}
-              />
-              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
-                {t('settings.replayTutorial')}
-              </Text>
+              <MaterialCommunityIcons name="presentation-play" size={20} color={colors.primary} style={{ marginRight: 8 }} />
+              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>{t('settings.replayTutorial')}</Text>
             </View>
           </Pressable>
         </View>
       </ScrollView>
+
+      <Modal
+        visible={showLanguageModal}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setShowLanguageModal(false)}
+      >
+        <Pressable
+          style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
+          onPress={() => setShowLanguageModal(false)}
+        >
+          <Pressable
+            style={[styles.modalContent, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            onPress={(e) => e.stopPropagation()}
+          >
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: colors.text }]}>
+                {t('settings.selectLanguage')}
+              </Text>
+              <Pressable
+                onPress={() => setShowLanguageModal(false)}
+                hitSlop={8}
+                accessibilityRole="button"
+                accessibilityLabel={t('common.cancel')}
+              >
+                <MaterialCommunityIcons name="close" size={24} color={colors.textSecondary} />
+              </Pressable>
+            </View>
+
+            <View style={styles.languagesList}>
+              {SUPPORTED_LANGUAGES.map((lang) => {
+                const isSelected = activeLang === lang.code;
+                return (
+                  <Pressable
+                    key={lang.code}
+                    style={[
+                      styles.langOption,
+                      {
+                        backgroundColor: isSelected ? colors.surfaceAlt : 'transparent',
+                        borderColor: isSelected ? colors.primary : colors.border,
+                      },
+                    ]}
+                    onPress={async () => {
+                      setShowLanguageModal(false);
+                      if (!isSelected) {
+                        await changeLanguage(lang.code);
+                      }
+                    }}
+                  >
+                    <Text
+                      style={[
+                        styles.langOptionText,
+                        {
+                          color: isSelected ? colors.primary : colors.text,
+                          fontWeight: isSelected ? '700' : '500',
+                        },
+                      ]}
+                    >
+                      {lang.label}
+                    </Text>
+                    {isSelected && (
+                      <MaterialCommunityIcons name="check" size={20} color={colors.primary} />
+                    )}
+                  </Pressable>
+                );
+              })}
+            </View>
+          </Pressable>
+        </Pressable>
+      </Modal>
 
       <OnboardingModal visible={showOnboarding} onDismiss={() => setShowOnboarding(false)} />
     </SafeAreaView>
@@ -369,20 +336,49 @@ const styles = StyleSheet.create({
   card: { padding: Spacing.lg, borderRadius: BorderRadius.md, borderWidth: 1 },
   title: { fontSize: FontSize.lg, fontWeight: 'bold', marginBottom: Spacing.md },
   body: { fontSize: FontSize.md, lineHeight: 22 },
-  langRow: { flexDirection: 'row', gap: Spacing.md },
-  langBtn: {
-    flex: 1,
+  languageTile: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     padding: Spacing.md,
     borderRadius: BorderRadius.md,
-    alignItems: 'center',
     borderWidth: 1,
-    borderColor: 'transparent',
   },
-  langText: { fontSize: FontSize.md, fontWeight: 'bold' },
-  linkBtn: {
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
+  languageTileLabel: { fontSize: FontSize.md, fontWeight: '600' },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    padding: Spacing.lg,
+  },
+  modalContent: {
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: Spacing.lg,
+    marginBottom: Spacing.md,
   },
+  modalTitle: {
+    fontSize: FontSize.lg,
+    fontWeight: 'bold',
+  },
+  languagesList: {
+    gap: Spacing.sm,
+  },
+  langOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.md,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+  },
+  langOptionText: {
+    fontSize: FontSize.md,
+  },
+  linkBtn: { padding: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center', marginTop: Spacing.lg }
 });

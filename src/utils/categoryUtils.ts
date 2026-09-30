@@ -2,14 +2,14 @@ import type { Category } from '../types';
 import { t } from './i18n';
 
 const DEFAULT_CATEGORY_MAP: Record<string, { key: string; defaults: string[] }> = {
-  sonno: { key: 'categories.sleep', defaults: ['Sonno', 'Sleep'] },
-  uni: { key: 'categories.uni', defaults: ['Lezione Uni', 'University', 'Uni'] },
-  studio: { key: 'categories.study', defaults: ['Studio', 'Study'] },
+  sonno: { key: 'categories.sleep', defaults: ['Sonno', 'Sleep', 'Schlaf', 'Sommeil', 'Sueño', 'Sueno'] },
+  uni: { key: 'categories.uni', defaults: ['Lezione Uni', 'University', 'Uni', 'Universität', 'Universite', 'Université', 'Universidad'] },
+  studio: { key: 'categories.study', defaults: ['Studio', 'Study', 'Lernen', 'Études', 'Etudes', 'Estudio'] },
   cp: { key: 'categories.cp', defaults: ['Competitive Prog.', 'Competitive Prog'] },
-  hobby: { key: 'categories.hobby', defaults: ['Hobby'] },
-  lettura: { key: 'categories.reading', defaults: ['Lettura', 'Reading', 'Altro', 'Other'] },
-  progetto: { key: 'categories.project', defaults: ['Progetto', 'Project', 'Altro', 'Other'] },
-  libero: { key: 'categories.freetime', defaults: ['Tempo Libero', 'Free Time'] },
+  hobby: { key: 'categories.hobby', defaults: ['Hobby', 'Loisir', 'Afición', 'Aficion'] },
+  lettura: { key: 'categories.reading', defaults: ['Lettura', 'Reading', 'Altro', 'Other', 'Lesen', 'Lecture', 'Lectura'] },
+  progetto: { key: 'categories.project', defaults: ['Progetto', 'Project', 'Altro', 'Other', 'Projekt', 'Projet', 'Proyecto'] },
+  libero: { key: 'categories.freetime', defaults: ['Tempo Libero', 'Free Time', 'Freizeit', 'Temps libre', 'Tiempo libre'] },
 };
 
 export function getCategoryDisplayName(cat?: Category | null): string {

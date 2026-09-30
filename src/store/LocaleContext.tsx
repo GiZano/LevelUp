@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import i18n from '../utils/i18n';
+import i18n, { getSupportedLocale } from '../utils/i18n';
 
 interface LocaleContextType {
   locale: string;
@@ -23,21 +23,23 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     AsyncStorage.getItem('app_language').then((lang) => {
       if (lang) {
-        i18n.locale = lang;
-        setLocale(lang);
+        const supported = getSupportedLocale(lang);
+        i18n.locale = supported;
+        setLocale(supported);
       }
     });
   }, []);
 
   const changeLocale = async (lang: string) => {
-    if (lang === locale) return;
+    const supported = getSupportedLocale(lang);
+    if (supported === locale) return;
     setIsReloading(true);
-    i18n.locale = lang;
-    await AsyncStorage.setItem('app_language', lang);
-
+    i18n.locale = supported;
+    await AsyncStorage.setItem('app_language', supported);
+    
     // Simulate a brief loading to allow UI to settle and show the overlay
     setTimeout(() => {
-      setLocale(lang);
+      setLocale(supported);
       setTimeout(() => {
         setIsReloading(false);
       }, 500); // 500ms extra to hide overlay smoothly
