@@ -41,7 +41,7 @@ jobs:
         run: cd android && ./gradlew assembleRelease
 
       - name: 📂 Upload APK Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: LevelUp-APK
           path: android/app/build/outputs/apk/release/app-release.apk
