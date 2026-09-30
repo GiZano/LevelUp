@@ -395,7 +395,8 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
           startTime,
           customDuration ?? template.durationHours,
           cat.name,
-          cat.color
+          cat.color,
+          currentWeekId
         )
           .then((eventId) => {
             if (eventId) {
@@ -453,7 +454,7 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
       // Sync with Google Calendar in background
       const cat = categories.find((c) => c.id === categoryId);
       if (cat) {
-        createCalendarEvent(name, day, startTime, durationHours, cat.name, cat.color)
+        createCalendarEvent(name, day, startTime, durationHours, cat.name, cat.color, currentWeekId)
           .then((eventId) => {
             if (eventId) {
               setPlans((prev) => {
@@ -514,6 +515,21 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         if (!template || !cat) continue;
 
         const newId = generateId();
+        let eventId = null;
+        try {
+          eventId = await createCalendarEvent(
+            template.name,
+            b.day,
+            b.startTime,
+            b.customDuration ?? template.durationHours,
+            cat.name,
+            cat.color,
+            currentWeekId
+          );
+        } catch (e) {
+          console.error('Errore creazione evento calendario bulk:', e);
+        }
+
         const newBlock: ScheduledBlock = {
           id: newId,
           templateId: b.templateId,
@@ -521,36 +537,9 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
           startTime: b.startTime,
           done: false,
           customDuration: b.customDuration,
+          calendarEventId: eventId || undefined,
         };
         newBlocks.push(newBlock);
-
-        // Create events on the new calendar in background
-        createCalendarEvent(
-          template.name,
-          b.day,
-          b.startTime,
-          b.customDuration ?? template.durationHours,
-          cat.name,
-          cat.color
-        )
-          .then((eventId) => {
-            if (eventId) {
-              setPlans((prev) => {
-                const plan = prev[currentWeekId];
-                if (!plan) return prev;
-                return {
-                  ...prev,
-                  [currentWeekId]: {
-                    ...plan,
-                    blocks: plan.blocks.map((blk) =>
-                      blk.id === newId ? { ...blk, calendarEventId: eventId } : blk
-                    ),
-                  },
-                };
-              });
-            }
-          })
-          .catch(console.error);
       }
 
       setPlans((prev) => {

@@ -57,20 +57,26 @@ export async function createCalendarEvent(
   startTime: string,
   durationHours: number,
   catName: string,
-  catColor: string
+  catColor: string,
+  weekId?: string
 ) {
   try {
     const calendarId = await getOrCreateCategoryCalendar(catName, catColor);
     if (!calendarId) return null;
 
-    const now = new Date();
-    const currentDay = now.getDay() === 0 ? 6 : now.getDay() - 1; // 0=Mon, 6=Sun
     const targetDays = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom'];
     const targetDayIdx = targetDays.indexOf(day);
 
-    const diff = targetDayIdx - currentDay;
-    const targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() + diff);
+    let targetDate = new Date();
+    if (weekId) {
+      const [y, m, d] = weekId.split('-').map(Number);
+      targetDate = new Date(y, m - 1, d); // This is the Monday of the week
+      targetDate.setDate(targetDate.getDate() + targetDayIdx);
+    } else {
+      const currentDay = targetDate.getDay() === 0 ? 6 : targetDate.getDay() - 1; // 0=Mon, 6=Sun
+      const diff = targetDayIdx - currentDay;
+      targetDate.setDate(targetDate.getDate() + diff);
+    }
 
     const [hh, mm] = startTime.split(':').map(Number);
     targetDate.setHours(hh, mm, 0, 0);
