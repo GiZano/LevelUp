@@ -1,4 +1,4 @@
-import { getWeekId, getNextWeekId, getPrevWeekId, getMonday } from '../../types/weekUtils';
+import { getWeekId, getNextWeekId, getPrevWeekId } from '../../types/weekUtils';
 
 describe('weekUtils', () => {
   it('should generate a valid week ID based on the Monday date', () => {

@@ -36,7 +36,7 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     setIsReloading(true);
     i18n.locale = supported;
     await AsyncStorage.setItem('app_language', supported);
-    
+
     // Simulate a brief loading to allow UI to settle and show the overlay
     setTimeout(() => {
       setLocale(supported);

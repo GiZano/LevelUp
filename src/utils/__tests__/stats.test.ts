@@ -1,4 +1,4 @@
-import { peakProgress, computeStats, isPeakComplete, updateStreak } from '../stats';
+import { peakProgress, computeStats, isPeakComplete } from '../stats';
 
 describe('stats utilities', () => {
   it('should calculate peak progress correctly', () => {
@@ -9,9 +9,9 @@ describe('stats utilities', () => {
       camps: [
         { id: 'c1', name: 'Camp 1', done: true },
         { id: 'c2', name: 'Camp 2', done: false },
-      ]
+      ],
     };
-    
+
     // progress should be 1 / 2 = 0.5
     expect(peakProgress(mockPeak)).toBe(0.5);
   });
@@ -21,28 +21,22 @@ describe('stats utilities', () => {
       id: 'p2',
       name: 'Empty Peak',
       createdAt: '2026-01-01',
-      camps: []
+      camps: [],
     };
-    
+
     expect(peakProgress(mockPeak)).toBe(0);
   });
 
   it('should correctly identify a completed peak', () => {
     const mockPeak: any = {
-      camps: [
-        { done: true },
-        { done: true },
-      ]
+      camps: [{ done: true }, { done: true }],
     };
     expect(isPeakComplete(mockPeak)).toBe(true);
   });
 
   it('should not identify an incomplete peak as completed', () => {
     const mockPeak: any = {
-      camps: [
-        { done: true },
-        { done: false },
-      ]
+      camps: [{ done: true }, { done: false }],
     };
     expect(isPeakComplete(mockPeak)).toBe(false);
   });
@@ -50,7 +44,7 @@ describe('stats utilities', () => {
   it('should compute overall stats correctly', () => {
     const peaks: any[] = [
       { camps: [{ done: true }, { done: true }] }, // completed
-      { camps: [{ done: true }, { done: false }] } // incomplete, 1 camp done
+      { camps: [{ done: true }, { done: false }] }, // incomplete, 1 camp done
     ];
 
     const stats = computeStats(peaks, 5, '2026-01-01', 10);

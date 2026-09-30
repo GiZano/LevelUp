@@ -1,6 +1,16 @@
 import React, { useState } from 'react';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { View, Text, StyleSheet, Pressable, ScrollView, Alert, Linking, ActivityIndicator, Modal } from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  ScrollView,
+  Alert,
+  Linking,
+  ActivityIndicator,
+  Modal,
+} from 'react-native';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system/legacy';
 import * as Sharing from 'expo-sharing';
@@ -137,13 +147,25 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <ScrollView contentContainerStyle={styles.scroll}>
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+        <View
+          style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: Spacing.md }}>
-            <MaterialCommunityIcons name="translate" size={24} color={colors.primary} style={{ marginRight: Spacing.sm }} />
-            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.langTitle')}</Text>
+            <MaterialCommunityIcons
+              name="translate"
+              size={24}
+              color={colors.primary}
+              style={{ marginRight: Spacing.sm }}
+            />
+            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>
+              {t('settings.langTitle')}
+            </Text>
           </View>
           <Pressable
-            style={[styles.languageTile, { backgroundColor: colors.surfaceAlt, borderColor: colors.border }]}
+            style={[
+              styles.languageTile,
+              { backgroundColor: colors.surfaceAlt, borderColor: colors.border },
+            ]}
             onPress={() => setShowLanguageModal(true)}
             accessibilityRole="button"
             accessibilityLabel={`${t('settings.langTitle')}: ${currentLanguageItem.label}`}
@@ -155,18 +177,40 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
 
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl },
+          ]}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <MaterialCommunityIcons name="content-save-outline" size={24} color={colors.primary} style={{ marginRight: 8 }} />
-            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.backupTitle')}</Text>
+            <MaterialCommunityIcons
+              name="content-save-outline"
+              size={24}
+              color={colors.primary}
+              style={{ marginRight: 8 }}
+            />
+            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>
+              {t('settings.backupTitle')}
+            </Text>
           </View>
           <Text style={[styles.body, { color: colors.textSecondary }]}>
             {t('settings.backupDesc')}
           </Text>
-          <Pressable style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]} onPress={exportBackup}>
+          <Pressable
+            style={[styles.linkBtn, { backgroundColor: colors.surfaceAlt, marginTop: Spacing.md }]}
+            onPress={exportBackup}
+          >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name="export" size={20} color={colors.primary} style={{ marginRight: 8 }} />
-              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>{t('settings.exportBtn')}</Text>
+              <MaterialCommunityIcons
+                name="export"
+                size={20}
+                color={colors.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>
+                {t('settings.exportBtn')}
+              </Text>
             </View>
           </Pressable>
           <Pressable
@@ -187,20 +231,41 @@ export default function SettingsScreen() {
               <ActivityIndicator color={colors.primary} style={{ marginRight: 8 }} />
             ) : null}
             {isImporting ? (
-              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>{t('settings.importing')}</Text>
+              <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>
+                {t('settings.importing')}
+              </Text>
             ) : (
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <MaterialCommunityIcons name="import" size={20} color={colors.primary} style={{ marginRight: 8 }} />
-                <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>{t('settings.importBtn')}</Text>
+                <MaterialCommunityIcons
+                  name="import"
+                  size={20}
+                  color={colors.primary}
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={[{ fontWeight: 'bold' }, { color: colors.text }]}>
+                  {t('settings.importBtn')}
+                </Text>
               </View>
             )}
           </Pressable>
         </View>
 
-        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl }]}>
+        <View
+          style={[
+            styles.card,
+            { backgroundColor: colors.surface, borderColor: colors.border, marginTop: Spacing.xl },
+          ]}
+        >
           <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-            <MaterialCommunityIcons name="information-outline" size={24} color={colors.primary} style={{ marginRight: 8 }} />
-            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>{t('settings.aboutTitle')}</Text>
+            <MaterialCommunityIcons
+              name="information-outline"
+              size={24}
+              color={colors.primary}
+              style={{ marginRight: 8 }}
+            />
+            <Text style={[styles.title, { color: colors.text, marginBottom: 0 }]}>
+              {t('settings.aboutTitle')}
+            </Text>
           </View>
 
           <Text style={[styles.body, { color: colors.textSecondary }]}>
@@ -215,8 +280,15 @@ export default function SettingsScreen() {
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp')}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name="github" size={20} color={colors.primary} style={{ marginRight: 8 }} />
-              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>{t('settings.starGithub')}</Text>
+              <MaterialCommunityIcons
+                name="github"
+                size={20}
+                color={colors.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
+                {t('settings.starGithub')}
+              </Text>
             </View>
           </Pressable>
 
@@ -225,8 +297,15 @@ export default function SettingsScreen() {
             onPress={() => Linking.openURL('https://github.com/gizano/LevelUp/issues')}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name="bug" size={20} color={colors.primary} style={{ marginRight: 8 }} />
-              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>{t('settings.submitIssue')}</Text>
+              <MaterialCommunityIcons
+                name="bug"
+                size={20}
+                color={colors.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
+                {t('settings.submitIssue')}
+              </Text>
             </View>
           </Pressable>
 
@@ -238,8 +317,15 @@ export default function SettingsScreen() {
             disabled={true}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name="google-play" size={20} color={colors.textSecondary} style={{ marginRight: 8 }} />
-              <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>{t('settings.feedbackPlayStore')}</Text>
+              <MaterialCommunityIcons
+                name="google-play"
+                size={20}
+                color={colors.textSecondary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: colors.textSecondary, fontWeight: 'bold' }}>
+                {t('settings.feedbackPlayStore')}
+              </Text>
             </View>
           </Pressable>
 
@@ -248,8 +334,15 @@ export default function SettingsScreen() {
             onPress={() => setShowOnboarding(true)}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <MaterialCommunityIcons name="presentation-play" size={20} color={colors.primary} style={{ marginRight: 8 }} />
-              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>{t('settings.replayTutorial')}</Text>
+              <MaterialCommunityIcons
+                name="presentation-play"
+                size={20}
+                color={colors.primary}
+                style={{ marginRight: 8 }}
+              />
+              <Text style={{ color: colors.primary, fontWeight: 'bold' }}>
+                {t('settings.replayTutorial')}
+              </Text>
             </View>
           </Pressable>
         </View>
@@ -266,7 +359,10 @@ export default function SettingsScreen() {
           onPress={() => setShowLanguageModal(false)}
         >
           <Pressable
-            style={[styles.modalContent, { backgroundColor: colors.surface, borderColor: colors.border }]}
+            style={[
+              styles.modalContent,
+              { backgroundColor: colors.surface, borderColor: colors.border },
+            ]}
             onPress={(e) => e.stopPropagation()}
           >
             <View style={styles.modalHeader}>
@@ -380,5 +476,10 @@ const styles = StyleSheet.create({
   langOptionText: {
     fontSize: FontSize.md,
   },
-  linkBtn: { padding: Spacing.md, borderRadius: BorderRadius.md, alignItems: 'center', marginTop: Spacing.lg }
+  linkBtn: {
+    padding: Spacing.md,
+    borderRadius: BorderRadius.md,
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+  },
 });
