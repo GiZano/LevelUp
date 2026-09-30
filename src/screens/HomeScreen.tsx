@@ -150,6 +150,11 @@ export default function HomeScreen({ navigation }: HomeProps) {
     setModalVisible(false);
   };
 
+  const openPeakFromHistory = (peakId: string) => {
+    setPeaksModalVisible(false);
+    navigation.navigate('PeakDetail', { peakId });
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <StatsBar stats={stats} onAltPress={loadAltStats} onPeaksPress={() => setPeaksModalVisible(true)} />
@@ -197,11 +202,12 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('home.completed')}</Text>
               </View>
               {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
-                <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
+                <Pressable key={p.id} accessibilityRole="button" onPress={() => openPeakFromHistory(p.id)} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
                   <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
                   <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
                   <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
-                </View>
+                  <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textSecondary} style={{ marginLeft: Spacing.xs }} />
+                </Pressable>
               ))}
               {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>{t('home.noCompletedPeaks')}</Text>}
 
@@ -212,11 +218,12 @@ export default function HomeScreen({ navigation }: HomeProps) {
               {peaks.filter((p: any) => !isPeakComplete(p)).map((p: any) => {
                 const perc = Math.round(peakProgress(p) * 100);
                 return (
-                  <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
+                  <Pressable key={p.id} accessibilityRole="button" onPress={() => openPeakFromHistory(p.id)} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
                     <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
                     <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
                     <Text style={{ color: colors.accent || '#3B82F6', fontWeight: '900', fontSize: 16 }}>{perc}%</Text>
-                  </View>
+                    <MaterialCommunityIcons name="chevron-right" size={20} color={colors.textSecondary} style={{ marginLeft: Spacing.xs }} />
+                  </Pressable>
                 );
               })}
             </ScrollView>
