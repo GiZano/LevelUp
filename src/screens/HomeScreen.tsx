@@ -24,11 +24,14 @@ import PeakCard from '../components/PeakCard';
 import OnboardingModal from '../components/OnboardingModal';
 import type { RootStackParamList } from '../types/navigation';
 import { getCategoryDisplayName } from '../utils/categoryUtils';
+import { formatCompletionDate } from '../utils/date';
+import { useLocale } from '../store/LocaleContext';
 
 type HomeProps = NativeStackScreenProps<RootStackParamList, 'Home'>;
 
 export default function HomeScreen({ navigation }: HomeProps) {
   const { colors } = useThemeColors();
+  const { locale } = useLocale();
   const { peaks, streak, lastActiveDate, totalCompletedHours, addPeak } = usePeaks();
 
   const [altModalVisible, setAltModalVisible] = useState(false);
@@ -196,13 +199,23 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 <MaterialCommunityIcons name="check-circle" size={16} color={colors.text} style={{ marginRight: 4 }} />
                 <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('home.completed')}</Text>
               </View>
-              {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => (
-                <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                  <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
-                  <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
-                  <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
-                </View>
-              ))}
+              {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => {
+                const completedDate = formatCompletionDate(p.completedAt, locale);
+                return (
+                  <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
+                    <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
+                      {completedDate && (
+                        <Text style={{ color: colors.textSecondary, fontSize: FontSize.sm, marginTop: Spacing.xs }}>
+                          {t('home.completedOn', { date: completedDate })}
+                        </Text>
+                      )}
+                    </View>
+                    <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
+                  </View>
+                );
+              })}
               {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>{t('home.noCompletedPeaks')}</Text>}
 
               <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: Spacing.md, marginBottom: Spacing.xs }}>
