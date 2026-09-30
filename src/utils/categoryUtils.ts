@@ -22,15 +22,18 @@ const DEFAULT_CATEGORY_MAP: Record<string, { key: string; defaults: string[] }> 
     key: 'categories.study',
     defaults: ['Studio', 'Study', 'Lernen', 'Études', 'Etudes', 'Estudio'],
   },
-  cp: { key: 'categories.cp', defaults: ['Competitive Prog.', 'Competitive Prog'] },
+  cp: {
+    key: 'categories.cp',
+    defaults: ['Competitive Prog.', 'Competitive Prog', 'Competitive Programming'],
+  },
   hobby: { key: 'categories.hobby', defaults: ['Hobby', 'Loisir', 'Afición', 'Aficion'] },
   lettura: {
     key: 'categories.reading',
-    defaults: ['Lettura', 'Reading', 'Altro', 'Other', 'Lesen', 'Lecture', 'Lectura'],
+    defaults: ['Lettura', 'Reading', 'Lesen', 'Lecture', 'Lectura'],
   },
   progetto: {
     key: 'categories.project',
-    defaults: ['Progetto', 'Project', 'Altro', 'Other', 'Projekt', 'Projet', 'Proyecto'],
+    defaults: ['Progetto', 'Project', 'Side Project', 'Projekt', 'Projet', 'Proyecto'],
   },
   libero: {
     key: 'categories.freetime',

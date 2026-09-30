@@ -52,14 +52,14 @@ const DEFAULT_CATEGORIES: Category[] = [
   },
   {
     id: 'lettura',
-    name: t('categories.other'),
+    name: t('categories.reading'),
     color: '#F59E0B',
     emoji: 'book-open-page-variant',
     targetHoursPerWeek: 3,
   },
   {
     id: 'progetto',
-    name: t('categories.other'),
+    name: t('categories.project'),
     color: '#EC4899',
     emoji: 'rocket-launch',
     targetHoursPerWeek: 2,
@@ -198,7 +198,21 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
         loadWeeklyPlan(getPrevWeekId(currentWeekId)),
       ]);
       if (cats.length > 0) {
-        const merged = cats.map((c) => ({ ...c, emoji: migrateEmoji(c.emoji) }));
+        const legacyOtherNames = ['altro', 'other', 'sonstiges', 'autre', 'otro'];
+        const merged = cats.map((c) => {
+          let name = c.name;
+          if (
+            (c.id === 'lettura' || c.id === 'progetto') &&
+            legacyOtherNames.includes(name.trim().toLowerCase())
+          ) {
+            name = c.id === 'lettura' ? t('categories.reading') : t('categories.project');
+          }
+          return {
+            ...c,
+            name,
+            emoji: migrateEmoji(c.emoji),
+          };
+        });
         setCategories(merged);
       } else {
         setCategories(DEFAULT_CATEGORIES);
@@ -318,7 +332,15 @@ export function PlannerProvider({ children }: { children: React.ReactNode }) {
   );
 
   const editCategory = useCallback((id: string, updates: Partial<Category>) => {
-    setCategories((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
+    setCategories((prev) =>
+      prev.map((c) => {
+        if (c.id !== id) return c;
+        const cleanedUpdates = Object.fromEntries(
+          Object.entries(updates).filter(([_, v]) => v !== undefined)
+        );
+        return { ...c, ...cleanedUpdates };
+      })
+    );
   }, []);
 
   const addTemplate = useCallback(

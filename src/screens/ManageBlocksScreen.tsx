@@ -21,6 +21,7 @@ import { usePlanner } from '../store/PlannerContext';
 import { usePeaks } from '../store/PeaksContext';
 import { scrubDeletedTemplates } from '../store/plannerStorage';
 import { getCategoryDisplayName } from '../utils/categoryUtils';
+import type { Category } from '../types';
 
 const DURATION_OPTIONS = [0.5, 1, 1.5, 2, 2.5, 3, 4, 8];
 
@@ -111,9 +112,9 @@ export default function ManageBlocksScreen({ navigation }: any) {
     setCatModalVisible(true);
   };
 
-  const openEditCategory = (cat: any) => {
+  const openEditCategory = (cat: Category) => {
     setEditCatId(cat.id);
-    setCatName(cat.name);
+    setCatName(getCategoryDisplayName(cat));
     setCatEmoji(cat.emoji);
     setCatColor(cat.color);
     setCatTargetHours(String(cat.targetHoursPerWeek));
