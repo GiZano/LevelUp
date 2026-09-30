@@ -147,7 +147,9 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
   const openPeakFromHistory = (peakId: string) => {
     setPeaksModalVisible(false);
-    navigation.navigate('PeakDetail', { peakId });
+    setTimeout(() => {
+      navigation.navigate('PeakDetail', { peakId });
+    }, 100);
   };
 
   return (
