@@ -66,7 +66,7 @@ const styles = StyleSheet.create({
   },
   flag: {
     position: 'absolute',
-    top: 0,
-    fontSize: 20,
+    top: -12,
+    left: 94,
   },
 });
