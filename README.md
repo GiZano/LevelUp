@@ -2,7 +2,7 @@
   <img src="./assets/icon.png" width="120" style="border-radius: 24px; margin-bottom: 20px;" alt="LevelUp Logo" />
   <h1>LevelUp</h1>
   <p><b>Gamify your goals. Conquer your peaks.</b></p>
-  
+
   <p>
     <img src="https://img.shields.io/badge/React_Native-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React Native" />
     <img src="https://img.shields.io/badge/Expo-1B1F23?style=for-the-badge&logo=expo&logoColor=white" alt="Expo" />
@@ -14,7 +14,7 @@
   <p><i>An open-source productivity engine, built by developers, for everyone.</i></p>
 </div>
 
-LevelUp is a mobile app for long-term goal tracking, built around the metaphor of **mountain climbing**: every goal is a peak to reach, every sub-goal is a base camp along the way. It includes a weekly planner to organize your week in blocks and eliminate *decision fatigue*.
+LevelUp is a mobile app for long-term goal tracking, built around the metaphor of **mountain climbing**: every goal is a peak to reach, every sub-goal is a base camp along the way. It includes a weekly planner to organize your week in blocks and eliminate _decision fatigue_.
 
 > [!NOTE]
 > Personal project born to solve a real problem: not knowing what to do in free time and ending up scrolling the phone. The app is the scaffolding — the real goal is to build the time-boxing habit until it becomes natural.
@@ -24,6 +24,7 @@ LevelUp is a mobile app for long-term goal tracking, built around the metaphor o
 ## ✨ Features
 
 ### MVP — Peaks and Camps
+
 - **Peaks**: long-term goals (exams, Codeforces rating, personal projects)
 - **Camps**: checkable sub-goals along the path to the peak
 - **Visual progress**: SVG mountain path that fills up gradually
@@ -31,7 +32,8 @@ LevelUp is a mobile app for long-term goal tracking, built around the metaphor o
 - **Celebrations**: visual feedback upon completing camps and peaks
 - 🌗 **Light/Dark theme**: follows system preferences
 
-### Weekly Planner *(Phase 2)*
+### Weekly Planner _(Phase 2)_
+
 - 📅 Precise weekly grid timeline syncable with Google Calendar
 - 🧩 Dynamic duration overrides upon scheduling
 - 🗃️ Accordion UI and Soft-delete Archives for blocks
@@ -43,14 +45,14 @@ LevelUp is a mobile app for long-term goal tracking, built around the metaphor o
 
 ## 🛠️ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | [Expo](https://expo.dev/) (React Native) |
-| Navigation | Expo Router |
-| Local Storage | expo-sqlite / AsyncStorage |
-| SVG Graphics | react-native-svg |
-| Build & Deploy | EAS Build + GitHub Actions |
-| Language | TypeScript |
+| Layer          | Technology                               |
+| -------------- | ---------------------------------------- |
+| Framework      | [Expo](https://expo.dev/) (React Native) |
+| Navigation     | Expo Router                              |
+| Local Storage  | expo-sqlite / AsyncStorage               |
+| SVG Graphics   | react-native-svg                         |
+| Build & Deploy | EAS Build + GitHub Actions               |
+| Language       | TypeScript                               |
 
 ---
 
@@ -117,7 +119,7 @@ LevelUp/
 ```typescript
 interface Peak {
   id: string;
-  name: string;            // e.g. "1400 Codeforces Rating"
+  name: string; // e.g. "1400 Codeforces Rating"
   description?: string;
   camps: Camp[];
   createdAt: Date;
@@ -126,19 +128,19 @@ interface Peak {
 
 interface Camp {
   id: string;
-  name: string;            // e.g. "Solve 20 Div.2 A problems"
+  name: string; // e.g. "Solve 20 Div.2 A problems"
   done: boolean;
   completedAt?: Date;
-  order: number;           // position along the path
+  order: number; // position along the path
 }
 
 interface WeeklyBlock {
   id: string;
-  name: string;            // e.g. "Study OSTEP"
-  category: string;        // e.g. "study", "cp", "hobby"
+  name: string; // e.g. "Study OSTEP"
+  category: string; // e.g. "study", "cp", "hobby"
   color: string;
   estimatedHours: number;
-  peakId?: string;         // optional link to a peak
+  peakId?: string; // optional link to a peak
 }
 ```
 
@@ -148,13 +150,12 @@ interface WeeklyBlock {
 
 See [ROADMAP.md](./ROADMAP.md) for the complete development plan.
 
-| Phase | Content | Status |
-|---|---|---|
-| **Phase 0** | Project Setup | 🟢 Completed |
+| Phase       | Content              | Status       |
+| ----------- | -------------------- | ------------ |
+| **Phase 0** | Project Setup        | 🟢 Completed |
 | **Phase 1** | MVP: Peaks and Camps | 🟢 Completed |
-| **Phase 2** | Weekly Planner | 🟢 Completed |
+| **Phase 2** | Weekly Planner       | 🟢 Completed |
 | **Phase 3** | CI/CD and automation | 🟢 Completed |
-
 
 ---
 

@@ -16,16 +16,9 @@ export default function CampItem({ camp, onToggle, onDelete }: CampItemProps) {
 
   return (
     <View
-      style={[
-        styles.container,
-        { backgroundColor: colors.surface, borderColor: colors.border },
-      ]}
+      style={[styles.container, { backgroundColor: colors.surface, borderColor: colors.border }]}
     >
-      <TouchableOpacity
-        onPress={onToggle}
-        style={styles.checkboxArea}
-        activeOpacity={0.6}
-      >
+      <TouchableOpacity onPress={onToggle} style={styles.checkboxArea} activeOpacity={0.6}>
         <View
           style={[
             styles.checkbox,
@@ -50,11 +43,7 @@ export default function CampItem({ camp, onToggle, onDelete }: CampItemProps) {
         {camp.name}
       </Text>
 
-      <TouchableOpacity
-        onPress={onDelete}
-        style={styles.deleteButton}
-        activeOpacity={0.6}
-      >
+      <TouchableOpacity onPress={onDelete} style={styles.deleteButton} activeOpacity={0.6}>
         <MaterialCommunityIcons name="trash-can-outline" size={18} color={colors.danger} />
       </TouchableOpacity>
     </View>

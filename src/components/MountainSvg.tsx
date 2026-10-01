@@ -32,10 +32,7 @@ export default function MountainSvg({ progress, isComplete }: MountainSvgProps) 
         </Defs>
 
         {/* Unfilled mountain shape */}
-        <Polygon
-          points={MOUNTAIN_POINTS}
-          fill={colors.mountain}
-        />
+        <Polygon points={MOUNTAIN_POINTS} fill={colors.mountain} />
 
         {/* Filled portion clipped to mountain shape */}
         <Rect
@@ -49,7 +46,12 @@ export default function MountainSvg({ progress, isComplete }: MountainSvgProps) 
       </Svg>
 
       {isComplete && (
-        <MaterialCommunityIcons name="flag-checkered" size={24} color={colors.accent} style={styles.flag} />
+        <MaterialCommunityIcons
+          name="flag-checkered"
+          size={24}
+          color={colors.accent}
+          style={styles.flag}
+        />
       )}
     </View>
   );
@@ -64,7 +66,7 @@ const styles = StyleSheet.create({
   },
   flag: {
     position: 'absolute',
-    top: 0,
-    fontSize: 20,
+    top: -12,
+    left: 94,
   },
 });

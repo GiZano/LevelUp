@@ -1,15 +1,15 @@
 cff-version: 1.2.0
-message: "If you use this software or reference its Agent-Driven Architecture, please cite it as below."
+message: 'If you use this software or reference its Agent-Driven Architecture, please cite it as below.'
 authors:
-  - family-names: "Zanotti"
-    given-names: "Giovanni"
-    orcid: "https://orcid.org/0009-0000-8900-9586"
-title: "LevelUp: Defeating Decision Fatigue via Gamified Time Management"
-version: 1.1.1
-date-released: "2026-09-25"
-url: "https://github.com/GiZano/LevelUp"
-repository-code: "https://github.com/GiZano/LevelUp"
-abstract: "LevelUp is an offline, privacy-first React Native application that leverages Agent-Driven Development to bridge the gap between long-term ambitions (Peaks) and daily execution (Weekly Block Planner)."
+  - family-names: 'Zanotti'
+    given-names: 'Giovanni'
+    orcid: 'https://orcid.org/0009-0000-8900-9586'
+title: 'LevelUp: Defeating Decision Fatigue via Gamified Time Management'
+version: 1.1.2
+date-released: '2026-09-25'
+url: 'https://github.com/GiZano/LevelUp'
+repository-code: 'https://github.com/GiZano/LevelUp'
+abstract: 'LevelUp is an offline, privacy-first React Native application that leverages Agent-Driven Development to bridge the gap between long-term ambitions (Peaks) and daily execution (Weekly Block Planner).'
 keywords:
   - time-management
   - react-native
@@ -19,5 +19,5 @@ keywords:
 license: MIT
 identifiers:
   - type: doi
-    value: "10.5281/zenodo.22969593"
-    description: "Zenodo archive of the LevelUp source code"
+    value: '10.5281/zenodo.22969593'
+    description: 'Zenodo archive of the LevelUp source code'

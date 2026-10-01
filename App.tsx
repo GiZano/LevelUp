@@ -1,12 +1,16 @@
 import React from 'react';
 
-
 import { useColorScheme } from 'react-native';
 import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StatusBar } from 'expo-status-bar';
-import { useFonts, Outfit_400Regular, Outfit_500Medium, Outfit_700Bold } from '@expo-google-fonts/outfit';
+import {
+  useFonts,
+  Outfit_400Regular,
+  Outfit_500Medium,
+  Outfit_700Bold,
+} from '@expo-google-fonts/outfit';
 import * as SplashScreen from 'expo-splash-screen';
 
 SplashScreen.preventAutoHideAsync();
@@ -15,7 +19,11 @@ import { PeaksProvider } from './src/store/PeaksContext';
 import { PlannerProvider } from './src/store/PlannerContext';
 import { LocaleProvider, useLocale } from './src/store/LocaleContext';
 import { Colors } from './src/utils/theme';
-import type { RootStackParamList, PlannerStackParamList, TabParamList } from './src/types/navigation';
+import type {
+  RootStackParamList,
+  PlannerStackParamList,
+  TabParamList,
+} from './src/types/navigation';
 
 import HomeScreen from './src/screens/HomeScreen';
 import PeakDetailScreen from './src/screens/PeakDetailScreen';
@@ -85,51 +93,61 @@ function TabNavigator() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textSecondary,
         tabBarLabelStyle: { fontFamily: 'Outfit_500Medium' },
-          tabBarStyle: {
+        tabBarStyle: {
           backgroundColor: colors.surface,
           borderTopColor: colors.border,
         },
       }}
     >
-      <Tab.Screen 
-        name="OggiTab" 
-        component={TodayScreen} 
-        options={{ 
+      <Tab.Screen
+        name="OggiTab"
+        component={TodayScreen}
+        options={{
           title: t('tabs.today'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="sunny-outline" size={size} color={color} /> 
-        }} 
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="sunny-outline" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="VetteTab" 
-        component={VetteStack} 
-        options={{ 
+      <Tab.Screen
+        name="VetteTab"
+        component={VetteStack}
+        options={{
           title: t('tabs.peaks'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="flag-outline" size={size} color={color} /> 
-        }} 
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="flag-outline" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="PlannerTab" 
-        component={PlannerStackNavigator} 
-        options={{ 
+      <Tab.Screen
+        name="PlannerTab"
+        component={PlannerStackNavigator}
+        options={{
           title: t('tabs.planner'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="calendar-outline" size={size} color={color} /> 
-        }} 
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="calendar-outline" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="BlocchiTab" 
-        component={BlocchiStack} 
-        options={{ 
+      <Tab.Screen
+        name="BlocchiTab"
+        component={BlocchiStack}
+        options={{
           title: t('tabs.blocks'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="cube-outline" size={size} color={color} /> 
-        }} 
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cube-outline" size={size} color={color} />
+          ),
+        }}
       />
-      <Tab.Screen 
-        name="SettingsTab" 
-        component={SettingsScreen} 
-        options={{ 
+      <Tab.Screen
+        name="SettingsTab"
+        component={SettingsScreen}
+        options={{
           title: t('tabs.settings'),
-          tabBarIcon: ({ color, size }) => <Ionicons name="settings-outline" size={size} color={color} /> 
-        }} 
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
+          ),
+        }}
       />
     </Tab.Navigator>
   );
@@ -178,17 +196,21 @@ function RootNavigator() {
         <TabNavigator />
       </NavigationContainer>
       {isReloading && (
-        <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center' }]}>
+        <View
+          style={[
+            StyleSheet.absoluteFill,
+            { backgroundColor: colors.overlay, justifyContent: 'center', alignItems: 'center' },
+          ]}
+        >
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={{ marginTop: 20, color: '#fff', fontSize: 16, fontWeight: 'bold' }}>
-            {locale === 'it' ? 'Cambio lingua...' : 'Changing language...'}
+            {t('settings.changingLanguage')}
           </Text>
         </View>
       )}
     </>
   );
 }
-
 
 export default function App() {
   const [fontsLoaded, fontError] = useFonts({

@@ -32,11 +32,13 @@ export default function CategoryProgress({
     <View style={[styles.container, { backgroundColor: colors.surface }]}>
       <View style={styles.header}>
         <View style={styles.labelRow}>
-          <MaterialCommunityIcons name={emoji as any} size={18} color={color} style={styles.emoji} />
-          <Text
-            style={[styles.name, { color: colors.text }]}
-            numberOfLines={1}
-          >
+          <MaterialCommunityIcons
+            name={emoji as any}
+            size={18}
+            color={color}
+            style={styles.emoji}
+          />
+          <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
             {name}
           </Text>
         </View>
@@ -45,9 +47,7 @@ export default function CategoryProgress({
         </Text>
       </View>
 
-      <View
-        style={[styles.track, { backgroundColor: colors.surfaceAlt }]}
-      >
+      <View style={[styles.track, { backgroundColor: colors.surfaceAlt }]}>
         {/* Scheduled fill (lighter) */}
         <View
           style={[

@@ -1,5 +1,5 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { t } from "../utils/i18n";
+import { t } from '../utils/i18n';
 import React, { useLayoutEffect, useState, useCallback } from 'react';
 import {
   Alert,
@@ -79,8 +79,6 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
   const pct = totalCamps > 0 ? Math.round((doneCamps / totalCamps) * 100) : 0;
   const completedDate = complete ? formatCompletionDate(peak.completedAt, locale) : null;
 
-  
-
   const handleAddCamp = () => {
     const trimmed = campName.trim();
     if (!trimmed) return;
@@ -111,8 +109,23 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
             </Text>
 
             {complete && (
-              <View style={[styles.banner, { backgroundColor: colors.primary + '20' }]}>
-                <MaterialCommunityIcons name="flag-checkered" size={FontSize.md} color={colors.primary} />
+              <View
+                style={[
+                  styles.banner,
+                  {
+                    backgroundColor: colors.primary + '20',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  },
+                ]}
+              >
+                <MaterialCommunityIcons
+                  name="flag-checkered"
+                  size={20}
+                  color={colors.primary}
+                  style={{ marginRight: 8 }}
+                />
                 <Text style={[styles.bannerText, { color: colors.primary }]}>
                   {completedDate ? t('peakDetail.conqueredOn', { date: completedDate }) : t('peakDetail.conquered')}
                 </Text>
@@ -130,7 +143,9 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
       />
 
       {/* Bottom input bar */}
-      <View style={[styles.inputBar, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+      <View
+        style={[styles.inputBar, { backgroundColor: colors.surface, borderColor: colors.border }]}
+      >
         <TextInput
           style={[
             styles.input,

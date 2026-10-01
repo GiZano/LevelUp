@@ -1,4 +1,4 @@
-import { t } from "../utils/i18n";
+import { t } from '../utils/i18n';
 /**
  * LevelUp — Core type definitions
  *

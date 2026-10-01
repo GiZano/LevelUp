@@ -1,17 +1,9 @@
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { ScrollView, TouchableOpacity } from 'react-native';
-import { t } from "../utils/i18n";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { t } from '../utils/i18n';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useLayoutEffect, useState } from 'react';
-import {
-  FlatList,
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -36,7 +28,9 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
   const [altModalVisible, setAltModalVisible] = useState(false);
   const [peaksModalVisible, setPeaksModalVisible] = useState(false);
-  const [altStats, setAltStats] = useState<{name: string, emoji: string, color: string, hours: number}[]>([]);
+  const [altStats, setAltStats] = useState<
+    { name: string; emoji: string; color: string; hours: number }[]
+  >([]);
   const { categories, templates } = usePlanner();
 
   const loadAltStats = async () => {
@@ -44,9 +38,9 @@ export default function HomeScreen({ navigation }: HomeProps) {
       const keys = await AsyncStorage.getAllKeys();
       const weekKeys = keys.filter((k: string) => k.startsWith('@levelup/week/'));
       const pairs = await AsyncStorage.multiGet(weekKeys);
-      
+
       const catTotals: Record<string, number> = {};
-      
+
       pairs.forEach(([_, value]: [string, string | null]) => {
         if (!value) return;
         const plan = JSON.parse(value);
@@ -71,34 +65,35 @@ export default function HomeScreen({ navigation }: HomeProps) {
         });
       });
 
-      const statsArray = Object.keys(catTotals).map(catId => {
+      const statsArray = Object.keys(catTotals).map((catId) => {
         const cat = categories.find((c: any) => c.id === catId);
         return {
           name: cat ? getCategoryDisplayName(cat) : t('home.deletedArchived'),
           emoji: cat ? cat.emoji : 'package-variant-closed',
           color: cat ? cat.color : '#888',
-          hours: catTotals[catId]
+          hours: catTotals[catId],
         };
       });
 
-      const peakStats = peaks.map((p: any) => {
-        const completedCamps = p.camps.filter((c: any) => c.done).length;
-        return {
-          name: p.name,
-          emoji: 'image-filter-hdr',
-          color: colors.success || '#10B981',
-          hours: completedCamps * 100
-        };
-      }).filter((p: any) => p.hours > 0);
+      const peakStats = peaks
+        .map((p: any) => {
+          const completedCamps = p.camps.filter((c: any) => c.done).length;
+          return {
+            name: p.name,
+            emoji: 'image-filter-hdr',
+            color: colors.success || '#10B981',
+            hours: completedCamps * 100,
+          };
+        })
+        .filter((p: any) => p.hours > 0);
 
-      const allStats = [...statsArray, ...peakStats].sort((a,b) => b.hours - a.hours);
+      const allStats = [...statsArray, ...peakStats].sort((a, b) => b.hours - a.hours);
       setAltStats(allStats);
       setAltModalVisible(true);
-    } catch(e) {
+    } catch (e) {
       console.log(e);
     }
   };
-
 
   const [modalVisible, setModalVisible] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
@@ -153,17 +148,37 @@ export default function HomeScreen({ navigation }: HomeProps) {
     setModalVisible(false);
   };
 
+  const openPeakFromHistory = (peakId: string) => {
+    setPeaksModalVisible(false);
+    setTimeout(() => {
+      navigation.navigate('PeakDetail', { peakId });
+    }, 100);
+  };
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <StatsBar stats={stats} onAltPress={loadAltStats} onPeaksPress={() => setPeaksModalVisible(true)} />
+      <StatsBar
+        stats={stats}
+        onAltPress={loadAltStats}
+        onPeaksPress={() => setPeaksModalVisible(true)}
+      />
 
       <FlatList
         data={peaks.filter((p: any) => !isPeakComplete(p))}
         keyExtractor={(item) => item.id}
-        contentContainerStyle={peaks.filter((p: any) => !isPeakComplete(p)).length === 0 ? styles.emptyContainer : styles.list}
+        contentContainerStyle={
+          peaks.filter((p: any) => !isPeakComplete(p)).length === 0
+            ? styles.emptyContainer
+            : styles.list
+        }
         ListEmptyComponent={
           <View style={styles.emptyState}>
-            <MaterialCommunityIcons name="image-filter-hdr" size={64} color={colors.textTertiary} style={styles.emptyEmoji} />
+            <MaterialCommunityIcons
+              name="image-filter-hdr"
+              size={64}
+              color={colors.textTertiary}
+              style={styles.emptyEmoji}
+            />
             <Text style={[styles.emptyText, { color: colors.textSecondary }]}>
               {t('home.addFirst')}
             </Text>
@@ -185,55 +200,171 @@ export default function HomeScreen({ navigation }: HomeProps) {
         <Text style={styles.fabText}>+</Text>
       </Pressable>
 
-      
-      
       {/* Peaks Stats Modal */}
-      <Modal visible={peaksModalVisible} transparent animationType="slide" onRequestClose={() => setPeaksModalVisible(false)}>
+      <Modal
+        visible={peaksModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setPeaksModalVisible(false)}
+      >
         <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
-          <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.peaksHistoryTitle')}</Text>
-            <ScrollView style={{marginVertical: 16}}>
-              {peaks.length === 0 && <Text style={{color: colors.textSecondary}}>{t('home.noHistoricalData')}</Text>}
-              
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: Spacing.sm, marginBottom: Spacing.xs }}>
-                <MaterialCommunityIcons name="check-circle" size={16} color={colors.text} style={{ marginRight: 4 }} />
-                <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('home.completed')}</Text>
+          <View
+            style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}
+          >
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              {t('home.peaksHistoryTitle')}
+            </Text>
+            <ScrollView style={{ marginVertical: 16 }}>
+              {peaks.length === 0 && (
+                <Text style={{ color: colors.textSecondary }}>{t('home.noHistoricalData')}</Text>
+              )}
+
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: Spacing.sm,
+                  marginBottom: Spacing.xs,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="check-circle"
+                  size={16}
+                  color={colors.text}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={{ color: colors.text, fontWeight: 'bold' }}>
+                  {t('home.completed')}
+                </Text>
               </View>
-              {peaks.filter((p: any) => isPeakComplete(p)).map((p: any) => {
-                const completedDate = formatCompletionDate(p.completedAt, locale);
-                return (
-                  <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                    <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
+              {peaks
+                .filter((p: any) => isPeakComplete(p))
+                .map((p: any) => (
+                  <Pressable
+                    key={p.id}
+                    accessibilityRole="button"
+                    onPress={() => openPeakFromHistory(p.id)}
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginBottom: 8,
+                      padding: 8,
+                      backgroundColor: colors.surfaceAlt,
+                      borderRadius: 8,
+                    }}
+                  >
+                    <MaterialCommunityIcons
+                      name="flag-variant"
+                      size={24}
+                      color={colors.primary}
+                      style={{ marginRight: 8 }}
+                    />
                     <View style={{ flex: 1 }}>
-                      <Text style={{ color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
-                      {completedDate && (
+                      <Text style={{ color: colors.text, fontSize: 16, fontWeight: 'bold' }}>
+                        {p.name}
+                      </Text>
+                      {formatCompletionDate(p.completedAt, locale) && (
                         <Text style={{ color: colors.textSecondary, fontSize: FontSize.sm, marginTop: Spacing.xs }}>
-                          {t('home.completedOn', { date: completedDate })}
+                          {t('home.completedOn', { date: formatCompletionDate(p.completedAt, locale) || '' })}
                         </Text>
                       )}
                     </View>
-                    <Text style={{ color: colors.success || '#10B981', fontWeight: '900', fontSize: 16 }}>100%</Text>
-                  </View>
-                );
-              })}
-              {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && <Text style={{color: colors.textSecondary, fontSize: 12}}>{t('home.noCompletedPeaks')}</Text>}
+                    <Text
+                      style={{
+                        color: colors.success || '#10B981',
+                        fontWeight: '900',
+                        fontSize: 16,
+                      }}
+                    >
+                      100%
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="chevron-right"
+                      size={20}
+                      color={colors.textSecondary}
+                      style={{ marginLeft: Spacing.xs }}
+                    />
+                  </Pressable>
+                ))}
+              {peaks.filter((p: any) => isPeakComplete(p)).length === 0 && (
+                <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
+                  {t('home.noCompletedPeaks')}
+                </Text>
+              )}
 
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: Spacing.md, marginBottom: Spacing.xs }}>
-                <MaterialCommunityIcons name="hiking" size={16} color={colors.text} style={{ marginRight: 4 }} />
-                <Text style={{color: colors.text, fontWeight: 'bold'}}>{t('home.inProgress')}</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginTop: Spacing.md,
+                  marginBottom: Spacing.xs,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="hiking"
+                  size={16}
+                  color={colors.text}
+                  style={{ marginRight: 4 }}
+                />
+                <Text style={{ color: colors.text, fontWeight: 'bold' }}>
+                  {t('home.inProgress')}
+                </Text>
               </View>
-              {peaks.filter((p: any) => !isPeakComplete(p)).map((p: any) => {
-                const perc = Math.round(peakProgress(p) * 100);
-                return (
-                  <View key={p.id} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                    <MaterialCommunityIcons name="flag-variant" size={24} color={colors.primary} style={{ marginRight: 8 }} />
-                    <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{p.name}</Text>
-                    <Text style={{ color: colors.accent || '#3B82F6', fontWeight: '900', fontSize: 16 }}>{perc}%</Text>
-                  </View>
-                );
-              })}
+              {peaks
+                .filter((p: any) => !isPeakComplete(p))
+                .map((p: any) => {
+                  const perc = Math.round(peakProgress(p) * 100);
+                  return (
+                    <Pressable
+                      key={p.id}
+                      accessibilityRole="button"
+                      onPress={() => openPeakFromHistory(p.id)}
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        marginBottom: 8,
+                        padding: 8,
+                        backgroundColor: colors.surfaceAlt,
+                        borderRadius: 8,
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name="flag-variant"
+                        size={24}
+                        color={colors.primary}
+                        style={{ marginRight: 8 }}
+                      />
+                      <Text
+                        style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}
+                      >
+                        {p.name}
+                      </Text>
+                      <Text
+                        style={{
+                          color: colors.accent || '#3B82F6',
+                          fontWeight: '900',
+                          fontSize: 16,
+                        }}
+                      >
+                        {perc}%
+                      </Text>
+                      <MaterialCommunityIcons
+                        name="chevron-right"
+                        size={20}
+                        color={colors.textSecondary}
+                        style={{ marginLeft: Spacing.xs }}
+                      />
+                    </Pressable>
+                  );
+                })}
             </ScrollView>
-            <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.primary, alignItems: 'center' }]} onPress={() => setPeaksModalVisible(false)}>
+            <TouchableOpacity
+              style={[
+                styles.modalButton,
+                { backgroundColor: colors.primary, alignItems: 'center' },
+              ]}
+              onPress={() => setPeaksModalVisible(false)}
+            >
               <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('home.close')}</Text>
             </TouchableOpacity>
           </View>
@@ -241,21 +372,57 @@ export default function HomeScreen({ navigation }: HomeProps) {
       </Modal>
 
       {/* Altitude Stats Modal */}
-      <Modal visible={altModalVisible} transparent animationType="slide" onRequestClose={() => setAltModalVisible(false)}>
+      <Modal
+        visible={altModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setAltModalVisible(false)}
+      >
         <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
-          <View style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.altHistoryTitle')}</Text>
-            <ScrollView style={{marginVertical: 16}}>
-              {altStats.length === 0 && <Text style={{color: colors.textSecondary}}>{t('home.noHistoricalData')}</Text>}
+          <View
+            style={[styles.modalContent, { backgroundColor: colors.surface, maxHeight: '80%' }]}
+          >
+            <Text style={[styles.modalTitle, { color: colors.text }]}>
+              {t('home.altHistoryTitle')}
+            </Text>
+            <ScrollView style={{ marginVertical: 16 }}>
+              {altStats.length === 0 && (
+                <Text style={{ color: colors.textSecondary }}>{t('home.noHistoricalData')}</Text>
+              )}
               {altStats.map((s, idx) => (
-                <View key={idx} style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, padding: 8, backgroundColor: colors.surfaceAlt, borderRadius: 8 }}>
-                  <MaterialCommunityIcons name={s.emoji as any} size={24} color={s.color} style={{ marginRight: 8 }} />
-                  <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>{s.name}</Text>
-                  <Text style={{ color: s.color, fontWeight: '900', fontSize: 16 }}>{s.hours}m</Text>
+                <View
+                  key={idx}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    marginBottom: 8,
+                    padding: 8,
+                    backgroundColor: colors.surfaceAlt,
+                    borderRadius: 8,
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={s.emoji as any}
+                    size={24}
+                    color={s.color}
+                    style={{ marginRight: 8 }}
+                  />
+                  <Text style={{ flex: 1, color: colors.text, fontSize: 16, fontWeight: 'bold' }}>
+                    {s.name}
+                  </Text>
+                  <Text style={{ color: s.color, fontWeight: '900', fontSize: 16 }}>
+                    {s.hours}m
+                  </Text>
                 </View>
               ))}
             </ScrollView>
-            <TouchableOpacity style={[styles.modalButton, { backgroundColor: colors.primary, alignItems: 'center' }]} onPress={() => setAltModalVisible(false)}>
+            <TouchableOpacity
+              style={[
+                styles.modalButton,
+                { backgroundColor: colors.primary, alignItems: 'center' },
+              ]}
+              onPress={() => setAltModalVisible(false)}
+            >
               <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('home.close')}</Text>
             </TouchableOpacity>
           </View>
@@ -263,12 +430,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
       </Modal>
 
       {/* Add Peak Modal */}
-      <Modal
-        visible={modalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={handleCancel}
-      >
+      <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={handleCancel}>
         <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.newPeak')}</Text>
@@ -320,7 +482,9 @@ export default function HomeScreen({ navigation }: HomeProps) {
                 style={[styles.modalButton, { backgroundColor: colors.primary }]}
                 onPress={handleCreate}
               >
-                <Text style={[styles.modalButtonText, { color: '#fff' }]}>{t('home.createPeak')}</Text>
+                <Text style={[styles.modalButtonText, { color: '#fff' }]}>
+                  {t('home.createPeak')}
+                </Text>
               </Pressable>
             </View>
           </View>

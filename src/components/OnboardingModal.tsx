@@ -82,9 +82,7 @@ export default function OnboardingModal({ visible, onDismiss }: Props) {
           <Image source={item.image} style={styles.image} resizeMode="contain" />
         </View>
         <Text style={[styles.title, { color: colors.text }]}>{t(item.titleKey)}</Text>
-        <Text style={[styles.description, { color: colors.textSecondary }]}>
-          {t(item.descKey)}
-        </Text>
+        <Text style={[styles.description, { color: colors.textSecondary }]}>{t(item.descKey)}</Text>
         {index === slides.length - 1 && (
           <Pressable
             style={[styles.button, { backgroundColor: colors.primary }]}
@@ -102,7 +100,9 @@ export default function OnboardingModal({ visible, onDismiss }: Props) {
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         {currentIndex < slides.length - 1 && (
           <Pressable style={styles.skipButton} onPress={onDismiss}>
-            <Text style={[styles.skipText, { color: colors.textSecondary }]}>{t('onboarding.skip')}</Text>
+            <Text style={[styles.skipText, { color: colors.textSecondary }]}>
+              {t('onboarding.skip')}
+            </Text>
           </Pressable>
         )}
         <FlatList

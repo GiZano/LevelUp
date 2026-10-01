@@ -38,17 +38,25 @@ export default function BlockChip({
         },
       ]}
     >
-      <MaterialCommunityIcons name={categoryEmoji as any} size={16} color={categoryColor} style={styles.emoji} />
+      <MaterialCommunityIcons
+        name={categoryEmoji as any}
+        size={16}
+        color={categoryColor}
+        style={styles.emoji}
+      />
 
       <View style={styles.nameContainer}>
-        <View style={{flexDirection: 'row', alignItems: 'center'}}>
-          {done && <MaterialCommunityIcons name="check-bold" size={16} color={colors.success} style={{ marginRight: 4 }} />}
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          {done && (
+            <MaterialCommunityIcons
+              name="check-bold"
+              size={16}
+              color={colors.success}
+              style={{ marginRight: 4 }}
+            />
+          )}
           <Text
-            style={[
-              styles.name,
-              { color: colors.text },
-              done && styles.nameDone,
-            ]}
+            style={[styles.name, { color: colors.text }, done && styles.nameDone]}
             numberOfLines={1}
           >
             {name}
@@ -61,9 +69,7 @@ export default function BlockChip({
         )}
       </View>
 
-      <Text style={[styles.duration, { color: colors.textSecondary }]}>
-        {durationHours}h
-      </Text>
+      <Text style={[styles.duration, { color: colors.textSecondary }]}>{durationHours}h</Text>
     </TouchableOpacity>
   );
 }

@@ -46,27 +46,31 @@ export async function loadWeeklyPlan(weekId: string): Promise<WeeklyPlan | null>
   return JSON.parse(raw) as WeeklyPlan;
 }
 
-export async function scrubDeletedTemplates(templateIds: string[], templates: BlockTemplate[], categoryId?: string): Promise<number> {
+export async function scrubDeletedTemplates(
+  templateIds: string[],
+  templates: BlockTemplate[],
+  categoryId?: string
+): Promise<number> {
   let totalHoursSubtracted = 0;
-  
+
   const allKeys = await AsyncStorage.getAllKeys();
-  const planKeys = allKeys.filter(k => k.startsWith(KEYS.WEEKLY_PLAN_PREFIX));
-  
+  const planKeys = allKeys.filter((k) => k.startsWith(KEYS.WEEKLY_PLAN_PREFIX));
+
   for (const key of planKeys) {
     const raw = await AsyncStorage.getItem(key);
     if (raw) {
       const plan = JSON.parse(raw) as WeeklyPlan;
       let planModified = false;
-      
-      const newBlocks = plan.blocks.filter(b => {
+
+      const newBlocks = plan.blocks.filter((b) => {
         const matchesTemplate = b.templateId && templateIds.includes(b.templateId);
         const matchesOneOffCat = categoryId && b.oneOffCategoryId === categoryId;
-        
+
         if (matchesTemplate || matchesOneOffCat) {
           if (b.done) {
             let duration = b.customDuration ?? 0;
             if (matchesTemplate && !b.customDuration) {
-              const template = templates.find(t => t.id === b.templateId);
+              const template = templates.find((t) => t.id === b.templateId);
               duration = template?.durationHours ?? 0;
             }
             totalHoursSubtracted += duration;
@@ -79,13 +83,13 @@ export async function scrubDeletedTemplates(templateIds: string[], templates: Bl
         }
         return true;
       });
-      
+
       if (planModified) {
         plan.blocks = newBlocks;
         await AsyncStorage.setItem(key, JSON.stringify(plan));
       }
     }
   }
-  
+
   return totalHoursSubtracted;
 }

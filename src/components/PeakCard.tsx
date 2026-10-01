@@ -23,36 +23,29 @@ export default function PeakCard({ peak, onPress }: PeakCardProps) {
     <TouchableOpacity
       activeOpacity={0.7}
       onPress={onPress}
-      style={[
-        styles.card,
-        { backgroundColor: colors.surface, borderColor: colors.border },
-      ]}
+      style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}
     >
       <View style={styles.header}>
-        <Text
-          style={[styles.name, { color: colors.text }]}
-          numberOfLines={1}
-        >
+        <Text style={[styles.name, { color: colors.text }]} numberOfLines={1}>
           {peak.name}
         </Text>
-        {completed && <MaterialCommunityIcons name="flag-checkered" size={20} color={colors.accent} style={styles.badge} />}
+        {completed && (
+          <MaterialCommunityIcons
+            name="flag-checkered"
+            size={20}
+            color={colors.accent}
+            style={styles.badge}
+          />
+        )}
       </View>
 
       {peak.description ? (
-        <Text
-          style={[styles.description, { color: colors.textSecondary }]}
-          numberOfLines={1}
-        >
+        <Text style={[styles.description, { color: colors.textSecondary }]} numberOfLines={1}>
           {peak.description}
         </Text>
       ) : null}
 
-      <View
-        style={[
-          styles.progressTrack,
-          { backgroundColor: colors.surfaceAlt },
-        ]}
-      >
+      <View style={[styles.progressTrack, { backgroundColor: colors.surfaceAlt }]}>
         <View
           style={[
             styles.progressFill,
