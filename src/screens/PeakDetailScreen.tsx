@@ -127,7 +127,9 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
                   style={{ marginRight: 8 }}
                 />
                 <Text style={[styles.bannerText, { color: colors.primary }]}>
-                  {completedDate ? t('peakDetail.conqueredOn', { date: completedDate }) : t('peakDetail.conquered')}
+                  {completedDate
+                    ? t('peakDetail.conqueredOn', { date: completedDate })
+                    : t('peakDetail.conquered')}
                 </Text>
               </View>
             )}
