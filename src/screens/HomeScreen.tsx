@@ -264,8 +264,16 @@ export default function HomeScreen({ navigation }: HomeProps) {
                         {p.name}
                       </Text>
                       {formatCompletionDate(p.completedAt, locale) && (
-                        <Text style={{ color: colors.textSecondary, fontSize: FontSize.sm, marginTop: Spacing.xs }}>
-                          {t('home.completedOn', { date: formatCompletionDate(p.completedAt, locale) || '' })}
+                        <Text
+                          style={{
+                            color: colors.textSecondary,
+                            fontSize: FontSize.sm,
+                            marginTop: Spacing.xs,
+                          }}
+                        >
+                          {t('home.completedOn', {
+                            date: formatCompletionDate(p.completedAt, locale) || '',
+                          })}
                         </Text>
                       )}
                     </View>
