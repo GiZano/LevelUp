@@ -61,3 +61,8 @@ PRIVATE_ROADMAP.md
 android/
 ios/
 
+# Graphify
+graphify-out/
+
+# Agents
+.agents/
