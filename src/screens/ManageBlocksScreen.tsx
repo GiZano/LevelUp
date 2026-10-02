@@ -698,10 +698,15 @@ export default function ManageBlocksScreen({ navigation }: any) {
                       },
                     ]}
                     onPress={() => {
-                      setSelectedCategoryId(c.id);
-                      if (!blockName.trim()) {
+                      const prevCat = selectedCategoryId
+                        ? getCategoryById(selectedCategoryId)
+                        : null;
+                      const prevCatName = prevCat ? getCategoryDisplayName(prevCat) : '';
+
+                      if (!blockName.trim() || blockName.trim() === prevCatName) {
                         setBlockName(getCategoryDisplayName(c));
                       }
+                      setSelectedCategoryId(c.id);
                     }}
                   >
                     <Text
