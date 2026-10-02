@@ -697,7 +697,12 @@ export default function ManageBlocksScreen({ navigation }: any) {
                         borderColor: selected ? c.color : colors.border,
                       },
                     ]}
-                    onPress={() => setSelectedCategoryId(c.id)}
+                    onPress={() => {
+                      setSelectedCategoryId(c.id);
+                      if (!blockName.trim()) {
+                        setBlockName(getCategoryDisplayName(c));
+                      }
+                    }}
                   >
                     <Text
                       style={[styles.chipText, { color: selected ? '#fff' : colors.text }]}
