@@ -18,6 +18,7 @@ interface PeaksActions {
   addCamp: (peakId: string, name: string) => void;
   toggleCamp: (peakId: string, campId: string) => void;
   deleteCamp: (peakId: string, campId: string) => void;
+  editCamp: (peakId: string, campId: string, newName: string) => void;
   reorderCamps: (peakId: string, camps: Camp[]) => void;
   addCompletedHours: (hours: number) => void;
   refreshData: () => Promise<void>;
@@ -174,6 +175,19 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
     );
   }, []);
 
+  const editCamp = useCallback((peakId: string, campId: string, newName: string) => {
+    setPeaks((prev) =>
+      prev.map((peak) => {
+        if (peak.id !== peakId) return peak;
+        const updatedCamps = peak.camps.map((camp) => {
+          if (camp.id !== campId) return camp;
+          return { ...camp, name: newName };
+        });
+        return { ...peak, camps: updatedCamps };
+      })
+    );
+  }, []);
+
   const reorderCamps = useCallback((peakId: string, camps: Camp[]) => {
     setPeaks((prev) =>
       prev.map((peak) => {
@@ -196,6 +210,7 @@ export function PeaksProvider({ children }: { children: React.ReactNode }) {
         addCamp,
         toggleCamp,
         deleteCamp,
+        editCamp,
         reorderCamps,
         addCompletedHours,
         refreshData,

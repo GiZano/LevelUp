@@ -29,9 +29,10 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
   const { peakId } = route.params;
   const { colors } = useThemeColors();
   const { locale } = useLocale();
-  const { peaks, addCamp, toggleCamp, deleteCamp, deletePeak } = usePeaks();
+  const { peaks, addCamp, toggleCamp, deleteCamp, deletePeak, editCamp } = usePeaks();
 
   const [campName, setCampName] = useState('');
+  const [editingCampId, setEditingCampId] = useState<string | null>(null);
 
   const peak = peaks.find((p) => p.id === peakId);
 
@@ -79,10 +80,22 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
   const pct = totalCamps > 0 ? Math.round((doneCamps / totalCamps) * 100) : 0;
   const completedDate = complete ? formatCompletionDate(peak.completedAt, locale) : null;
 
-  const handleAddCamp = () => {
+  const handleSaveCamp = () => {
     const trimmed = campName.trim();
-    if (!trimmed) return;
-    addCamp(peakId, trimmed);
+    if (!trimmed) {
+      if (editingCampId) {
+        setEditingCampId(null);
+        setCampName('');
+      }
+      return;
+    }
+
+    if (editingCampId) {
+      editCamp(peakId, editingCampId, trimmed);
+      setEditingCampId(null);
+    } else {
+      addCamp(peakId, trimmed);
+    }
     setCampName('');
   };
 
@@ -140,6 +153,10 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
             camp={item}
             onToggle={() => toggleCamp(peakId, item.id)}
             onDelete={() => deleteCamp(peakId, item.id)}
+            onEdit={() => {
+              setEditingCampId(item.id);
+              setCampName(item.name);
+            }}
           />
         )}
       />
@@ -148,6 +165,17 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
       <View
         style={[styles.inputBar, { backgroundColor: colors.surface, borderColor: colors.border }]}
       >
+        {editingCampId && (
+          <Pressable
+            onPress={() => {
+              setEditingCampId(null);
+              setCampName('');
+            }}
+            style={{ padding: Spacing.xs }}
+          >
+            <MaterialCommunityIcons name="close" size={24} color={colors.textTertiary} />
+          </Pressable>
+        )}
         <TextInput
           style={[
             styles.input,
@@ -157,18 +185,20 @@ export default function PeakDetailScreen({ navigation, route }: PeakDetailProps)
               borderColor: colors.border,
             },
           ]}
-          placeholder={t('peakDetail.addCamp')}
+          placeholder={editingCampId ? t('common.edit') + '...' : t('peakDetail.addCamp')}
           placeholderTextColor={colors.textSecondary}
           value={campName}
           onChangeText={setCampName}
-          onSubmitEditing={handleAddCamp}
+          onSubmitEditing={handleSaveCamp}
           returnKeyType="done"
         />
         <Pressable
           style={[styles.addButton, { backgroundColor: colors.primary }]}
-          onPress={handleAddCamp}
+          onPress={handleSaveCamp}
         >
-          <Text style={styles.addButtonText}>{t('peakDetail.add')}</Text>
+          <Text style={styles.addButtonText}>
+            {editingCampId ? t('common.save') : t('peakDetail.add')}
+          </Text>
         </Pressable>
       </View>
     </KeyboardAvoidingView>

@@ -9,9 +9,10 @@ interface CampItemProps {
   camp: Camp;
   onToggle: () => void;
   onDelete: () => void;
+  onEdit?: () => void;
 }
 
-export default function CampItem({ camp, onToggle, onDelete }: CampItemProps) {
+export default function CampItem({ camp, onToggle, onDelete, onEdit }: CampItemProps) {
   const { colors } = useThemeColors();
 
   return (
@@ -43,7 +44,13 @@ export default function CampItem({ camp, onToggle, onDelete }: CampItemProps) {
         {camp.name}
       </Text>
 
-      <TouchableOpacity onPress={onDelete} style={styles.deleteButton} activeOpacity={0.6}>
+      {onEdit && (
+        <TouchableOpacity onPress={onEdit} style={styles.actionButton} activeOpacity={0.6}>
+          <MaterialCommunityIcons name="pencil-outline" size={18} color={colors.textTertiary} />
+        </TouchableOpacity>
+      )}
+
+      <TouchableOpacity onPress={onDelete} style={styles.actionButton} activeOpacity={0.6}>
         <MaterialCommunityIcons name="trash-can-outline" size={18} color={colors.danger} />
       </TouchableOpacity>
     </View>
@@ -85,11 +92,8 @@ const styles = StyleSheet.create({
   nameCompleted: {
     textDecorationLine: 'line-through',
   },
-  deleteButton: {
+  actionButton: {
     padding: Spacing.xs,
     marginLeft: Spacing.sm,
-  },
-  deleteIcon: {
-    fontSize: FontSize.md,
   },
 });
