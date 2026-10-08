@@ -1,0 +1,14 @@
+coverage:
+  status:
+    project:
+      default:
+        informational: true
+    patch:
+      default:
+        informational: true
+
+comment:
+  layout: 'reach, diff, files'
+
+ignore:
+  - 'src/**/__tests__/**'

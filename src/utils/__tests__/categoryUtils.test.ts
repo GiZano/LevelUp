@@ -76,6 +76,18 @@ describe('categoryUtils', () => {
     expect(getCategoryDisplayName(renamedToAltro)).toBe('Altro');
   });
 
+  it('keeps the stored name when isCustomName is set, even if it matches a default', () => {
+    const customCat: Category = {
+      id: 'lettura',
+      name: 'Reading',
+      color: '#F59E0B',
+      emoji: 'book-open-page-variant',
+      targetHoursPerWeek: 3,
+      isCustomName: true,
+    };
+    expect(getCategoryDisplayName(customCat)).toBe('Reading');
+  });
+
   it('preserves custom names for user-created categories', () => {
     const userCat: Category = {
       id: 'custom-123',
