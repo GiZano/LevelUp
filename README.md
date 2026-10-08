@@ -10,6 +10,7 @@
     <img src="https://img.shields.io/badge/SQLite-07405E?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite" />
     <img src="https://img.shields.io/badge/Open_Source-4CAF50?style=for-the-badge&logo=open-source-initiative&logoColor=white" alt="Open Source" />
     <a href="https://doi.org/10.5281/zenodo.22969593"><img src="https://img.shields.io/badge/DOI-10.5281%2Fzenodo.22969593-blue?style=for-the-badge&logo=zenodo&logoColor=white" alt="DOI" /></a>
+    <a href="https://codecov.io/gh/GiZano/LevelUp"><img src="https://codecov.io/gh/GiZano/LevelUp/graph/badge.svg" alt="codecov" /></a>
   </p>
   <p><i>An open-source productivity engine, built by developers, for everyone.</i></p>
 </div>
