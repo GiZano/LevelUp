@@ -160,6 +160,16 @@ See [ROADMAP.md](./ROADMAP.md) for the complete development plan.
 
 ---
 
+## 🧪 Test Coverage
+
+We are actively working to cover the entire application with automated tests. Help us make this sunburst graph completely green!
+
+<p align="center">
+  <a href="https://codecov.io/github/GiZano/LevelUp">
+    <img src="https://codecov.io/github/GiZano/LevelUp/graphs/sunburst.svg?token=ZMK6BDH8WI" alt="Codecov Sunburst" width="600" />
+  </a>
+</p>
+
 ---
 
 ## 🤝 Community & Security
