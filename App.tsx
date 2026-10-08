@@ -28,6 +28,7 @@ import type {
 import HomeScreen from './src/screens/HomeScreen';
 import PeakDetailScreen from './src/screens/PeakDetailScreen';
 import PlannerScreen from './src/screens/PlannerScreen';
+import WeeklyReviewScreen from './src/screens/WeeklyReviewScreen';
 import ManageBlocksScreen from './src/screens/ManageBlocksScreen';
 import TodayScreen from './src/screens/TodayScreen';
 import SettingsScreen from './src/screens/SettingsScreen';
@@ -62,6 +63,11 @@ function PlannerStackNavigator() {
       }}
     >
       <PlannerStack.Screen name="PlannerHome" component={PlannerScreen} />
+      <PlannerStack.Screen
+        name="WeeklyReview"
+        component={WeeklyReviewScreen}
+        options={{ title: t('review.title') }}
+      />
     </PlannerStack.Navigator>
   );
 }

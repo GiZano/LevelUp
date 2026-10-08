@@ -5,6 +5,7 @@ export type RootStackParamList = {
 
 export type PlannerStackParamList = {
   PlannerHome: undefined;
+  WeeklyReview: undefined;
 };
 
 export type BlocchiStackParamList = {

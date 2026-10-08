@@ -68,6 +68,20 @@ export default function PlannerScreen({ navigation }: any) {
       title: t('tabs.planner'),
       headerStyle: { backgroundColor: colors.surface },
       headerTintColor: colors.text,
+      headerRight: () => (
+        <Pressable
+          onPress={() => navigation.navigate('WeeklyReview')}
+          hitSlop={12}
+          accessibilityRole="button"
+          accessibilityLabel={t('review.title')}
+        >
+          <MaterialCommunityIcons
+            name="clipboard-text-clock-outline"
+            size={24}
+            color={colors.text}
+          />
+        </Pressable>
+      ),
     });
   }, [navigation, colors]);
 
