@@ -1,5 +1,12 @@
 import { BlockTemplate, Camp, Category, Peak, ScheduledBlock, WeeklyPlan } from '../../types';
-import { computeWeeklyReview, resolveBlock, WeeklyReviewInput } from '../weeklyReview';
+import {
+  CategoryReview,
+  computeWeeklyReview,
+  getWeeklyInsight,
+  resolveBlock,
+  WeeklyReview,
+  WeeklyReviewInput,
+} from '../weeklyReview';
 
 const CURRENT_WEEK = '2026-10-05';
 const PAST_WEEK = '2026-09-28';
@@ -452,6 +459,77 @@ describe('computeWeeklyReview camps and peaks', () => {
   });
 });
 
+describe('computeWeeklyReview phase', () => {
+  const phaseOf = (weekId: string, today: Date) =>
+    computeWeeklyReview(input({ plan: planOf([], weekId), today })).phase;
+
+  it('is current in the middle of the week', () => {
+    expect(phaseOf(CURRENT_WEEK, THURSDAY)).toBe('current');
+  });
+
+  it('is current on Monday at the very start of the week', () => {
+    expect(phaseOf(CURRENT_WEEK, new Date(2026, 9, 5, 0, 0, 0))).toBe('current');
+  });
+
+  it('is current on Sunday at the very end of the week', () => {
+    expect(phaseOf(CURRENT_WEEK, new Date(2026, 9, 11, 23, 59, 59))).toBe('current');
+  });
+
+  it('is upcoming on the Sunday just before the week begins', () => {
+    expect(phaseOf(CURRENT_WEEK, new Date(2026, 9, 4, 23, 59, 59))).toBe('upcoming');
+  });
+
+  it('is past on the Monday just after the week ends', () => {
+    expect(phaseOf(CURRENT_WEEK, new Date(2026, 9, 12, 0, 0, 0))).toBe('past');
+  });
+
+  it('is past for an earlier week', () => {
+    expect(phaseOf(PAST_WEEK, THURSDAY)).toBe('past');
+  });
+
+  it('is upcoming for a later week', () => {
+    expect(phaseOf(FUTURE_WEEK, THURSDAY)).toBe('upcoming');
+  });
+
+  it('resolves a week that spans a month boundary', () => {
+    expect(phaseOf('2026-11-30', new Date(2026, 11, 6, 12))).toBe('current');
+    expect(phaseOf('2026-11-30', new Date(2026, 11, 7, 12))).toBe('past');
+  });
+
+  it('reports no skipped blocks and an upcoming streak status for an upcoming week', () => {
+    const plan = planOf([block({ day: 'lun' })], FUTURE_WEEK);
+
+    const review = computeWeeklyReview(input({ plan }));
+
+    expect(review.phase).toBe('upcoming');
+    expect(review.skippedByDay).toEqual([]);
+    expect(review.streakStatus).toBe('upcoming');
+  });
+});
+
+describe('computeWeeklyReview rounding', () => {
+  const eightBlocks = (doneCount: number) =>
+    planOf(
+      Array.from({ length: 8 }, (_, index) => block({ id: 'b' + index, done: index < doneCount }))
+    );
+
+  it('rounds a completion rate of exactly 12.5 percent up to 13', () => {
+    expect(computeWeeklyReview(input({ plan: eightBlocks(1) })).completionRate).toBe(13);
+  });
+
+  it('rounds a completion rate of exactly 37.5 percent up to 38', () => {
+    expect(computeWeeklyReview(input({ plan: eightBlocks(3) })).completionRate).toBe(38);
+  });
+
+  it('rounds a completion rate of exactly 0.5 percent up to 1', () => {
+    const blocks = Array.from({ length: 200 }, (_, index) =>
+      block({ id: 'b' + index, done: index === 0 })
+    );
+
+    expect(computeWeeklyReview(input({ plan: planOf(blocks) })).completionRate).toBe(1);
+  });
+});
+
 describe('computeWeeklyReview streakStatus', () => {
   const review = (overrides: Partial<WeeklyReviewInput>) =>
     computeWeeklyReview(input({ today: UTC_THURSDAY, ...overrides }));
@@ -552,5 +630,166 @@ describe('computeWeeklyReview streakStatus', () => {
     const result = review({ plan, today, streak: 2, lastActiveDate: '2026-11-30' });
 
     expect(result.streakStatus).toBe('survived');
+  });
+});
+
+describe('getWeeklyInsight', () => {
+  const categoryReview = (overrides: Partial<CategoryReview> = {}): CategoryReview => ({
+    category: category(),
+    scheduled: 4,
+    completed: 4,
+    target: 0,
+    metTarget: false,
+    ...overrides,
+  });
+
+  const reviewOf = (overrides: Partial<WeeklyReview> = {}): WeeklyReview => ({
+    weekId: CURRENT_WEEK,
+    hoursCompleted: 4,
+    hoursScheduled: 4,
+    blocksCompleted: 2,
+    blocksScheduled: 2,
+    completionRate: 100,
+    categories: [],
+    skippedByDay: [],
+    streak: 0,
+    streakStatus: 'broken',
+    phase: 'current',
+    campsCompleted: [],
+    peaksReached: [],
+    ...overrides,
+  });
+
+  it('is upcoming for a future week even when nothing is scheduled', () => {
+    const result = getWeeklyInsight(reviewOf({ phase: 'upcoming', blocksScheduled: 0 }));
+
+    expect(result).toEqual({ type: 'upcoming' });
+  });
+
+  it('is upcoming for a future week that has blocks and unmet targets', () => {
+    const categories = [categoryReview({ target: 5, completed: 0 })];
+
+    const result = getWeeklyInsight(reviewOf({ phase: 'upcoming', categories }));
+
+    expect(result).toEqual({ type: 'upcoming' });
+  });
+
+  it('gives the same focus insight for current and past weeks', () => {
+    const categories = [categoryReview({ target: 5, completed: 1 })];
+
+    const current = getWeeklyInsight(reviewOf({ phase: 'current', categories }));
+    const past = getWeeklyInsight(reviewOf({ phase: 'past', categories }));
+
+    expect(current).toEqual(past);
+    expect(current.type).toBe('focus');
+  });
+
+  it('rounds a missing half-tenth boundary up to the next tenth', () => {
+    const categories = [categoryReview({ target: 0.5, completed: 0.25 })];
+
+    const result = getWeeklyInsight(reviewOf({ categories }));
+
+    expect(result).toMatchObject({ type: 'focus', missingHours: 0.3 });
+  });
+
+  it('is empty when no blocks are scheduled', () => {
+    const result = getWeeklyInsight(reviewOf({ blocksScheduled: 0, completionRate: 0 }));
+
+    expect(result).toEqual({ type: 'empty' });
+  });
+
+  it('is empty rather than focus when nothing is scheduled but a target is missed', () => {
+    const categories = [categoryReview({ target: 5, completed: 0 })];
+
+    const result = getWeeklyInsight(reviewOf({ blocksScheduled: 0, categories }));
+
+    expect(result).toEqual({ type: 'empty' });
+  });
+
+  it('is perfect at a 100 percent completion rate with no missed targets', () => {
+    const categories = [categoryReview({ target: 4, completed: 4, metTarget: true })];
+
+    expect(getWeeklyInsight(reviewOf({ categories }))).toEqual({ type: 'perfect' });
+  });
+
+  it('is great from 80 percent upwards', () => {
+    expect(getWeeklyInsight(reviewOf({ completionRate: 80 }))).toEqual({ type: 'great' });
+    expect(getWeeklyInsight(reviewOf({ completionRate: 99 }))).toEqual({ type: 'great' });
+  });
+
+  it('is keepGoing below 80 percent', () => {
+    expect(getWeeklyInsight(reviewOf({ completionRate: 79 }))).toEqual({ type: 'keepGoing' });
+    expect(getWeeklyInsight(reviewOf({ completionRate: 0 }))).toEqual({ type: 'keepGoing' });
+  });
+
+  it('is keepGoing rather than focus when every target is met or unset', () => {
+    const categories = [
+      categoryReview({ target: 0, completed: 0 }),
+      categoryReview({ target: 3, completed: 5, metTarget: true }),
+    ];
+
+    expect(getWeeklyInsight(reviewOf({ completionRate: 50, categories }))).toEqual({
+      type: 'keepGoing',
+    });
+  });
+
+  it('focuses on a category that missed its target', () => {
+    const study = category({ id: 'study', targetHoursPerWeek: 6 });
+    const categories = [categoryReview({ category: study, target: 6, completed: 4 })];
+
+    const result = getWeeklyInsight(reviewOf({ categories }));
+
+    expect(result).toEqual({ type: 'focus', category: study, missingHours: 2 });
+  });
+
+  it('prefers focus over perfect and great', () => {
+    const categories = [categoryReview({ target: 10, completed: 4 })];
+
+    expect(getWeeklyInsight(reviewOf({ completionRate: 100, categories })).type).toBe('focus');
+    expect(getWeeklyInsight(reviewOf({ completionRate: 85, categories })).type).toBe('focus');
+  });
+
+  it('focuses on the category with the largest shortfall', () => {
+    const small = category({ id: 'small' });
+    const large = category({ id: 'large' });
+    const categories = [
+      categoryReview({ category: small, target: 5, completed: 4 }),
+      categoryReview({ category: large, target: 8, completed: 2 }),
+    ];
+
+    const result = getWeeklyInsight(reviewOf({ categories }));
+
+    expect(result).toEqual({ type: 'focus', category: large, missingHours: 6 });
+  });
+
+  it('breaks shortfall ties in favour of the first category', () => {
+    const first = category({ id: 'first' });
+    const second = category({ id: 'second' });
+    const categories = [
+      categoryReview({ category: first, target: 4, completed: 2 }),
+      categoryReview({ category: second, target: 5, completed: 3 }),
+    ];
+
+    const result = getWeeklyInsight(reviewOf({ categories }));
+
+    expect(result).toMatchObject({ type: 'focus', category: first });
+  });
+
+  it('rounds the missing hours to one decimal', () => {
+    const categories = [categoryReview({ target: 3, completed: 0.7 + 0.1 })];
+
+    const result = getWeeklyInsight(reviewOf({ categories }));
+
+    expect(result).toMatchObject({ type: 'focus', missingHours: 2.2 });
+  });
+
+  it('does not mutate the review', () => {
+    const categories = [categoryReview({ target: 5, completed: 1 })];
+    const review = reviewOf({ categories });
+    const snapshot = JSON.parse(JSON.stringify(review));
+
+    getWeeklyInsight(review);
+
+    expect(review).toEqual(snapshot);
   });
 });

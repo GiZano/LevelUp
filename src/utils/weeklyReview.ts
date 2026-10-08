@@ -27,6 +27,8 @@ export interface CategoryReview {
 
 export type StreakStatus = 'survived' | 'started' | 'broken' | 'upcoming';
 
+export type WeekPhase = 'past' | 'current' | 'upcoming';
+
 export interface WeeklyReview {
   weekId: string;
   hoursCompleted: number;
@@ -38,6 +40,7 @@ export interface WeeklyReview {
   skippedByDay: { day: DayOfWeek; blocks: ResolvedBlock[] }[];
   streak: number;
   streakStatus: StreakStatus;
+  phase: WeekPhase;
   campsCompleted: { peak: Peak; camp: Camp }[];
   peaksReached: Peak[];
 }
@@ -136,17 +139,27 @@ function groupSkippedByDay(
   })).filter((entry) => entry.blocks.length > 0);
 }
 
-function getStreakStatus(input: WeeklyReviewInput, isAlive: boolean): StreakStatus {
-  const { plan, streak, lastActiveDate, today } = input;
-  const dates = getDatesOfWeek(plan.weekId).map(toLocalDateString);
-  const [monday, sunday] = [dates[0], dates[6]];
+function getWeekPhase(weekId: string, today: Date): WeekPhase {
+  const dates = getDatesOfWeek(weekId).map(toLocalDateString);
   const todayString = toLocalDateString(today);
-  if (monday > todayString) return 'upcoming';
+  if (dates[0] > todayString) return 'upcoming';
+  if (dates[6] < todayString) return 'past';
+  return 'current';
+}
+
+function getStreakStatus(
+  input: WeeklyReviewInput,
+  phase: WeekPhase,
+  isAlive: boolean
+): StreakStatus {
+  const { plan, streak, lastActiveDate } = input;
+  if (phase === 'upcoming') return 'upcoming';
   if (!lastActiveDate || streak <= 0) return 'broken';
 
+  const dates = getDatesOfWeek(plan.weekId).map(toLocalDateString);
+  const [monday, sunday] = [dates[0], dates[6]];
   const reachesMonday = dayNumber(lastActiveDate) - dayNumber(monday) + 1 <= streak;
-  if (sunday < todayString)
-    return lastActiveDate >= sunday && reachesMonday ? 'survived' : 'broken';
+  if (phase === 'past') return lastActiveDate >= sunday && reachesMonday ? 'survived' : 'broken';
   if (!isAlive) return 'broken';
   return reachesMonday ? 'survived' : 'started';
 }
@@ -172,6 +185,7 @@ function isInWeek(isoDate: string | undefined, weekId: string): boolean {
 export function computeWeeklyReview(input: WeeklyReviewInput): WeeklyReview {
   const { plan, categories, templates, peaks, streak, today } = input;
   const isAlive = isStreakAlive(input);
+  const phase = getWeekPhase(plan.weekId, today);
   const resolved = plan.blocks.map((b) => resolveBlock(b, templates));
   const completedBlocks = resolved.filter((r) => r.block.done);
 
@@ -186,8 +200,49 @@ export function computeWeeklyReview(input: WeeklyReviewInput): WeeklyReview {
     categories: reviewCategories(categories, resolved),
     skippedByDay: groupSkippedByDay(resolved, plan.weekId, today),
     streak: isAlive ? streak : 0,
-    streakStatus: getStreakStatus(input, isAlive),
+    streakStatus: getStreakStatus(input, phase, isAlive),
+    phase,
     campsCompleted: findCompletedCamps(peaks, plan.weekId),
     peaksReached: peaks.filter((p) => isInWeek(p.completedAt, plan.weekId)),
   };
+}
+
+export type WeeklyInsight =
+  | { type: 'empty' }
+  | { type: 'upcoming' }
+  | { type: 'perfect' }
+  | { type: 'great' }
+  | { type: 'focus'; category: Category; missingHours: number }
+  | { type: 'keepGoing' };
+
+const GREAT_COMPLETION_RATE = 80;
+const PERFECT_COMPLETION_RATE = 100;
+
+const roundToTenth = (value: number): number => Math.round(value * 10) / 10;
+
+function findLargestShortfall(categories: CategoryReview[]): CategoryReview | undefined {
+  return categories
+    .filter((item) => item.target > 0 && !item.metTarget)
+    .reduce<CategoryReview | undefined>(
+      (worst, item) =>
+        !worst || item.target - item.completed > worst.target - worst.completed ? item : worst,
+      undefined
+    );
+}
+
+export function getWeeklyInsight(review: WeeklyReview): WeeklyInsight {
+  if (review.phase === 'upcoming') return { type: 'upcoming' };
+  if (review.blocksScheduled === 0) return { type: 'empty' };
+
+  const shortfall = findLargestShortfall(review.categories);
+  if (shortfall) {
+    return {
+      type: 'focus',
+      category: shortfall.category,
+      missingHours: roundToTenth(shortfall.target - shortfall.completed),
+    };
+  }
+  if (review.completionRate >= PERFECT_COMPLETION_RATE) return { type: 'perfect' };
+  if (review.completionRate >= GREAT_COMPLETION_RATE) return { type: 'great' };
+  return { type: 'keepGoing' };
 }
