@@ -3,7 +3,17 @@ import { ScrollView, TouchableOpacity } from 'react-native';
 import { t } from '../utils/i18n';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import React, { useLayoutEffect, useState } from 'react';
-import { FlatList, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import {
+  FlatList,
+  Modal,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useThemeColors } from '../utils/useThemeColors';
 import { Spacing, FontSize, BorderRadius } from '../utils/theme';
@@ -439,7 +449,10 @@ export default function HomeScreen({ navigation }: HomeProps) {
 
       {/* Add Peak Modal */}
       <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={handleCancel}>
-        <View style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}>
+        <KeyboardAvoidingView
+          style={[styles.modalOverlay, { backgroundColor: colors.overlay }]}
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        >
           <View style={[styles.modalContent, { backgroundColor: colors.surface }]}>
             <Text style={[styles.modalTitle, { color: colors.text }]}>{t('home.newPeak')}</Text>
 
@@ -496,7 +509,7 @@ export default function HomeScreen({ navigation }: HomeProps) {
               </Pressable>
             </View>
           </View>
-        </View>
+        </KeyboardAvoidingView>
       </Modal>
 
       <OnboardingModal visible={showOnboarding} onDismiss={handleDismissOnboarding} />
